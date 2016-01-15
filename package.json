@@ -1,0 +1,55 @@
+{
+  "name": "react-form-tools",
+  "version": "1.0.0",
+  "description": "ValidationMixin and base form components for React + Baobab",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "karma start karma.conf.js --single-run",
+    "compile": "babel --presets es2015,react --out-dir dist ./src",
+    "prepublish": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brogency/react-form-tools.git"
+  },
+  "keywords": [
+    "react",
+    "baobab",
+    "forms",
+    "validation"
+  ],
+  "author": "Bro agency",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Brogency/react-form-tools/issues"
+  },
+  "homepage": "https://github.com/Brogency/react-form-tools#readme",
+  "devDependencies": {
+    "babel": "^6.3.26",
+    "babel-cli": "^6.4.0",
+    "babel-core": "^6.4.0",
+    "babel-loader": "^6.2.1",
+    "babel-plugin-module-alias": "^1.0.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "baobab": "^2.3.0",
+    "chai": "^3.4.1",
+    "isparta-loader": "^2.0.0",
+    "karma": "^0.13.19",
+    "karma-chai": "^0.1.0",
+    "karma-coverage": "^0.5.3",
+    "karma-mocha": "^0.2.0",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-phantomjs-shim": "^1.1.2",
+    "karma-webpack": "^1.7.0",
+    "mocha": "^2.3.4",
+    "phantomjs": "^1.9.17",
+    "react": "^0.14.6",
+    "react-addons-test-utils": "^0.14.1",
+    "webpack": "^1.12.11"
+  },
+  "dependencies": {
+    "baobab-react-schemabranchmixin": "^1.0.2",
+    "lodash": "^4.0.0"
+  }
+}
