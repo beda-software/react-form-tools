@@ -1,7 +1,6 @@
 import React from 'react'
 import {getSelection, setSelection} from 'react/lib/ReactInputSelection';
 import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
-import config from '~/config';
 
 export default React.createClass({
   displayName: 'Input',
@@ -14,6 +13,8 @@ export default React.createClass({
   },
 
   updateTimer: null,
+
+  msToPoll: 200,
 
   selection: null,
 
@@ -54,7 +55,7 @@ export default React.createClass({
 
   setUpdateTimer: function () {
     this.clearUpdateTimer();
-    this.updateTimer = setTimeout(this.syncValue, config.msToPoll);
+    this.updateTimer = setTimeout(this.syncValue, this.msToPoll);
   },
 
   onChange: function(evt) {
