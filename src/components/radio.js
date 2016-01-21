@@ -1,16 +1,12 @@
 import React from 'react';
-import {SchemaBranchMixin} from 'libs/mixins';
+import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
 
 export default React.createClass({
   displayName: 'Radio',
 
   propTypes: {
-    cursor: React.PropTypes.any.isRequired
+    cursor: BaobabPropTypes.cursor.isRequired
   },
-
-  mixins: [SchemaBranchMixin],
-
-  schema: {},
 
   onChange: function() {
     const value = this.props.value;

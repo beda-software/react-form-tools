@@ -1,16 +1,14 @@
 import React from 'react'
 import {getSelection, setSelection} from 'react/lib/ReactInputSelection';
-import {PureRenderMixin} from 'libs/mixins';
+import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
 import config from '~/config';
 
 export default React.createClass({
   displayName: 'Input',
 
-  mixins: [PureRenderMixin],
-
   propTypes: {
     onChange : React.PropTypes.func,
-    cursor: React.PropTypes.any.isRequired,
+    cursor: BaobabPropTypes.cursor.isRequired,
     sync: React.PropTypes.bool,
     syncOnlyOnBlur: React.PropTypes.bool
   },

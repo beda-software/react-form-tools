@@ -1,11 +1,12 @@
 import React from 'react'
 import Input from './Input';
+import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
 
 export default React.createClass({
   displayName: 'ReInput',
 
   propTypes: {
-    cursor: React.PropTypes.any.isRequired,
+    cursor: BaobabPropTypes.cursor.isRequired,
     skip: React.PropTypes.string.isRequired
   },
 

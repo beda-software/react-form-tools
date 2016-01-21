@@ -1,14 +1,12 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import defaultStrategy from 'yup-validation-strategy';
+import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
 
 export default React.createClass({
-  mixins: [PureRenderMixin],
-
   propTypes: {
     onSubmit: React.PropTypes.func,
     onInvalidSubmit: React.PropTypes.func,
-    cursor: React.PropTypes.any.isRequired, // TODO: change to cursors proptype
+    cursor: BaobabPropTypes.cursor.isRequired,
     validationSchema: React.PropTypes.any.isRequired,
     validateOnFly: React.PropTypes.bool
   },
