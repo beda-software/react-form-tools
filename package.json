@@ -1,7 +1,7 @@
 {
   "name": "react-form-tools",
-  "version": "1.0.0",
-  "description": "ValidationMixin and base form components for React + Baobab",
+  "version": "1.0.1",
+  "description": "Form components with validation for React + Baobab",
   "main": "./dist/index.js",
   "scripts": {
     "test": "karma start karma.conf.js --single-run",
