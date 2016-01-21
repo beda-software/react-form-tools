@@ -1,6 +1,6 @@
 {
   "name": "react-form-tools",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Form components with validation for React + Baobab",
   "main": "./dist/index.js",
   "scripts": {
