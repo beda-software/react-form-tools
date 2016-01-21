@@ -18,6 +18,4 @@ ValidationMixin inspired by [react-validation-mixin](https://github.com/jurassix
   
 ## Release History
 
-* 1.0.2 Import fix
-* 1.0.1 Export fix
-* 1.0.0 Initial release
+* 1.0 Initial release
