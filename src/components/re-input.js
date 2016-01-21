@@ -1,5 +1,5 @@
 import React from 'react'
-import Input from './Input';
+import Input from './input';
 import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
 
 export default React.createClass({
