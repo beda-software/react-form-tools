@@ -1,8 +1,6 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import strategy from 'yup-validation-strategy';
-
-const validator = strategy();
+import defaultStrategy from 'yup-validation-strategy';
 
 export default React.createClass({
   mixins: [PureRenderMixin],
@@ -23,7 +21,8 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
-      validateOnFly: true
+      validateOnFly: true,
+      strategy: defaultStrategy
     };
   },
 
@@ -78,7 +77,6 @@ export default React.createClass({
 
   onSubmit: function (evt) {
     evt.preventDefault();
-
     this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
   },
 
@@ -90,7 +88,7 @@ export default React.createClass({
     const data = this.props.cursor.get();
     const schema = this.props.validationSchema;
 
-    validator.validate(data, schema, {}, errors => {
+    this.props.strategy.validate(data, schema, {}, errors => {
       this.setState({
         validationErrors: errors,
         validationDirtyStates: updateStates(
@@ -113,7 +111,7 @@ export default React.createClass({
       if (_.isEmpty(errors)) {
         successCallback && successCallback();
       } else {
-        errorCallback && errorCallback();
+        errorCallback && errorCallback(errors);
       }
     });
   },
