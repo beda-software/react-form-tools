@@ -8,7 +8,11 @@ export default React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-
+    onSubmit: React.PropTypes.func,
+    onInvalidSubmit: React.PropTypes.func,
+    cursor: React.PropTypes.any.isRequired, // TODO: change to cursors proptype
+    validationSchema: React.PropTypes.any.isRequired,
+    validateOnFly: React.PropTypes.bool
   },
 
   childContextTypes: {
@@ -19,7 +23,7 @@ export default React.createClass({
 
   getDefaultProps: function () {
     return {
-      onSubmit: _.identity
+      validateOnFly: true
     };
   },
 
@@ -50,14 +54,18 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    // Add on update callback
-    this.props.cursor.on('update', this.onUpdate);
+    if (this.props.validateOnFly) {
+      // Add on update callback
+      this.props.cursor.on('update', this.onUpdate);
+    }
     this.setInitialValue();
     this.validate();
   },
 
   componentWillUnmount: function () {
-    this.props.cursor.off('update', this.onUpdate);
+    if (this.props.validateOnFly) {
+      this.props.cursor.off('update', this.onUpdate);
+    }
   },
 
   render: function () {
@@ -70,16 +78,15 @@ export default React.createClass({
 
   onSubmit: function (evt) {
     evt.preventDefault();
-    if (this.isValid()) {
-      this.props.onSubmit();
-    }
+
+    this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
   },
 
   onUpdate: function () {
     this.validate();
   },
 
-  validate: function () {
+  validate: function (successCallback, errorCallback) {
     const data = this.props.cursor.get();
     const schema = this.props.validationSchema;
 
@@ -101,6 +108,12 @@ export default React.createClass({
             return value != initial ? true : curStates[field];
           }
         });
+      }
+
+      if (_.isEmpty(errors)) {
+        successCallback && successCallback();
+      } else {
+        errorCallback && errorCallback();
       }
     });
   },

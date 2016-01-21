@@ -15,8 +15,9 @@ export default React.createClass({
   render: function () {
     const isValid = this.context.isValid();
     return (
-      <button className={classNames(this.props.className, {"_active": isValid})}
-              onClick={isValid && this.props.onClick}>{this.props.children}</button>
+      <input type="submit"
+             className={classNames(this.props.className, {"_active": isValid})}
+             value={this.props.children} />
     );
   }
 });
