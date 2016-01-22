@@ -6,7 +6,7 @@ react-form-tools
 =========
 
 ValidationMixin and base form components for React+Baobab. 
-Based on [baobab-react-schemabranchmixin](https://github.com/Brogency/baobab-react-schemabranchmixin) and [Baobab cursors](https://github.com/Yomguithereal/baobab).
+Based on [Baobab cursors](https://github.com/Yomguithereal/baobab).
 
 ValidationMixin inspired by [react-validation-mixin](https://github.com/jurassix/react-validation-mixin).
 
