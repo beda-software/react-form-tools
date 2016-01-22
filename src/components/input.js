@@ -1,4 +1,5 @@
 import React from 'react'
+import _ from 'lodash';
 import {getSelection, setSelection} from 'react/lib/ReactInputSelection';
 import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
 

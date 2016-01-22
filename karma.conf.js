@@ -8,10 +8,10 @@ module.exports = function (config) {
     frameworks: ['phantomjs-shim', 'mocha', 'chai'],
 
     files: [
-      'test/*.spec.js'
+      'test/**/*.spec.js'
     ],
     preprocessors: {
-      'test/*.spec.js': 'webpack'
+      'test/**/*.spec.js': 'webpack'
     },
 
     reporters: ['coverage', 'dots'],

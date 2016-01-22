@@ -15,11 +15,11 @@ export default React.createClass({
   contextTypes: {
     isValid: React.PropTypes.func.isRequired,
     isDirty: React.PropTypes.func.isRequired,
-    getValidationMessages: React.PropTypes.func.isRequired
+    getValidationErrors: React.PropTypes.func.isRequired
   },
 
   render: function() {
-    const error = this.context.getValidationMessages(this.props.fieldPath),
+    const error = this.context.getValidationErrors(this.props.fieldPath),
       isDirty = this.context.isDirty(this.props.fieldPath),
       isValid = !error;
     const className = classNames(this.props.className, {

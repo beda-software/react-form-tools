@@ -10,7 +10,7 @@ export default React.createClass({
 
   contextTypes: {
     isValid: React.PropTypes.func.isRequired,
-    getValidationMessages: React.PropTypes.func.isRequired
+    getValidationErrors: React.PropTypes.func.isRequired
   },
 
   getDefaultProps: function () {
@@ -25,7 +25,7 @@ export default React.createClass({
 
     return !isValid && (
       <div className={this.props.className + "-global-error"}>
-        {this.context.getValidationMessages(fieldPath)}
+        {this.context.getValidationErrors(fieldPath)}
       </div>
     );
   }

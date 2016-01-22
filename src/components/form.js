@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import defaultStrategy from 'yup-validation-strategy';
 import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
 
@@ -14,13 +15,13 @@ export default React.createClass({
   childContextTypes: {
     isValid: React.PropTypes.func.isRequired,
     isDirty: React.PropTypes.func.isRequired,
-    getValidationMessages: React.PropTypes.func.isRequired
+    getValidationErrors: React.PropTypes.func.isRequired
   },
 
   getDefaultProps: function () {
     return {
       validateOnFly: true,
-      strategy: defaultStrategy
+      strategy: defaultStrategy()
     };
   },
 
@@ -29,7 +30,7 @@ export default React.createClass({
     return {
       isValid: this.isValid,
       isDirty: this.isDirty,
-      getValidationMessages: this.getValidationMessages
+      getValidationErrors: this.getValidationErrors
     };
   },
 
@@ -114,7 +115,7 @@ export default React.createClass({
     });
   },
 
-  getValidationMessages: function (fieldPath) {
+  getValidationErrors: function (fieldPath) {
     if (fieldPath) {
       return _.get(this.state.validationErrors, fieldPath);
     }
@@ -134,6 +135,12 @@ export default React.createClass({
 
   resetValidationData: function () {
     this.props.cursor.set(this.state.validationInitialValues);
+  },
+
+  resetDirtyStates: function () {
+    this.setState({
+      validationDirtyStates: {}
+    });
   },
 
   resetValidationErrors: function () {
