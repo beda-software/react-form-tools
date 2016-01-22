@@ -10,6 +10,10 @@ ValidationMixin inspired by [react-validation-mixin](https://github.com/jurassix
 
 ## Installation
 
+  npm install baobab --save
+  
+  npm install react-baobab --save
+  
   npm install react-form-tools --save
   
 ## Tests

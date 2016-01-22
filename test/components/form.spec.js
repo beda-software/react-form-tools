@@ -1,55 +1,38 @@
 import React from 'react';
 import Baobab from 'baobab';
+import {default as SchemaBranchMixin, PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import {expect} from 'chai';
+import yup from 'yup';
+import {Form, Input} from '../../src/components';
 
 const tree = new Baobab(
-  {
-    form: {
-      firstName: null,
-      lastName: null
-    }
-  },
+  {},
   {
     immutable: false,
     asynchronous: false
   }
 );
 
-const TestComponentInner = React.createClass({
-  mixins: [SchemaBranchMixin],
-
-  schema: {
-    firstLevel: {
-      secondLevel: {
-        fieldThird: 'initialThird'
-      },
-      fieldSecond: 'initialSecond'
-    },
-    fieldFirst: 'initialFirst'
+const Root = React.createClass({
+  childContextTypes: {
+    tree: BaobabPropTypes.baobab
   },
 
-  render: function () {
-    return null;
-  }
-});
-
-const TestComponentInnerOverride = React.createClass({
-  mixins: [SchemaBranchMixin],
-
-  schema: {
-    _override: true,
-    firstLevel: {
-      secondLevel: {
-        fieldThird: 'initialThird'
-      },
-      fieldSecond: 'initialSecond'
-    },
-    fieldFirst: 'initialFirst'
+  getChildContext: function () {
+    return {
+      tree: this.props.tree
+    };
   },
 
-  render: function () {
-    return null;
+  render: function() {
+    const Component = this.props.component;
+
+    return (
+      <div>
+        <Component ref="component" {...this.props.componentProps} />
+      </div>
+    );
   }
 });
 
@@ -57,30 +40,42 @@ const TestComponent = React.createClass({
   mixins: [SchemaBranchMixin],
 
   schema: {
-    componentKey: 'component1'
+    form: {
+      firstName: null,
+      lastName: null
+    }
+  },
+
+  getValidationSchema: function () {
+    return yup.object().shape({
+      firstName: yup.string().required(),
+      lastName: yup.string().required()
+    });
   },
 
   render: function () {
-    const Component = this.props.innerComponent;
     return (
-      <Component ref="component" tree={this.props.tree.select(this.state.componentKey)} />
+      <Form cursor={this.cursors.form} validationSchema={this.getValidationSchema()} ref="form">
+        <Input cursor={this.cursors.form.select('firstName')} />
+        <Input cursor={this.cursors.form.select('lastName')} />
+      </Form>
     );
   }
 });
 
 describe('Check SchemaBranchMixin', () => {
-  let component, treeState;
+  let formComponent, component, treeState;
 
   function renderComponent(componentProps = {}) {
     const rootComponent = TestUtils.renderIntoDocument(
       <Root tree={tree}
             component={TestComponent}
             componentProps={_.defaults(componentProps, {
-              tree: tree.select(),
-              innerComponent: TestComponentInner
+              tree: tree.select()
             })} />
     );
-    component = rootComponent.refs.component.refs.component;
+    component = rootComponent.refs.component;
+    formComponent = component.refs.form;
   }
 
   before(() => {
@@ -93,70 +88,110 @@ describe('Check SchemaBranchMixin', () => {
     tree.set(treeState);
   });
 
-  it('should component has correct cursors mapping', () => {
-    expect(_.keys(component.cursors)).to.have.members(['firstLevel', 'fieldFirst']);
+  it('should Form is accessible via ref', () => {
+    expect(formComponent).to.be.not.null;
   });
 
-  it('should component has correct state with initial and changed data', () => {
-    expect(component.state).to.be.deep.equal({
-      firstLevel: {
-        secondLevel: {
-          fieldThird: 'changedThird',
-          notDeclaredInStateAtThirdLevel: {
-            value: [1, 2, 3]
-          }
-        },
-        fieldSecond: 'initialSecond'
-      },
-      fieldFirst: 'initialFirst'
+  it('should Form has validation errors for default data after validation', (done) => {
+    formComponent.validate(null, () => {
+      const errors = formComponent.getValidationErrors();
+
+      expect(errors).to.be.have.property('firstName');
+      expect(errors).to.be.have.property('lastName');
+      done();
     });
   });
 
-  it('should state changed correctly when tree prop changed', () => {
-    tree.set('componentKey', 'component2');
-
-    expect(component.state).to.be.deep.equal({
-      firstLevel: {
-        secondLevel: {
-          fieldThird: 'initialThird'
-        },
-        fieldSecond: 'initialSecond'
-      },
-      fieldFirst: 'fromComponent2'
+  it('should Form getValidationErrors works correctly for concrete param', (done) => {
+    formComponent.validate(null, () => {
+      expect(formComponent.getValidationErrors('firstName')).to.be.not.null;
+      done();
     });
   });
 
-  it('should changes via cursor change state directly', () => {
-    tree.set(['component2', 'fieldFirst'], 'newValue');
-    expect(component.state.fieldFirst).to.be.equal('newValue');
+  it('should Form isValid is falsy for all form and each field', (done) => {
+    formComponent.validate(null, () => {
+      expect(formComponent.isValid()).to.be.false;
+      expect(formComponent.isValid('firstName')).to.be.false;
+      expect(formComponent.isValid('lastName')).to.be.false;
+      done();
+    });
   });
 
-  it('should _override attribute at first-level schema overrides value in tree', () => {
-    tree.set('componentKey', 'component1');
-
-    tree.set('component1', {
-      notDeclaredInStateAtFirstLevel: true,
-      firstLevel: {
-        secondLevel: {
-          fieldThird: 'changedThird',
-          notDeclaredInStateAtThirdLevel: {
-            value: [1, 2, 3]
-          }
-        }
-      },
-      fieldFirst: 'changed'
+  it('should Form has pristine states for default data after validation', (done) => {
+    formComponent.validate(null, () => {
+      expect(formComponent.isDirty('firstName')).to.be.false;
+      expect(formComponent.isDirty('lastName')).to.be.false;
+      done();
     });
-    renderComponent({innerComponent: TestComponentInnerOverride});
+  });
 
-    expect(component.state).to.be.deep.equal({
-      _override: true,
-      firstLevel: {
-        secondLevel: {
-          fieldThird: 'initialThird'
-        },
-        fieldSecond: 'initialSecond'
-      },
-      fieldFirst: 'initialFirst'
+  it('should Form has dirty states for changed data after validation', (done) => {
+    tree.set(['form', 'firstName'], 'firstName');
+    formComponent.validate(null, () => {
+      expect(formComponent.isDirty('firstName')).to.be.true;
+      expect(formComponent.isDirty('lastName')).to.be.false;
+      done();
     });
+  });
+
+  it('should Form isValid works correctly for valid field', (done) => {
+    formComponent.validate(null, () => {
+      expect(formComponent.isValid('firstName')).to.be.true;
+      expect(formComponent.isValid('lastName')).to.be.false;
+      done();
+    });
+  });
+
+  it('should Form save dirty states for reverted data after validation', (done) => {
+    tree.set(['form', 'firstName'], null);
+    formComponent.validate(null, () => {
+      expect(formComponent.isDirty('firstName')).to.be.true;
+      expect(formComponent.isDirty('lastName')).to.be.false;
+      done();
+    });
+  });
+
+  it('should Form has not validation errors for correct data', (done) => {
+    tree.set(['form', 'firstName'], 'firstName');
+    tree.set(['form', 'lastName'], 'lastName');
+
+    formComponent.validate(() => {
+      const errors = formComponent.getValidationErrors();
+
+      expect(errors).to.be.not.have.property('firstName');
+      expect(errors).to.be.not.have.property('lastName');
+      done();
+    });
+  });
+
+  it('should resetValidationData reverts data to initial state', () => {
+    formComponent.resetValidationData();
+    expect(tree.get('form', 'firstName')).to.be.null;
+    expect(tree.get('form', 'lastName')).to.be.null;
+  });
+
+  it('should resetValidationErrors works correctly', (done) => {
+    formComponent.validate(null, () => {
+      expect(formComponent.isValid('firstName')).to.be.false;
+      expect(formComponent.isValid('lastName')).to.be.false;
+      formComponent.resetValidationErrors();
+      expect(formComponent.isValid('firstName')).to.be.true;
+      expect(formComponent.isValid('lastName')).to.be.true;
+      done();
+    });
+  });
+
+  it('should setValidationErrors works correctly', () => {
+    formComponent.setValidationErrors({firstName: 'error'});
+    expect(formComponent.isValid('firstName')).to.be.false;
+    expect(formComponent.getValidationErrors('firstName')).to.be.equal('error');
+    expect(formComponent.isValid('lastName')).to.be.true;
+  });
+
+  it('should resetDirtyStates works correctly', () => {
+    formComponent.resetDirtyStates();
+    expect(formComponent.isDirty('firstName')).to.be.false;
+    expect(formComponent.isDirty('lastName')).to.be.false;
   });
 });
