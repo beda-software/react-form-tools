@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/Brogency/react-form-tools.svg)](https://travis-ci.org/Brogency/react-form-tools)
+[![Build Status](https://travis-ci.org/Brogency/baobab-react-schemabranchmixin.svg)](https://travis-ci.org/Brogency/react-form-tools)
+[![Coverage Status](https://coveralls.io/repos/Brogency/react-form-tools/badge.svg?branch=master&service=github)](https://coveralls.io/github/Brogency/react-form-tools?branch=master)
+[![npm version](https://badge.fury.io/js/react-form-tools.svg)](https://badge.fury.io/js/react-form-tools)
 
 react-form-tools
 =========
