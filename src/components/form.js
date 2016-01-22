@@ -53,7 +53,6 @@ export default React.createClass({
 
   componentDidMount: function () {
     if (this.props.validateOnFly) {
-      // Add on update callback
       this.props.cursor.on('update', this.onUpdate);
     }
     this.setInitialValue();
@@ -76,11 +75,15 @@ export default React.createClass({
 
   onSubmit: function (evt) {
     evt.preventDefault();
-    this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
+    this.submit();
   },
 
   onUpdate: function () {
     this.validate();
+  },
+
+  submit: function () {
+    this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
   },
 
   validate: function (successCallback, errorCallback) {
@@ -96,6 +99,8 @@ export default React.createClass({
           data)
       });
 
+      // TODO: use baobab diff for best performance
+      // TODO: use schema instead of data for iterations!
       function updateStates(curStates, curInitial, curData) {
         return _.mapValues(curData, function (value, field) {
           if (_.isPlainObject(value) || _.isArray(value)) {
