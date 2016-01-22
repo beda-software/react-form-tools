@@ -1,6 +1,7 @@
 import React from 'react';
 import Baobab from 'baobab';
-import {default as SchemaBranchMixin, PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
+import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
+import BaobabPropTypes from 'baobab-prop-types';
 import TestUtils from 'react-addons-test-utils';
 import {expect} from 'chai';
 import yup from 'yup';

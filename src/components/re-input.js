@@ -1,6 +1,6 @@
 import React from 'react'
 import Input from './input';
-import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
+import BaobabPropTypes from 'baobab-prop-types';
 
 export default React.createClass({
   displayName: 'ReInput',

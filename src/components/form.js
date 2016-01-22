@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import defaultStrategy from 'yup-validation-strategy';
-import {PropTypes as BaobabPropTypes} from 'baobab-react-schemabranchmixin';
+import BaobabPropTypes from 'baobab-prop-types';
 
 export default React.createClass({
   propTypes: {
