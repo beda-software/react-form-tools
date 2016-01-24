@@ -5,7 +5,7 @@ import BaobabPropTypes from 'baobab-prop-types';
 import TestUtils from 'react-addons-test-utils';
 import {expect} from 'chai';
 import yup from 'yup';
-import {Form, Input} from '../../src/components';
+import {Form} from '../../src/components';
 
 const tree = new Baobab(
   {},
@@ -53,11 +53,8 @@ const FormComponentFactory = (formProps) => {
 
     render: function () {
       return (
-        <Form cursor={this.cursors.form}
-              ref="form"
-              {...formProps}>
-          <Input cursor={this.cursors.form.select('firstName')} />
-          <Input cursor={this.cursors.form.select('lastName')} />
+        <Form cursor={this.cursors.form} ref="form" {...formProps}>
+          <input type="submit" className="submit" />
         </Form>
       );
     }
@@ -181,6 +178,16 @@ describe('Check Form without on fly validation', () => {
     });
   });
 
+  it('should not validates data after cursor has been updated', (done) => {
+    tree.set(['form', 'firstName'], null);
+
+    setTimeout(() => {
+      expect(formComponent.isValid('firstName')).to.be.true;
+      expect(formComponent.isDirty('firstName')).to.be.true;
+      done();
+    }, 0);
+  });
+
   it('should resetValidationData reverts data to initial state', () => {
     formComponent.resetValidationData();
     expect(tree.get('form', 'firstName')).to.be.null;
@@ -214,6 +221,31 @@ describe('Check Form without on fly validation', () => {
     expect(formComponent.isDirty('firstName')).to.be.false;
     expect(formComponent.isDirty('lastName')).to.be.false;
     expect(formComponent.isDirty('second.field')).to.be.false;
+  });
+
+
+  it('should submit validates form', (done) => {
+    formComponent.resetValidationErrors();
+    expect(formComponent.isValid()).to.be.true;
+
+    formComponent.submit();
+    setTimeout(() => {
+      expect(formComponent.isValid()).to.be.false;
+      done();
+    }, 0);
+  });
+
+  it('should dom-level submit validates form', (done) => {
+    formComponent.resetValidationErrors();
+    expect(formComponent.isValid()).to.be.true;
+
+    const submitNode = TestUtils.findRenderedDOMComponentWithClass(formComponent, 'submit');
+    TestUtils.Simulate.submit(submitNode);
+
+    setTimeout(() => {
+      expect(formComponent.isValid()).to.be.false;
+      done();
+    }, 0);
   });
 });
 
