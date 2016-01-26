@@ -1,16 +1,21 @@
 import React from 'react'
+import ReactDOM from 'react-dom';
 import _ from 'lodash';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {getSelection, setSelection} from 'react/lib/ReactInputSelection';
 import BaobabPropTypes from 'baobab-prop-types';
 
 export default React.createClass({
   displayName: 'Input',
 
+  mixins: [PureRenderMixin],
+
   propTypes: {
     onChange : React.PropTypes.func,
     cursor: BaobabPropTypes.cursor.isRequired,
     sync: React.PropTypes.bool,
-    syncOnlyOnBlur: React.PropTypes.bool
+    syncOnlyOnBlur: React.PropTypes.bool,
+    autoFocus: React.PropTypes.bool
   },
 
   updateTimer: null,
@@ -43,6 +48,12 @@ export default React.createClass({
     });
   },
 
+  componentDidMount: function () {
+    if (this.props.autoFocus) {
+      ReactDOM.findDOMNode(this.refs.input).focus()
+    }
+  },
+
   componentWillUnmount: function () {
     this.clearUpdateTimer();
   },
@@ -62,7 +73,7 @@ export default React.createClass({
   onChange: function(evt) {
     const value = this.props.toInternal(evt.target.value);
 
-    if (value == this.state.value) {
+    if (value === this.state.value) {
       // Skip sync if no changes
       return;
     }

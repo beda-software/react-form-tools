@@ -5,16 +5,14 @@
 react-form-tools
 =========
 
-ValidationMixin and base form components for React+Baobab. 
+Form validation and base form components for React+Baobab. 
 Based on [Baobab cursors](https://github.com/Yomguithereal/baobab).
 
-ValidationMixin inspired by [react-validation-mixin](https://github.com/jurassix/react-validation-mixin).
+Form validation inspired by [react-validation-mixin](https://github.com/jurassix/react-validation-mixin).
 
 ## Installation
 
   npm install baobab --save
-  
-  npm install react-baobab --save
   
   npm install react-form-tools --save
   
@@ -24,4 +22,5 @@ ValidationMixin inspired by [react-validation-mixin](https://github.com/jurassix
   
 ## Release History
 
-* 1.0 Initial release
+* 1.0.7 Added autoFocus to input
+* 1.0.0 Initial release
