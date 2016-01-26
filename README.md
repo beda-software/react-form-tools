@@ -22,6 +22,7 @@ Form validation inspired by [react-validation-mixin](https://github.com/jurassix
   
 ## Release History
 
+* 1.0.9 Added disabledIfInvalid to submit
 * 1.0.8 Fixed perr dependencies
 * 1.0.7 Added autoFocus to input
 * 1.0.0 Initial release
