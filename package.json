@@ -1,6 +1,6 @@
 {
   "name": "react-form-tools",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Form components with validation for React + Baobab",
   "main": "./dist/index.js",
   "scripts": {
@@ -52,12 +52,14 @@
     "react-dom": "^0.14.6",
     "webpack": "^1.12.11"
   },
+  "peerDependencies": {
+    "yup": "^0.12.0",
+    "yup-validation-strategy": "^1.2.0"
+  },
   "dependencies": {
     "baobab-prop-types": "^1.0.0",
     "classnames": "^2.2.3",
     "lodash": "^3.10.1",
-    "react-addons-pure-render-mixin": "^0.14.6",
-    "yup": "^0.12.0",
-    "yup-validation-strategy": "^1.2.0"
+    "react-addons-pure-render-mixin": "^0.14.6"
   }
 }
