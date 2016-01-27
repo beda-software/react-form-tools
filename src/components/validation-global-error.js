@@ -20,6 +20,7 @@ export default React.createClass({
   },
 
   render: function () {
+    // TODO: change fieldPath
     const fieldPath = ['attributes', this.props.globalErrorFieldName],
       isValid = this.context.isValid(fieldPath);
 

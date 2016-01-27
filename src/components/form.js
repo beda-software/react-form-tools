@@ -13,9 +13,11 @@ export default React.createClass({
   },
 
   childContextTypes: {
-    isValid: React.PropTypes.func.isRequired,
-    isDirty: React.PropTypes.func.isRequired,
-    getValidationErrors: React.PropTypes.func.isRequired
+    isValid: React.PropTypes.func,
+    isDirty: React.PropTypes.func,
+    getValidationErrors: React.PropTypes.func,
+    setDirtyState: React.PropTypes.func,
+    setPristineState: React.PropTypes.func
   },
 
   getDefaultProps: function () {
@@ -30,7 +32,9 @@ export default React.createClass({
     return {
       isValid: this.isValid,
       isDirty: this.isDirty,
-      getValidationErrors: this.getValidationErrors
+      getValidationErrors: this.getValidationErrors,
+      setDirtyState: this.setDirtyState,
+      setPristineState: this.setPristineState
     };
   },
 
@@ -155,6 +159,20 @@ export default React.createClass({
   setValidationErrors: function (errors) {
     this.setState({
       validationErrors: errors
+    });
+  },
+
+  setDirtyState: function (fieldPath) {
+    this.updateDirtyState(fieldPath, true)
+  },
+
+  setPristineState: function (fieldPath) {
+    this.updateDirtyState(fieldPath, false)
+  },
+
+  updateDirtyState: function (fieldPath, state) {
+    this.setState({
+      validationDirtyState: _.set(this.state.validationDirtyStates, fieldPath, state)
     });
   }
 });

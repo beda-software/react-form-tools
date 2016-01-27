@@ -223,6 +223,15 @@ describe('Check Form without on fly validation', () => {
     expect(formComponent.isDirty('second.field')).to.be.false;
   });
 
+  it('should setDirtyState works correctly', () => {
+    formComponent.setDirtyState('firstName');
+    expect(formComponent.isDirty('firstName')).to.be.true;
+  });
+
+  it('should setPristineState works correctly', () => {
+    formComponent.setPristineState('firstName');
+    expect(formComponent.isDirty('firstName')).to.be.false;
+  });
 
   it('should submit validates form', (done) => {
     formComponent.resetValidationErrors();
