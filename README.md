@@ -22,8 +22,9 @@ Form validation inspired by [react-validation-mixin](https://github.com/jurassix
   
 ## Release History
 
-* 1.0.10 Added setDirtyState and setPristineState methods for form and form context
-* 1.0.9 Added disabledIfInvalid to submit
-* 1.0.8 Fixed perr dependencies
-* 1.0.7 Added autoFocus to input
+* 1.0.11 Added onBlur for Input
+* 1.0.10 Added setDirtyState and setPristineState methods for Form and form context
+* 1.0.9 Added disabledIfInvalid to Submit
+* 1.0.8 Fixed peer dependencies
+* 1.0.7 Added autoFocus to Input
 * 1.0.0 Initial release

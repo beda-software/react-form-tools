@@ -11,7 +11,8 @@ export default React.createClass({
   mixins: [PureRenderMixin],
 
   propTypes: {
-    onChange : React.PropTypes.func,
+    onChange: React.PropTypes.func,
+    onBlur: React.PropTypes.func,
     cursor: BaobabPropTypes.cursor.isRequired,
     sync: React.PropTypes.bool,
     syncOnlyOnBlur: React.PropTypes.bool,
@@ -93,15 +94,19 @@ export default React.createClass({
     const value = this.state.value || null;
 
     this.props.cursor.set(value);
-    if (this.props.onChange) {
+    if (_.isFunction(this.props.onChange)) {
       setTimeout(() => this.props.onChange(value), 0);
     }
   },
 
-  onBlur: function () {
+  onBlur: function (evt) {
     this.clearUpdateTimer();
 
     this.syncValue();
+
+    if (_.isFunction(this.props.onBlur)) {
+      this.props.onBlur(evt);
+    }
   },
 
   updateSelection: function () {
