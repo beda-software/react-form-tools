@@ -22,6 +22,7 @@ Form validation inspired by [react-validation-mixin](https://github.com/jurassix
   
 ## Release History
 
+* 1.0.12 Fixed autoFocus (added timeout), removed useless logic for selection (mobile ff fix)
 * 1.0.11 Added onBlur for Input
 * 1.0.10 Added setDirtyState and setPristineState methods for Form and form context
 * 1.0.9 Added disabledIfInvalid to Submit

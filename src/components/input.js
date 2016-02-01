@@ -51,7 +51,7 @@ export default React.createClass({
 
   componentDidMount: function () {
     if (this.props.autoFocus) {
-      ReactDOM.findDOMNode(this.refs.input).focus()
+      setTimeout(() => ReactDOM.findDOMNode(this.refs.input).focus(), 0);
     }
   },
 
@@ -106,22 +106,6 @@ export default React.createClass({
 
     if (_.isFunction(this.props.onBlur)) {
       this.props.onBlur(evt);
-    }
-  },
-
-  updateSelection: function () {
-    const input = this.refs.input;
-    const value = this.refs.input.value;
-    let selection = getSelection(input);
-    selection.start = selection.end = value.length;
-
-    setSelection(input, selection);
-  },
-
-  componentDidUpdate: function () {
-    if (_.contains(['text', 'password', 'tel', 'url', 'search'], this.props.type)) {
-      // For mobile firefox we need to updated selection for correct output
-      setTimeout(this.updateSelection, 30);
     }
   },
 
