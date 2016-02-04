@@ -47,7 +47,9 @@ const FormComponentFactory = (formProps) => {
         lastName: null,
         second: {
           field: null
-        }
+        },
+        num1: 2,
+        num2: -1
       }
     },
 
@@ -257,5 +259,45 @@ describe('Check Form with on fly validation', () => {
       expect(formComponent.isValid('firstName')).to.be.true;
       done();
     }, 0);
+  });
+});
+
+describe('Check Form with dynamic validation schema', () => {
+  let formComponent, treeState;
+
+  before(() => {
+    const validationSchema = (data) => {
+      return yup.object().shape({
+        num1: yup.number(),
+        num2: yup.number().min(data.num1)
+      });
+    };
+
+    const FormWithOnFlyValidation = FormComponentFactory({
+      validationSchema,
+      validateOnFly: false
+    });
+    const rootComponent = TestUtils.renderIntoDocument(
+      <Root tree={tree}
+            component={FormWithOnFlyValidation}
+            componentProps={{
+              tree: tree.select()
+            }} />
+    );
+    formComponent = rootComponent.refs.component.refs.form;
+    treeState = tree.get();
+  });
+
+  after(() => {
+    formComponent.componentWillUnmount();
+    tree.set(treeState);
+  });
+
+  it('should validation works correctly', (done) => {
+    formComponent.validate(null, () => {
+      expect(formComponent.isValid('num1')).to.be.true;
+      expect(formComponent.isValid('num2')).to.be.false;
+      done();
+    });
   });
 });
