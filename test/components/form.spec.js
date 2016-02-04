@@ -125,40 +125,11 @@ describe('Check Form without on fly validation', () => {
     });
   });
 
-  it('should has pristine states for default data after validation', (done) => {
-    formComponent.validate(null, () => {
-      expect(formComponent.isDirty('firstName')).to.be.false;
-      expect(formComponent.isDirty('lastName')).to.be.false;
-      expect(formComponent.isDirty('second.field')).to.be.false;
-      done();
-    });
-  });
-
-  it('should has dirty states for changed data after validation', (done) => {
-    tree.set(['form', 'firstName'], 'firstName');
-    formComponent.validate(null, () => {
-      expect(formComponent.isDirty('firstName')).to.be.true;
-      expect(formComponent.isDirty('lastName')).to.be.false;
-      expect(formComponent.isDirty('second.field')).to.be.false;
-      done();
-    });
-  });
-
   it('should isValid works correctly for valid field', (done) => {
+    tree.set(['form', 'firstName'], 'firstName');
     formComponent.validate(null, () => {
       expect(formComponent.isValid('firstName')).to.be.true;
       expect(formComponent.isValid('lastName')).to.be.false;
-      expect(formComponent.isDirty('second.field')).to.be.false;
-      done();
-    });
-  });
-
-  it('should save dirty states for reverted data after validation', (done) => {
-    tree.set(['form', 'firstName'], null);
-    formComponent.validate(null, () => {
-      expect(formComponent.isDirty('firstName')).to.be.true;
-      expect(formComponent.isDirty('lastName')).to.be.false;
-      expect(formComponent.isDirty('second.field')).to.be.false;
       done();
     });
   });
@@ -183,23 +154,15 @@ describe('Check Form without on fly validation', () => {
 
     setTimeout(() => {
       expect(formComponent.isValid('firstName')).to.be.true;
-      expect(formComponent.isDirty('firstName')).to.be.true;
       done();
     }, 0);
-  });
-
-  it('should resetValidationData reverts data to initial state', () => {
-    formComponent.resetValidationData();
-    expect(tree.get('form', 'firstName')).to.be.null;
-    expect(tree.get('form', 'lastName')).to.be.null;
-    expect(tree.get('form', 'second', 'field')).to.be.null;
   });
 
   it('should resetValidationErrors works correctly', (done) => {
     formComponent.validate(null, () => {
       expect(formComponent.isValid('firstName')).to.be.false;
-      expect(formComponent.isValid('lastName')).to.be.false;
-      expect(formComponent.isValid('second.field')).to.be.false;
+      expect(formComponent.isValid('lastName')).to.be.true;
+      expect(formComponent.isValid('second.field')).to.be.true;
       formComponent.resetValidationErrors();
       expect(formComponent.isValid('firstName')).to.be.true;
       expect(formComponent.isValid('lastName')).to.be.true;
@@ -292,7 +255,6 @@ describe('Check Form with on fly validation', () => {
 
     setTimeout(() => {
       expect(formComponent.isValid('firstName')).to.be.true;
-      expect(formComponent.isDirty('firstName')).to.be.true;
       done();
     }, 0);
   });

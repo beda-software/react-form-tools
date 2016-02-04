@@ -13,6 +13,7 @@ export default React.createClass({
   },
 
   childContextTypes: {
+    formCursor: BaobabPropTypes.cursor,
     isValid: React.PropTypes.func,
     isDirty: React.PropTypes.func,
     getValidationErrors: React.PropTypes.func,
@@ -30,6 +31,7 @@ export default React.createClass({
   getChildContext: function() {
     // Methods for children components such as ValidationBox
     return {
+      formCursor: this.props.cursor,
       isValid: this.isValid,
       isDirty: this.isDirty,
       getValidationErrors: this.getValidationErrors,
@@ -41,25 +43,14 @@ export default React.createClass({
   getInitialState: function () {
     return {
       validationErrors: {},
-      validationDirtyStates: {},
-      validationInitialValues: {}
+      validationDirtyStates: {}
     };
-  },
-
-  setInitialValue: function () {
-    this.setState({
-      validationInitialValues: _.mapValues(
-        _.object(_.keys(this.props.validationSchema.fields)),
-        (value, key) => this.props.cursor.get(key)
-      )
-    });
   },
 
   componentDidMount: function () {
     if (this.props.validateOnFly) {
       this.props.cursor.on('update', this.onUpdate);
     }
-    this.setInitialValue();
     this.validate();
   },
 
@@ -92,29 +83,11 @@ export default React.createClass({
 
   validate: function (successCallback, errorCallback) {
     const data = this.props.cursor.get();
-    const schema = this.props.validationSchema;
+    const schema = _.isFunction(this.props.validationSchema) ?
+      this.props.validationSchema(data) : this.props.validationSchema;
 
     this.props.strategy.validate(data, schema, {}, errors => {
-      this.setState({
-        validationErrors: errors,
-        validationDirtyStates: updateStates(
-          this.state.validationDirtyStates,
-          this.state.validationInitialValues,
-          data)
-      });
-
-      // TODO: use baobab diff for best performance
-      // TODO: use schema instead of data for iterations!
-      function updateStates(curStates, curInitial, curData) {
-        return _.mapValues(curData, function (value, field) {
-          if (_.isPlainObject(value) || _.isArray(value)) {
-            return updateStates(curStates[field] || {}, curInitial[field] || {}, value);
-          } else {
-            const initial = curInitial[field];
-            return value != initial ? true : curStates[field];
-          }
-        });
-      }
+      this.setState({validationErrors: errors});
 
       if (_.isEmpty(errors)) {
         successCallback && successCallback();
@@ -140,10 +113,6 @@ export default React.createClass({
 
   isDirty: function (fieldPath) {
     return !!_.get(this.state.validationDirtyStates, fieldPath);
-  },
-
-  resetValidationData: function () {
-    this.props.cursor.set(this.state.validationInitialValues);
   },
 
   resetDirtyStates: function () {

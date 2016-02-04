@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import {getSelection, setSelection} from 'react/lib/ReactInputSelection';
 import BaobabPropTypes from 'baobab-prop-types';
 
 export default React.createClass({
@@ -34,6 +33,7 @@ export default React.createClass({
   getDefaultProps: function () {
     return {
       type: "text",
+      nullable: true,
       toInternal: x => x,
       toRepresentation: x => x
     };
@@ -91,7 +91,7 @@ export default React.createClass({
   },
 
   syncValue: function () {
-    const value = this.state.value || null;
+    const value = this.props.nullable && this.state.value === "" ? null : this.state.value;
 
     this.props.cursor.set(value);
     if (_.isFunction(this.props.onChange)) {
