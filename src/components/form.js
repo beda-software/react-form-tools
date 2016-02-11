@@ -9,6 +9,7 @@ export default React.createClass({
     onInvalidSubmit: React.PropTypes.func,
     cursor: BaobabPropTypes.cursor.isRequired,
     validationSchema: React.PropTypes.any.isRequired,
+    formStateCursor: BaobabPropTypes.cursor,
     validateOnFly: React.PropTypes.bool
   },
 
@@ -41,10 +42,14 @@ export default React.createClass({
   },
 
   getInitialState: function () {
-    return {
-      validationErrors: {},
-      validationDirtyStates: {}
-    };
+    if (this.props.formStateCursor) {
+      return {};
+    } else {
+      return {
+        errors: {},
+        dirtyStates: {}
+      };
+    }
   },
 
   componentDidMount: function () {
@@ -68,6 +73,22 @@ export default React.createClass({
     );
   },
 
+  setFormState: function (nextState) {
+    if (this.props.formStateCursor) {
+      this.props.formStateCursor.merge(nextState);
+    } else {
+      this.setState(nextState);
+    }
+  },
+
+  getFormState: function () {
+    if (this.props.formStateCursor) {
+      return this.props.formStateCursor.get();
+    } else {
+      return this.state;
+    }
+  },
+
   onSubmit: function (evt) {
     evt.preventDefault();
     this.submit();
@@ -87,7 +108,7 @@ export default React.createClass({
       this.props.validationSchema(data) : this.props.validationSchema;
 
     this.props.strategy.validate(data, schema, {}, errors => {
-      this.setState({validationErrors: errors});
+      this.setFormState({errors: errors});
 
       if (_.isEmpty(errors)) {
         successCallback && successCallback();
@@ -98,26 +119,29 @@ export default React.createClass({
   },
 
   getValidationErrors: function (fieldPath) {
+    const state = this.getFormState();
     if (fieldPath) {
-      return _.get(this.state.validationErrors, fieldPath);
+      return _.get(state.errors, fieldPath);
     }
-    return this.state.validationErrors;
+    return state.errors;
   },
 
   isValid: function (fieldPath) {
+    const state = this.getFormState();
     if (fieldPath) {
-      return !_.get(this.state.validationErrors, fieldPath);
+      return !_.get(state.errors, fieldPath);
     }
-    return _.isEmpty(this.state.validationErrors);
+    return _.isEmpty(state.errors);
   },
 
   isDirty: function (fieldPath) {
-    return !!_.get(this.state.validationDirtyStates, fieldPath);
+    const state = this.getFormState();
+    return !!_.get(state.dirtyStates, fieldPath);
   },
 
   resetDirtyStates: function () {
-    this.setState({
-      validationDirtyStates: {}
+    this.setFormState({
+      dirtyStates: {}
     });
   },
 
@@ -126,8 +150,8 @@ export default React.createClass({
   },
 
   setValidationErrors: function (errors) {
-    this.setState({
-      validationErrors: errors
+    this.setFormState({
+      errors: errors
     });
   },
 
@@ -139,9 +163,11 @@ export default React.createClass({
     this.updateDirtyState(fieldPath, false)
   },
 
-  updateDirtyState: function (fieldPath, state) {
-    this.setState({
-      validationDirtyState: _.set(this.state.validationDirtyStates, fieldPath, state)
+  updateDirtyState: function (fieldPath, dirtyState) {
+    const state = this.getFormState();
+
+    this.setFormState({
+      dirtyStates: _.set(state.dirtyStates || {}, fieldPath, dirtyState)
     });
   }
 });

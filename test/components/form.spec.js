@@ -48,9 +48,10 @@ const FormComponentFactory = (formProps) => {
         second: {
           field: null
         },
-        num1: 2,
-        num2: -1
-      }
+        num1: null,
+        num2: null
+      },
+      formState: {}
     },
 
     render: function () {
@@ -294,9 +295,105 @@ describe('Check Form with dynamic validation schema', () => {
   });
 
   it('should validation works correctly', (done) => {
+    tree.set('form', {num1: 1, num2: 0});
     formComponent.validate(null, () => {
       expect(formComponent.isValid('num1')).to.be.true;
       expect(formComponent.isValid('num2')).to.be.false;
+      done();
+    });
+  });
+});
+
+describe('Check Form formStateCursor', () => {
+  let formComponent, treeState;
+
+  before(() => {
+    const validationSchema = () => {
+      return yup.object().shape({
+        num1: yup.string().required('required'),
+        num2: yup.string().required('required')
+      });
+    };
+
+    const FormWithOnFlyValidation = FormComponentFactory({
+      validationSchema,
+      formStateCursor: tree.select('formState'),
+      validateOnFly: false
+    });
+    const rootComponent = TestUtils.renderIntoDocument(
+      <Root tree={tree}
+            component={FormWithOnFlyValidation}
+            componentProps={{
+              tree: tree.select()
+            }} />
+    );
+    formComponent = rootComponent.refs.component.refs.form;
+    treeState = tree.get();
+  });
+
+  after(() => {
+    formComponent.componentWillUnmount();
+    tree.set(treeState);
+  });
+
+  it('should formStateCursor has correct state', (done) => {
+    formComponent.validate(null, () => {
+      expect(formComponent.isValid('num1')).to.be.false;
+      expect(formComponent.isValid('num2')).to.be.false;
+      expect(tree.get('formState')).to.be.deep.equal({
+        errors: {
+          num1: ['required'],
+          num2: ['required']
+        }
+      });
+      done();
+    });
+  });
+
+  it('should formStateCursor has correct state for valid field', (done) => {
+    tree.set(['form', 'num1'], 1);
+    formComponent.validate(null, () => {
+      expect(formComponent.isValid('num1')).to.be.true;
+      expect(formComponent.isValid('num2')).to.be.false;
+      expect(tree.get('formState')).to.be.deep.equal({
+        errors: {
+          num2: ['required']
+        }
+      });
+      done();
+    });
+  });
+  it('should formStateCursor has correct state for dirty field', (done) => {
+    formComponent.setDirtyState('num1');
+    formComponent.validate(null, () => {
+      expect(formComponent.isDirty('num1')).to.be.true;
+      expect(formComponent.isDirty('num2')).to.be.false;
+      expect(tree.get('formState')).to.be.deep.equal({
+        errors: {
+          num2: ['required']
+        },
+        dirtyStates: {
+          num1: true
+        }
+      });
+      done();
+    });
+  });
+  it('should formStateCursor has correct state for valid form', (done) => {
+    formComponent.setDirtyState('num1');
+    formComponent.setDirtyState('num2');
+    tree.set(['form', 'num2'], 2);
+
+    formComponent.validate(() => {
+      expect(formComponent.isDirty('num1')).to.be.true;
+      expect(formComponent.isDirty('num2')).to.be.true;
+      expect(tree.get('formState')).to.be.deep.equal({
+        errors: {},
+        dirtyStates: {
+          num1: true,
+          num2: true
+        }
+      });
       done();
     });
   });
