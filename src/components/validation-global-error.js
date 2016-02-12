@@ -1,33 +1,33 @@
 import React from 'react';
 
 export default React.createClass({
-  displayName: 'ValidationGlobalError',
+    displayName: 'ValidationGlobalError',
 
-  propTypes: {
-    className: React.PropTypes.string.isRequired,
-    globalErrorFieldName: React.PropTypes.string
-  },
+    propTypes: {
+        className: React.PropTypes.string.isRequired,
+        globalErrorFieldName: React.PropTypes.string,
+    },
 
-  contextTypes: {
-    isValid: React.PropTypes.func.isRequired,
-    getValidationErrors: React.PropTypes.func.isRequired
-  },
+    contextTypes: {
+        isValid: React.PropTypes.func.isRequired,
+        getValidationErrors: React.PropTypes.func.isRequired,
+    },
 
-  getDefaultProps: function () {
-    return {
-      globalErrorFieldName: '__all__'
-    }
-  },
+    getDefaultProps: function() {
+        return {
+            globalErrorFieldName: '__all__',
+        }
+    },
 
-  render: function () {
-    // TODO: change fieldPath
-    const fieldPath = ['attributes', this.props.globalErrorFieldName],
-      isValid = this.context.isValid(fieldPath);
+    render: function() {
+        // TODO: change fieldPath
+        const fieldPath = ['attributes', this.props.globalErrorFieldName];
+        const isValid = this.context.isValid(fieldPath);
 
-    return !isValid && (
-      <div className={this.props.className + "-global-error"}>
-        {this.context.getValidationErrors(fieldPath)}
-      </div>
-    );
-  }
+        return !isValid && (
+            <div className={this.props.className + '-global-error'}>
+                {this.context.getValidationErrors(fieldPath)}
+            </div>
+        );
+    },
 });

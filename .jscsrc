@@ -1,0 +1,12 @@
+{
+    "preset": "node-style-guide",
+    "maxErrors": 100,
+    "maximumLineLength": 120,
+    "validateIndentation": 4,
+    "esnext": true,
+    "validateQuoteMarks": {
+        "mark": "'",
+        "escape": true,
+        "ignoreJSX": true
+    }
+}
