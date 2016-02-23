@@ -1,9 +1,10 @@
 {
   "name": "react-form-tools",
-  "version": "1.0.12",
+  "version": "2.0.0",
   "description": "Form components with validation for React + Baobab",
   "main": "./dist/index.js",
   "scripts": {
+    "test-dev": "karma start karma.conf.js",
     "test": "karma start karma.conf.js --single-run",
     "compile": "babel --presets es2015,react --out-dir dist ./src",
     "prepublish": "npm run compile"
