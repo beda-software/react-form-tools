@@ -14,30 +14,28 @@ export default React.createClass({
     },
 
     childContextTypes: {
-        formCursor: BaobabPropTypes.cursor,
-        isValid: React.PropTypes.func,
-        isDirty: React.PropTypes.func,
-        getValidationErrors: React.PropTypes.func,
-        setDirtyState: React.PropTypes.func,
-        setPristineState: React.PropTypes.func,
+        form: React.PropTypes.object,
     },
 
     getDefaultProps: function() {
         return {
             validateOnFly: true,
             strategy: defaultStrategy(),
+            onSubmit: _.identity,
+            onInvalidSubmit: _.identity,
         };
     },
 
     getChildContext: function() {
-        // Methods for children components such as ValidationBox
         return {
-            formCursor: this.props.cursor,
-            isValid: this.isValid,
-            isDirty: this.isDirty,
-            getValidationErrors: this.getValidationErrors,
-            setDirtyState: this.setDirtyState,
-            setPristineState: this.setPristineState,
+            form: {
+                cursor: this.props.cursor,
+                isValid: this.isValid,
+                isDirty: this.isDirty,
+                getValidationErrors: this.getValidationErrors,
+                setDirtyState: this.setDirtyState,
+                setPristineState: this.setPristineState,
+            },
         };
     },
 
@@ -66,9 +64,9 @@ export default React.createClass({
 
     render: function() {
         return (
-          <form noValidate {...this.props} onSubmit={this.onSubmit}>
-                    {this.props.children}
-                </form>
+          <form noValidate {...this.props} onSubmit={this.onFormSubmit}>
+              {this.props.children}
+          </form>
         );
     },
 
@@ -87,7 +85,7 @@ export default React.createClass({
         return this.state;
     },
 
-    onSubmit: function(evt) {
+    onFormSubmit: function(evt) {
         evt.preventDefault();
         this.submit();
     },
@@ -103,7 +101,7 @@ export default React.createClass({
     validate: function(successCallback, errorCallback) {
         const data = this.props.cursor.get();
         const schema = _.isFunction(this.props.validationSchema) ?
-          this.props.validationSchema(data) : this.props.validationSchema;
+            this.props.validationSchema(data) : this.props.validationSchema;
 
         this.props.strategy.validate(data, schema, {}, errors => {
             this.setFormState({errors: errors});
