@@ -34,8 +34,10 @@ export default React.createClass({
     return {
       type: "text",
       nullable: true,
-      toInternal: x => x,
-      toRepresentation: x => x
+      toInternal: _.identity,
+      toRepresentation: _.identity,
+      onBlur: _.identity,
+      onChange: _.identity
     };
   },
 
@@ -71,42 +73,41 @@ export default React.createClass({
     this.updateTimer = setTimeout(this.syncValue, this.msToPoll);
   },
 
-  onChange: function(evt) {
-    const value = this.props.toInternal(evt.target.value);
+  syncValue: function (callback) {
+    const value = this.props.nullable && this.state.value === "" ? null : this.state.value;
+
+    this.props.cursor.set(value);
+    callback && setTimeout(callback.bind(this), 0);
+  },
+
+  setValue: function (value, callback, forceSync=false) {
+    const value = this.props.toInternal(value);
 
     if (value === this.state.value) {
       // Skip sync if no changes
       return;
     }
 
-    this.setState({ value }, function () {
-      if (!this.props.syncOnlyOnBlur) {
-        if (this.props.sync) {
-          this.syncValue();
-        } else {
-          this.setUpdateTimer();
-        }
+    this.setState({value}, function () {
+      if (this.props.syncOnlyOnBlur && !forceSync) {
+          return;
+      }
+      if (this.props.sync || forceSync) {
+        this.syncValue(callback);
+      } else {
+        this.setUpdateTimer();
       }
     });
   },
 
-  syncValue: function () {
-    const value = this.props.nullable && this.state.value === "" ? null : this.state.value;
-
-    this.props.cursor.set(value);
-    if (_.isFunction(this.props.onChange)) {
-      setTimeout(() => this.props.onChange(value), 0);
-    }
+  onChange: function(evt) {
+    // TODO: Callback with value is deprecated. In v2.0.0 callback will be with event only
+    this.setValue(evt.target.value, () => this.props.onChange(evt.target.value));
   },
 
   onBlur: function (evt) {
     this.clearUpdateTimer();
-
-    this.syncValue();
-
-    if (_.isFunction(this.props.onBlur)) {
-      this.props.onBlur(evt);
-    }
+    this.setValue(evt.target.value, () => this.props.onBlur(evt), true);
   },
 
   render: function () {
