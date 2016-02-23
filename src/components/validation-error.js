@@ -4,8 +4,7 @@ export default React.createClass({
     displayName: 'ValidationError',
 
     contextTypes: {
-        getValidationErrors: React.PropTypes.func.isRequired,
-        isDirty: React.PropTypes.func.isRequired,
+        form: React.PropTypes.object.isRequired,
     },
 
     propTypes: {
@@ -24,9 +23,11 @@ export default React.createClass({
     },
 
     render: function() {
-        const error = this.context.getValidationErrors(this.props.fieldPath);
+        const form = this.context.form;
+
+        const error = form.getValidationErrors(this.props.fieldPath);
         const isValid = !error;
-        const isDirty = this.context.isDirty(this.props.fieldPath);
+        const isDirty = form.isDirty(this.props.fieldPath);
 
         if (isValid || !this.props.alwaysShow && !isDirty) {
             return null;

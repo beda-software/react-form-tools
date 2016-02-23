@@ -10,7 +10,7 @@ export default React.createClass({
     },
 
     contextTypes: {
-        isValid: React.PropTypes.func.isRequired,
+        form: React.PropTypes.object.isRequired,
     },
 
     getDefaultProps: function() {
@@ -20,7 +20,8 @@ export default React.createClass({
     },
 
     render: function() {
-        const disabled = !this.context.isValid();
+        const disabled = !this.context.form.isValid();
+
         return (
             <input type="submit"
                    className={classNames(this.props.className, {_disabled: disabled})}

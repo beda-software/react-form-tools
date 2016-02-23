@@ -9,8 +9,7 @@ export default React.createClass({
     },
 
     contextTypes: {
-        isValid: React.PropTypes.func.isRequired,
-        getValidationErrors: React.PropTypes.func.isRequired,
+        form: React.PropTypes.object.isRequired,
     },
 
     getDefaultProps: function() {
@@ -20,13 +19,14 @@ export default React.createClass({
     },
 
     render: function() {
+        const form = this.context.form;
         // TODO: change fieldPath
         const fieldPath = ['attributes', this.props.globalErrorFieldName];
-        const isValid = this.context.isValid(fieldPath);
+        const isValid = form.isValid(fieldPath);
 
         return !isValid && (
             <div className={this.props.className + '-global-error'}>
-                {this.context.getValidationErrors(fieldPath)}
+                {form.getValidationErrors(fieldPath)}
             </div>
         );
     },

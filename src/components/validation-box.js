@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import BaobabPropTypes from 'baobab-prop-types';
+import {resolveFieldPath} from './utils';
 
 export default React.createClass({
     displayName: 'ValidationBox',
@@ -14,11 +15,7 @@ export default React.createClass({
     },
 
     contextTypes: {
-        formCursor: BaobabPropTypes.cursor,
-        isValid: React.PropTypes.func.isRequired,
-        isDirty: React.PropTypes.func.isRequired,
-        setDirtyState: React.PropTypes.func.isRequired,
-        getValidationErrors: React.PropTypes.func.isRequired,
+        form: React.PropTypes.object.isRequired,
     },
 
     childContextTypes: {
@@ -27,14 +24,15 @@ export default React.createClass({
 
     getChildContext: function() {
         return {
-            fieldPath: _.isArray(this.props.fieldPath) ? this.props.fieldPath : this.props.fieldPath.split('.'),
+            fieldPath: resolveFieldPath(this.props.fieldPath),
         };
     },
 
     render: function() {
+        const form = this.context.form;
         // TODO: use ValidationError instead of this code
-        const error = this.context.getValidationErrors(this.props.fieldPath);
-        const isDirty = this.context.isDirty(this.props.fieldPath);
+        const error = form.getValidationErrors(this.props.fieldPath);
+        const isDirty = form.isDirty(this.props.fieldPath);
         const isValid = !error;
         const className = classNames(this.props.className, {
             _error: isDirty && !isValid,
