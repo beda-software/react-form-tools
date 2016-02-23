@@ -80,8 +80,8 @@ export default React.createClass({
     callback && setTimeout(callback.bind(this), 0);
   },
 
-  setValue: function (value, callback, forceSync=false) {
-    const value = this.props.toInternal(value);
+  setValue: function (rawValue, callback, forceSync=false) {
+    const value = this.props.toInternal(rawValue);
 
     if (value === this.state.value) {
       // Skip sync if no changes
