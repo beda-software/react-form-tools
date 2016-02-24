@@ -73,27 +73,30 @@ export default React.createClass({
         this.updateTimer = setTimeout(this.syncValue, this.msToPoll);
     },
 
-    syncValue: function(callback) {
+    syncValue: function() {
         const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
+        const previousValue = this.props.cursor.get();
+
+        if (value === previousValue) {
+            return;
+        }
 
         this.props.cursor.set(value);
-        callback && setTimeout(callback.bind(this), 0);
+
+        // Wait for next frame
+        setTimeout(() => this.props.onChange(value, previousValue), 0);
     },
 
-    setValue: function(rawValue, callback, forceSync=false) {
+    setValue: function(rawValue, forceSync=false) {
         const value = this.props.toInternal(rawValue);
 
         if (value === this.state.value) {
-            // Skip sync if no changes
             return;
         }
 
         this.setState({value}, function() {
-            if (this.props.syncOnlyOnBlur && !forceSync) {
-                return;
-            }
             if (this.props.sync || forceSync) {
-                this.syncValue(callback);
+                this.syncValue();
             } else {
                 this.setUpdateTimer();
             }
@@ -101,12 +104,21 @@ export default React.createClass({
     },
 
     onChange: function(evt) {
-        this.setValue(evt.target.value, () => this.props.onChange(evt));
+        if (this.props.syncOnlyOnBlur) {
+            return;
+        }
+        this.setValue(evt);
     },
 
     onBlur: function(evt) {
+        // Prevent future updates
         this.clearUpdateTimer();
-        this.setValue(evt.target.value, () => this.props.onBlur(evt), true);
+
+        // Set inner state value and force synchronization
+        this.setValue(evt.target.value, true);
+
+        // Wait for next frame
+        setTimeout(() => this.props.onBlur(evt), 0);
     },
 
     render: function() {
