@@ -57,7 +57,7 @@ React.createClass({
 * **strategy** *function* - validation strategy instance
 * **validateOnFly** *boolean* [`true`] - validate form on every change into form components  
 * **formStateCursor** *cursor* [`null`] - if formStateCursor is set to cursor, 
-then this cursor will be used for storing `dirtyStates` and `validationErrors`
+then this cursor will be used for storing `dirtyStates` and `errors`
 * **onSubmit** *function* [`optional`] - callback of successful validation which will be called when user will submit form
 * **onInvalidSubmit** *function* [`optional`] - callback of unsuccessful validation which will be called when user will submit form 
 

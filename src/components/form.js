@@ -115,24 +115,24 @@ export default React.createClass({
     },
 
     getValidationErrors: function(fieldPath) {
-        const state = this.getFormState();
+        const formState = this.getFormState();
         if (fieldPath) {
-            return _.get(state.errors, fieldPath);
+            return _.get(formState.errors, fieldPath);
         }
-        return state.errors;
+        return formState.errors;
     },
 
     isValid: function(fieldPath) {
-        const state = this.getFormState();
+        const formState = this.getFormState();
         if (fieldPath) {
-            return !_.get(state.errors, fieldPath);
+            return !_.get(formState.errors, fieldPath);
         }
-        return _.isEmpty(state.errors);
+        return _.isEmpty(formState.errors);
     },
 
     isDirty: function(fieldPath) {
-        const state = this.getFormState();
-        return !!_.get(state.dirtyStates, fieldPath);
+        const formState = this.getFormState();
+        return !!_.get(formState.dirtyStates, fieldPath);
     },
 
     resetDirtyStates: function() {
@@ -152,18 +152,22 @@ export default React.createClass({
     },
 
     setDirtyState: function(fieldPath) {
-        this.updateDirtyState(fieldPath, true)
+        this.updateDirtyState(fieldPath, true);
     },
 
     setPristineState: function(fieldPath) {
-        this.updateDirtyState(fieldPath, false)
+        this.updateDirtyState(fieldPath, false);
     },
 
     updateDirtyState: function(fieldPath, dirtyState) {
-        const state = this.getFormState();
+        if (this.isDirty(fieldPath) === dirtyState) {
+            return;
+        }
+
+        const formState = this.getFormState();
 
         this.setFormState({
-            dirtyStates: _.set(state.dirtyStates || {}, fieldPath, dirtyState),
+            dirtyStates: _.set(formState.dirtyStates || {}, fieldPath, dirtyState),
         });
     },
 });

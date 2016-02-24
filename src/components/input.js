@@ -10,12 +10,17 @@ export default React.createClass({
     mixins: [PureRenderMixin],
 
     propTypes: {
+        cursor: BaobabPropTypes.cursor,
         onChange: React.PropTypes.func,
         onBlur: React.PropTypes.func,
-        cursor: BaobabPropTypes.cursor.isRequired,
         sync: React.PropTypes.bool,
         syncOnlyOnBlur: React.PropTypes.bool,
         autoFocus: React.PropTypes.bool,
+    },
+
+    contextTypes: {
+        form: React.PropTypes.object,
+        fieldPath: React.PropTypes.array,
     },
 
     updateTimer: null,
@@ -26,7 +31,7 @@ export default React.createClass({
 
     getInitialState: function() {
         return {
-            value: this.props.toInternal(this.props.cursor.get()),
+            value: this.props.toInternal(this.getCursor().get()),
         }
     },
 
@@ -41,13 +46,23 @@ export default React.createClass({
         };
     },
 
+    getCursor: function(props) {
+        props = props || this.props;
+        const cursor = props.cursor || this.context.form.cursor.select(this.context.fieldPath);
+        if (!cursor) {
+            throw 'react-form.tools Input: cursor must be set via `cursor` or ' +
+                  'via higher order component ValidationBox with fieldPath';
+        }
+        return cursor;
+    },
+
     componentWillReceiveProps(nextProps) {
         if (this.updateTimer) {
             // Does not set state when component received props while user inputs
             return;
         }
         this.setState({
-            value: this.props.toInternal(nextProps.cursor.get()),
+            value: this.props.toInternal(this.getCursor(nextProps).get()),
         });
     },
 
@@ -59,6 +74,34 @@ export default React.createClass({
 
     componentWillUnmount: function() {
         this.clearUpdateTimer();
+    },
+
+    inValidationBox: function() {
+        return this.context.form && this.context.fieldPath;
+    },
+
+    setDirtyState: function() {
+        if (this.inValidationBox()) {
+            this.context.form.setDirtyState(this.context.fieldPath);
+        }
+    },
+
+    setPristineState: function() {
+        if (this.inValidationBox()) {
+            this.context.form.setPristineState(this.context.fieldPath);
+        }
+    },
+
+    isDirty: function() {
+        if (this.inValidationBox()) {
+            return this.context.form.isDirty(this.context.fieldPath);
+        }
+    },
+
+    isValid: function() {
+        if (this.inValidationBox()) {
+            return this.context.form.isValid(this.context.fieldPath);
+        }
     },
 
     clearUpdateTimer: function() {
@@ -75,13 +118,14 @@ export default React.createClass({
 
     syncValue: function() {
         const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
-        const previousValue = this.props.cursor.get();
+        const previousValue = this.getCursor().get();
 
         if (value === previousValue) {
             return;
         }
 
-        this.props.cursor.set(value);
+        this.getCursor().set(value);
+        this.setDirtyState();
 
         // Wait for next frame
         setTimeout(() => this.props.onChange(value, previousValue), 0);
