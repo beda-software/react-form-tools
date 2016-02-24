@@ -6,6 +6,7 @@ import TestUtils from 'react-addons-test-utils';
 import {expect} from 'chai';
 import yup from 'yup';
 import {Form} from '../../src/components';
+import {Root} from './utils';
 
 const tree = new Baobab(
     {},
@@ -14,28 +15,6 @@ const tree = new Baobab(
         asynchronous: false,
     }
 );
-
-const Root = React.createClass({
-    childContextTypes: {
-        tree: BaobabPropTypes.baobab,
-    },
-
-    getChildContext: function() {
-        return {
-            tree: this.props.tree,
-        };
-    },
-
-    render: function() {
-        const Component = this.props.component;
-
-        return (
-          <div>
-                    <Component ref="component" {...this.props.componentProps} />
-                </div>
-        );
-    },
-});
 
 const FormComponentFactory = (formProps) => {
     return React.createClass({
@@ -56,9 +35,9 @@ const FormComponentFactory = (formProps) => {
 
         render: function() {
             return (
-              <Form cursor={this.cursors.form} ref="form" {...formProps}>
-                          <input type="submit" className="submit" />
-                      </Form>
+                <Form cursor={this.cursors.form} ref="form" {...formProps}>
+                    <input type="submit" className="submit" />
+                </Form>
             );
         },
     });
@@ -81,14 +60,14 @@ describe('Check Form without on fly validation', () => {
             validateOnFly: false,
         });
         const rootComponent = TestUtils.renderIntoDocument(
-          <Root tree={tree}
+            <Root tree={tree}
                 component={FormWithoutOnFlyValidation}
-            componentProps={{
-                tree: tree.select(),
-            }} />
-    );
+                componentProps={{
+                    tree: tree.select(),
+                }} />
+        );
         formComponent = rootComponent.refs.component.refs.form;
-        treeState = tree.get();
+        treeState = tree.serialize();
     });
 
     after(() => {
@@ -118,7 +97,7 @@ describe('Check Form without on fly validation', () => {
         });
     });
 
-    it('should isValid is falsy for all form and each field', (done) => {
+    it('should isValid is false for all form and each field', (done) => {
         formComponent.validate(null, () => {
             expect(formComponent.isValid()).to.be.false;
             expect(formComponent.isValid('firstName')).to.be.false;
@@ -238,14 +217,14 @@ describe('Check Form with on fly validation', () => {
             validateOnFly: true,
         });
         const rootComponent = TestUtils.renderIntoDocument(
-          <Root tree={tree}
+            <Root tree={tree}
                 component={FormWithOnFlyValidation}
-            componentProps={{
+                componentProps={{
                 tree: tree.select(),
             }} />
     );
         formComponent = rootComponent.refs.component.refs.form;
-        treeState = tree.get();
+        treeState = tree.serialize();
     });
 
     after(() => {
@@ -279,14 +258,14 @@ describe('Check Form with dynamic validation schema', () => {
             validateOnFly: false,
         });
         const rootComponent = TestUtils.renderIntoDocument(
-          <Root tree={tree}
+            <Root tree={tree}
                 component={FormWithOnFlyValidation}
-            componentProps={{
+                componentProps={{
                 tree: tree.select(),
             }} />
     );
         formComponent = rootComponent.refs.component.refs.form;
-        treeState = tree.get();
+        treeState = tree.serialize();
     });
 
     after(() => {
@@ -321,14 +300,14 @@ describe('Check Form formStateCursor', () => {
             validateOnFly: false,
         });
         const rootComponent = TestUtils.renderIntoDocument(
-          <Root tree={tree}
+            <Root tree={tree}
                 component={FormWithOnFlyValidation}
-            componentProps={{
+                componentProps={{
                 tree: tree.select(),
             }} />
     );
         formComponent = rootComponent.refs.component.refs.form;
-        treeState = tree.get();
+        treeState = tree.serialize();
     });
 
     after(() => {

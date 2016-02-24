@@ -16,6 +16,8 @@ export default React.createClass({
         sync: React.PropTypes.bool,
         syncOnlyOnBlur: React.PropTypes.bool,
         autoFocus: React.PropTypes.bool,
+        toInternal: React.PropTypes.func,
+        toRepresentation: React.PropTypes.func,
     },
 
     contextTypes: {
@@ -77,7 +79,7 @@ export default React.createClass({
     },
 
     inValidationBox: function() {
-        return this.context.form && this.context.fieldPath;
+        return !!(this.context.form && this.context.fieldPath);
     },
 
     setDirtyState: function() {
@@ -151,7 +153,7 @@ export default React.createClass({
         if (this.props.syncOnlyOnBlur) {
             return;
         }
-        this.setValue(evt);
+        this.setValue(evt.target.value);
     },
 
     onBlur: function(evt) {

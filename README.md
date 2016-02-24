@@ -63,7 +63,7 @@ then this cursor will be used for storing `dirtyStates` and `errors`
 
 #### Form API
 
-Form API is available across refs. This methods are available in context `form`, which contains also `cursor` attribute to form data.
+Form API is available across refs. This methods are available in child context via `form`, which contains also `cursor` attribute to form data.
 
 * **isValid([fieldPath])**
 * **isDirty(fieldPath)**
@@ -85,12 +85,14 @@ Form API is available across refs. This methods are available in context `form`,
 * **syncOnlyOnBlur** *boolean* [`false`] - if `syncOnlyOnBlur` is set to true, then synchronization will be applied only on blur
 * **onChange(value, previousValue)** *function* [`optional`] - callback which will be called on every change
 * **onBlur(event)** *function* [`optional`] - callback which will be called only on blur
+* **toRepresentation** *function* [`identity`] - function of transformation which is used for output
+* **toInternal** *function* [`identity`] - function of transformation which is used for inner storing
 
 And other html input props also available such as `autoFocus`, `readOnly` and etc.
 
 #### Input API
 
-Input API is available across refs. Use this methods only if Input inside ValidationBox.
+Input API is available across refs. Use this methods only if Input is inside ValidationBox.
 
 * **isDirty()**
 * **isValid()**
