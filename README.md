@@ -63,15 +63,13 @@ then this cursor will be used for storing `dirtyStates` and `errors`
 
 #### Form API
 
-Form API available across refs.
+Form API is available across refs. This methods are available in context `form`, which contains also `cursor` attribute to form data.
 
 * **isValid([fieldPath])**
 * **isDirty(fieldPath)**
 * **getValidationErrors([fieldPath])**
 * **setDirtyState(fieldPath)**
-* **setPristineState(fieldPath)**
-
-`cursor` to form data also available via child context of `form`.                
+* **setPristineState(fieldPath)**             
 
 ### Input
   
@@ -92,7 +90,7 @@ And other html input props also available such as `autoFocus`, `readOnly` and et
 
 #### Input API
 
-Input API available across refs. Use this methods only if Input inside ValidationBox.
+Input API is available across refs. Use this methods only if Input inside ValidationBox.
 
 * **isDirty()**
 * **isValid()**
