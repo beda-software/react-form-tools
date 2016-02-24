@@ -107,7 +107,7 @@ export default React.createClass({
             this.setFormState({errors: errors});
 
             if (_.isEmpty(errors)) {
-                successCallback && successCallback();
+                successCallback && successCallback(data);
             } else {
                 errorCallback && errorCallback(errors);
             }
