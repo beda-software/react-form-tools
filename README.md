@@ -16,17 +16,57 @@ Form validation inspired by [react-validation-mixin](https://github.com/jurassix
   
   npm install react-form-tools --save
   
+## Usage
+
+There are some useful components which provide flexible interface for validation and clever input.
+
+### Form
+
+Form component provides tools for validation using validation schema (for example, yup, joi and etc.)
+
+```
+React.createClass({
+  // Schema from baobab-react-schemabranchmixin
+  schema: {
+    form: {
+      field: '',
+    },
+  },
+
+  // Validation schema from yup
+  validationSchema: yup.object().shape({
+    field: yup.string().required(),
+  }),
+  
+  render: function () {
+    return (
+      <Form cursor={this.cursors.form} validationSchema={this.validationSchema}>
+        <ValidationBox fieldPath='field'>
+          <Input />
+        </ValidationBox>
+      </Form>
+    );
+  },
+});
+```
+
+#### Form params
+
+* **cursor** *cursor* - cursor to form
+* **validationSchema** *object* - validation schema which uses with **strategy**
+* **strategy** *function* - validation strategy instance
+* **validateOnFly** *boolean* [`true`] - validate form on every change into form components  
+* **formStateCursor** *cursor* [`null`] - if formStateCursor is set to cursor, 
+then this cursor will be used for storing `dirtyStates` and `validationErrors`
+* **onSubmit** *function* [`optional`] - callback of successful validation which will be called when user will submit form
+* **onInvalidSubmit** *function* [`optional`] - callback of unsuccessful validation which will be called when user will submit form 
+
+### Input
+  
+```
+<Input cursor={this.cursors.form.select('field')} />
+```
+  
 ## Tests
 
   npm test
-  
-## Release History
-
-* 1.0.13 Fixed problem with onBlur in Input
-* 1.0.12 Fixed autoFocus (added timeout), removed useless logic for selection (mobile ff fix)
-* 1.0.11 Added onBlur for Input
-* 1.0.10 Added setDirtyState and setPristineState methods for Form and form context
-* 1.0.9 Added disabledIfInvalid to Submit
-* 1.0.8 Fixed peer dependencies
-* 1.0.7 Added autoFocus to Input
-* 1.0.0 Initial release
