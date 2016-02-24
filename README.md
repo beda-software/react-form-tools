@@ -52,14 +52,26 @@ React.createClass({
 
 #### Form props
 
-* **cursor** *cursor* - cursor to form
+* **cursor** *cursor* - cursor to form data
 * **validationSchema** *object* - validation schema which uses with **strategy**
 * **strategy** *function* - validation strategy instance
 * **validateOnFly** *boolean* [`true`] - validate form on every change into form components  
-* **formStateCursor** *cursor* [`null`] - if formStateCursor is set to cursor, 
+* **formStateCursor** *cursor* [`null`] - if `formStateCursor` is set to cursor, 
 then this cursor will be used for storing `dirtyStates` and `errors`
 * **onSubmit(data)** *function* [`optional`] - callback of successful validation which will be called when user will submit form
 * **onInvalidSubmit(errors)** *function* [`optional`] - callback of unsuccessful validation which will be called when user will submit form 
+
+#### Form API
+
+Form API available across refs.
+
+* **isValid([fieldPath])**
+* **isDirty(fieldPath)**
+* **getValidationErrors([fieldPath])**
+* **setDirtyState(fieldPath)**
+* **setPristineState(fieldPath)**
+
+`cursor` to form data also available via child context of `form`.                
 
 ### Input
   
@@ -70,13 +82,13 @@ then this cursor will be used for storing `dirtyStates` and `errors`
 #### Input props
 
 * **cursor** *cursor* - cursor to input. Cursor must be set if Input is used outside ValidationBox
-* **nullable** *boolean* [`false`] - if nullable is set to true, then empty value will be converted to null  
-* **sync** *boolean* [`false`] - if sync is set to true, then synchronization will be applied on every change
-* **syncOnlyOnBlur** *boolean* [`false`] - if syncOnlyOnBlur is set to true, then synchronization will be applied only on blur
+* **nullable** *boolean* [`false`] - if `nullable` is set to true, then empty value will be converted to null  
+* **sync** *boolean* [`false`] - if `sync` is set to true, then synchronization will be applied on every change
+* **syncOnlyOnBlur** *boolean* [`false`] - if `syncOnlyOnBlur` is set to true, then synchronization will be applied only on blur
 * **onChange(value, previousValue)** *function* [`optional`] - callback which will be called on every change
 * **onBlur(event)** *function* [`optional`] - callback which will be called only on blur
 
-And other html input props also available.
+And other html input props also available such as `autoFocus`, `readOnly` and etc.
 
 #### Input API
 
