@@ -73,27 +73,30 @@ export default React.createClass({
     this.updateTimer = setTimeout(this.syncValue, this.msToPoll);
   },
 
-  syncValue: function (callback) {
-    const value = this.props.nullable && this.state.value === "" ? null : this.state.value;
+  syncValue: function () {
+    const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
+    const previousValue = this.getCursor().get();
 
-    this.props.cursor.set(value);
-    callback && setTimeout(callback.bind(this), 0);
+    if (value === previousValue) {
+      return;
+    }
+
+    this.getCursor().set(value);
+
+    // Wait for next frame
+    setTimeout(() => this.props.onChange(value, previousValue), 0);
   },
 
-  setValue: function (rawValue, callback, forceSync=false) {
+  setValue: function (rawValue, forceSync = false) {
     const value = this.props.toInternal(rawValue);
 
     if (value === this.state.value) {
-      // Skip sync if no changes
       return;
     }
 
     this.setState({value}, function () {
-      if (this.props.syncOnlyOnBlur && !forceSync) {
-          return;
-      }
       if (this.props.sync || forceSync) {
-        this.syncValue(callback);
+        this.syncValue();
       } else {
         this.setUpdateTimer();
       }
@@ -101,14 +104,24 @@ export default React.createClass({
   },
 
   onChange: function(evt) {
-    // TODO: Callback with value is deprecated. In v2.0.0 callback will be with event only
-    this.setValue(evt.target.value, () => this.props.onChange(evt.target.value));
+    if (this.props.syncOnlyOnBlur) {
+      return;
+    }
+    this.setValue(evt.target.value);
   },
 
+
   onBlur: function (evt) {
+    // Prevent future updates
     this.clearUpdateTimer();
-    this.setValue(evt.target.value, () => this.props.onBlur(evt), true);
+
+    // Set inner state value and force synchronization
+    this.setValue(evt.target.value, true);
+
+    // Wait for next frame
+    setTimeout(() => this.props.onBlur(evt), 0);
   },
+
 
   render: function () {
     const props = {
