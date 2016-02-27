@@ -1,10 +1,26 @@
 # Changelog
 
 ## 2.0.0 
-* Changed arguments for onChange and onBlur callbacks
+* Form: Added formStateCursor for more flexible form state manipulation (#3)
+* Form: Added dynamic validationScheme (#4). validationScheme may be object or function
+* Form: Removed initial state 
+* Form: Removed method resetValidationData
+* Form: Moved dirty states manipulation from Form into Input inside ValidationBox (#7)
+* Form: Context now represents with only one prop - form
+* Form: Context.form contains cursor prop to form cursor
+* Input: Changed callbacks (#8): onBlur, onChange, onSync
+* Input inside ValidationBox has methods: setDirtyState, setPristineState, isDirty, isValid
+* Input cursor now is not required because it can be get via ValidationBox context.fieldPath and Form context.form.cursor
+* ValidationBox now has context prop fieldPath 
+* ValidationGlobalError (#2)
+* Added ValidationError component
 
-## 1.0.13 
-* Fixed problem with onBlur in Input
+## 1.0.16 
+* Fixed problem with syncOnlyOnBlur
+
+## 1.0.13
+* Fixed problem with onBlur in Input (#6)
+* Fixed problem with monkey (#5)
 
 ## 1.0.12 
 * Fixed autoFocus (added timeout), removed useless logic for selection (mobile ff fix)

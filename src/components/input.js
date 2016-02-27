@@ -33,7 +33,7 @@ export default React.createClass({
 
     getInitialState: function() {
         return {
-            value: this.props.toInternal(this.getCursor().get()),
+            value: this.props.toInternal(this.getCursor().get()) || '',
         }
     },
 
@@ -45,6 +45,7 @@ export default React.createClass({
             toRepresentation: _.identity,
             onBlur: _.identity,
             onChange: _.identity,
+            onSync: _.identity,
         };
     },
 
@@ -130,13 +131,10 @@ export default React.createClass({
         this.setDirtyState();
 
         // Wait for next frame
-        // TODO: call onSync callback
-        setTimeout(() => this.props.onChange(value, previousValue), 0);
+        setTimeout(() => this.props.onSync(value, previousValue), 0);
     },
 
-    setValue: function(rawValue, forceSync=false) {
-        const value = this.props.toInternal(rawValue);
-
+    setValue: function(value, forceSync=false) {
         this.setState({value}, function() {
             if (this.props.sync || forceSync) {
                 this.syncValue();
@@ -149,16 +147,25 @@ export default React.createClass({
     },
 
     onChange: function(evt) {
-        this.setValue(evt.target.value);
-        // TODO: call onChange callback with evt.target.value, this.state.value
+        const value = this.props.toInternal(evt.target.value);
+        const previousValue = this.state.value;
+
+        if (value === previousValue) {
+            return;
+        }
+
+        this.setValue(value);
+        this.props.onChange(value, previousValue);
     },
 
     onBlur: function(evt) {
+        const value = this.props.toInternal(evt.target.value);
+
         // Prevent future updates
         this.clearDeferredSyncTimer();
 
         // Set inner state value and force synchronization
-        this.setValue(evt.target.value, true);
+        this.setValue(value, true);
 
         // Wait for next frame
         setTimeout(() => this.props.onBlur(evt), 0);
