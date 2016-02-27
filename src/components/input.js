@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import {getSelection, setSelection} from 'react/lib/ReactInputSelection';
 import BaobabPropTypes from 'baobab-prop-types';
 
 export default React.createClass({
@@ -22,9 +21,7 @@ export default React.createClass({
   updateTimer: null,
 
   msToPoll: 200,
-
-  selection: null,
-
+  
   getInitialState: function () {
     return {
       value: this.props.toInternal(this.props.cursor.get())
