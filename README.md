@@ -22,6 +22,7 @@ Form validation inspired by [react-validation-mixin](https://github.com/jurassix
   
 ## Release History
 
+* 1.0.14 Fixed problem with syncOnlyOnBlur
 * 1.0.13 Fixed problem with onBlur in Input
 * 1.0.12 Fixed autoFocus (added timeout), removed useless logic for selection (mobile ff fix)
 * 1.0.11 Added onBlur for Input
