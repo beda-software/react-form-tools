@@ -25,7 +25,7 @@ export default React.createClass({
         fieldPath: React.PropTypes.array,
     },
 
-    updateTimer: null,
+    deferredSyncTimer: null,
 
     msToPoll: 200,
 
@@ -59,7 +59,7 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(nextProps) {
-        if (this.updateTimer) {
+        if (this.deferredSyncTimer) {
             // Does not set state when component received props while user inputs
             return;
         }
@@ -75,7 +75,7 @@ export default React.createClass({
     },
 
     componentWillUnmount: function() {
-        this.clearUpdateTimer();
+        this.clearDeferredSyncTimer();
     },
 
     inValidationBox: function() {
@@ -106,16 +106,16 @@ export default React.createClass({
         }
     },
 
-    clearUpdateTimer: function() {
-        if (this.updateTimer) {
-            clearTimeout(this.updateTimer);
-            this.updateTimer = null;
+    clearDeferredSyncTimer: function() {
+        if (this.deferredySyncTimer) {
+            clearTimeout(this.deferredSyncTimer);
+            this.deferredSyncTimer = null;
         }
     },
 
-    setUpdateTimer: function() {
-        this.clearUpdateTimer();
-        this.updateTimer = setTimeout(this.syncValue, this.msToPoll);
+    deferredSyncValue: function() {
+        this.clearDeferredSyncTimer();
+        this.deferredSyncTimer = setTimeout(this.syncValue, this.msToPoll);
     },
 
     syncValue: function() {
@@ -130,35 +130,32 @@ export default React.createClass({
         this.setDirtyState();
 
         // Wait for next frame
+        // TODO: call onSync callback
         setTimeout(() => this.props.onChange(value, previousValue), 0);
     },
 
     setValue: function(rawValue, forceSync=false) {
         const value = this.props.toInternal(rawValue);
 
-        if (value === this.state.value) {
-            return;
-        }
-
         this.setState({value}, function() {
             if (this.props.sync || forceSync) {
                 this.syncValue();
-            } else {
-                this.setUpdateTimer();
+                return;
+            }
+            if (!this.props.syncOnlyOnBlur) {
+                this.deferredSyncValue();
             }
         });
     },
 
     onChange: function(evt) {
-        if (this.props.syncOnlyOnBlur) {
-            return;
-        }
         this.setValue(evt.target.value);
+        // TODO: call onChange callback with evt.target.value, this.state.value
     },
 
     onBlur: function(evt) {
         // Prevent future updates
-        this.clearUpdateTimer();
+        this.clearDeferredSyncTimer();
 
         // Set inner state value and force synchronization
         this.setValue(evt.target.value, true);

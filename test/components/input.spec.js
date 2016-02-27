@@ -180,12 +180,12 @@ describe('Check Input without ValidationBox', () => {
         TestUtils.Simulate.change(inputNode, {target: {value: 'fourth'}});
 
         clock.tick(1);
-        inputComponent.state.value.should.be.equal('third');
+        inputComponent.state.value.should.be.equal('fourth');
         tree.get('form', 'field').should.be.equal('third');
         onChangeSpy.should.have.not.been.called;
 
         clock.tick(inputComponent.msToPoll + 1);
-        inputComponent.state.value.should.be.equal('third');
+        inputComponent.state.value.should.be.equal('fourth');
         tree.get('form', 'field').should.be.equal('third');
         onChangeSpy.should.have.not.been.called;
 
