@@ -34,7 +34,7 @@ export default React.createClass({
     getInitialState: function() {
         return {
             value: this.props.toInternal(this.getCursor().get()) || '',
-        }
+        };
     },
 
     getDefaultProps: function() {

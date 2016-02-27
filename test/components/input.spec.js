@@ -7,7 +7,7 @@ import {expect} from 'chai';
 import yup from 'yup';
 import {Form, Input} from '../../src/components';
 import {Root} from './utils';
-import sinon from 'sinon';
+import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
 
 const tree = new Baobab(
     {},
