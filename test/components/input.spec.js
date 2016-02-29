@@ -287,5 +287,34 @@ describe('Input without ValidationBox', () => {
 
         // Unable to check focus
     });
+
+    it('should works correcly with textarea type', () => {
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithOneInput}
+                componentProps={{
+                    tree: tree.select(),
+                    inputProps: {
+                        onChange: onChangeSpy,
+                        onSync: onSyncSpy,
+                        onBlur: onBlurSpy,
+                        type: 'textarea',
+                    },
+                }} />
+        );
+        inputComponent = rootComponent.refs.component.refs.input;
+
+        const inputNode = ReactDOM.findDOMNode(inputComponent);
+        TestUtils.Simulate.change(inputNode, { target: { value: 'sixth' } });
+        onChangeSpy.should.have.been.calledWith('sixth', 'fifth');
+
+        clock.tick(1);
+        inputComponent.state.value.should.be.equal('sixth');
+        onSyncSpy.should.have.not.been.called;
+        tree.get('form', 'field').should.be.equal('fifth');
+
+        clock.tick(inputComponent.msToPoll + 1);
+        onSyncSpy.should.have.been.calledWith('sixth', 'fifth');
+    });
 });
 

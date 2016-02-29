@@ -111,7 +111,7 @@ export default React.createClass({
     },
 
     clearDeferredSyncTimer: function () {
-        if (this.deferredySyncTimer) {
+        if (this.deferredSyncTimer) {
             clearTimeout(this.deferredSyncTimer);
             this.deferredSyncTimer = null;
         }
