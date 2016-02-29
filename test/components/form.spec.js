@@ -1,12 +1,12 @@
+// jscs:disable disallowMultipleVarDecl
 import React from 'react';
 import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import BaobabPropTypes from 'baobab-prop-types';
 import TestUtils from 'react-addons-test-utils';
-import {expect} from 'chai';
 import yup from 'yup';
 import {Form} from '../../src/components';
-import {Root} from './utils';
+import {Root} from '../utils';
 
 const tree = new Baobab(
     {},
@@ -33,7 +33,7 @@ const FormComponentFactory = (formProps) => {
             formState: {},
         },
 
-        render: function() {
+        render: function () {
             return (
                 <Form cursor={this.cursors.form} ref="form" {...formProps}>
                     <input type="submit" className="submit" />
@@ -43,7 +43,7 @@ const FormComponentFactory = (formProps) => {
     });
 };
 
-describe('Check Form without on fly validation', () => {
+describe('Form without on fly validation', () => {
     let formComponent, treeState;
 
     before(() => {
@@ -154,7 +154,7 @@ describe('Check Form without on fly validation', () => {
     });
 
     it('should setValidationErrors works correctly', () => {
-        formComponent.setValidationErrors({firstName: 'error'});
+        formComponent.setValidationErrors({ firstName: 'error' });
         expect(formComponent.isValid('firstName')).to.be.false;
         expect(formComponent.getValidationErrors('firstName')).to.be.equal('error');
         expect(formComponent.isValid('lastName')).to.be.true;
@@ -203,7 +203,7 @@ describe('Check Form without on fly validation', () => {
     });
 });
 
-describe('Check Form with on fly validation', () => {
+describe('Form with on fly validation', () => {
     let formComponent, treeState;
 
     before(() => {
@@ -242,7 +242,7 @@ describe('Check Form with on fly validation', () => {
     });
 });
 
-describe('Check Form with dynamic validation schema', () => {
+describe('Form with dynamic validation schema', () => {
     let formComponent, treeState;
 
     before(() => {
@@ -274,7 +274,7 @@ describe('Check Form with dynamic validation schema', () => {
     });
 
     it('should validation works correctly', (done) => {
-        tree.set('form', {num1: 1, num2: 0});
+        tree.set('form', { num1: 1, num2: 0 });
         formComponent.validate(null, () => {
             expect(formComponent.isValid('num1')).to.be.true;
             expect(formComponent.isValid('num2')).to.be.false;
@@ -283,7 +283,7 @@ describe('Check Form with dynamic validation schema', () => {
     });
 });
 
-describe('Check Form formStateCursor', () => {
+describe('Form formStateCursor', () => {
     let formComponent, treeState;
 
     before(() => {

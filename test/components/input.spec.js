@@ -1,12 +1,12 @@
+// jscs:disable disallowMultipleVarDecl
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
-import {expect} from 'chai';
 import yup from 'yup';
 import {Form, Input} from '../../src/components';
-import {Root} from './utils';
+import {Root} from '../utils';
 import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
 
 const tree = new Baobab(
@@ -30,7 +30,7 @@ const FormWithOneInput = React.createClass({
         field: yup.string().required(),
     }),
 
-    render: function() {
+    render: function () {
         return (
             <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
                 <Input cursor={this.cursors.form.select('field')} ref="input" {...this.props.inputProps} />
@@ -39,8 +39,7 @@ const FormWithOneInput = React.createClass({
     },
 });
 
-
-describe('Check Input without ValidationBox', () => {
+describe('Input without ValidationBox', () => {
     let inputComponent, formComponent, treeState, onSyncSpy, onBlurSpy, onChangeSpy, clock;
 
     before(() => {
@@ -77,7 +76,7 @@ describe('Check Input without ValidationBox', () => {
 
     afterEach(() => {
         clock.restore();
-        onChangeSpy.reset()
+        onChangeSpy.reset();
         onSyncSpy.reset();
         onBlurSpy.reset();
     });
@@ -99,7 +98,7 @@ describe('Check Input without ValidationBox', () => {
 
     it('should sets inner state value and synchronizes with cursor when user types with timer', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
-        TestUtils.Simulate.change(inputNode, {target: {value: 'first'}});
+        TestUtils.Simulate.change(inputNode, { target: { value: 'first' } });
         onChangeSpy.should.have.been.calledWith('first', '');
 
         clock.tick(1);
@@ -114,7 +113,7 @@ describe('Check Input without ValidationBox', () => {
 
     it('should not calls onSync with same value', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
-        TestUtils.Simulate.change(inputNode, {target: {value: 'first'}});
+        TestUtils.Simulate.change(inputNode, { target: { value: 'first' } });
         onChangeSpy.should.not.have.been.called;
 
         clock.tick(1);
@@ -129,11 +128,11 @@ describe('Check Input without ValidationBox', () => {
 
     it('should not calls onSync with other value if value restored to initial after changes', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
-        TestUtils.Simulate.change(inputNode, {target: {value: 'first changed'}});
+        TestUtils.Simulate.change(inputNode, { target: { value: 'first changed' } });
         onChangeSpy.should.have.been.calledWith('first changed', 'first');
 
         clock.tick(1);
-        TestUtils.Simulate.change(inputNode, {target: {value: 'first'}});
+        TestUtils.Simulate.change(inputNode, { target: { value: 'first' } });
         onChangeSpy.should.have.been.calledWith('first', 'first changed');
 
         clock.tick(inputComponent.msToPoll + 1);
@@ -143,7 +142,7 @@ describe('Check Input without ValidationBox', () => {
 
     it('should sets inner state value and synchronizes with cursor when input blurs', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
-        TestUtils.Simulate.change(inputNode, {target: {value: 'second'}});
+        TestUtils.Simulate.change(inputNode, { target: { value: 'second' } });
         onChangeSpy.should.have.been.calledWith('second', 'first');
 
         clock.tick(1);
@@ -151,7 +150,7 @@ describe('Check Input without ValidationBox', () => {
         tree.get('form', 'field').should.be.equal('first');
         onSyncSpy.should.have.been.not.called;
 
-        TestUtils.Simulate.blur(inputNode, {target: {value: 'third'}});
+        TestUtils.Simulate.blur(inputNode, { target: { value: 'third' } });
 
         clock.tick(2);
         onBlurSpy.should.have.been.called;
@@ -163,7 +162,7 @@ describe('Check Input without ValidationBox', () => {
 
     it('should calls onBlur when input blurs with same value', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
-        TestUtils.Simulate.blur(inputNode, {target: {value: 'third'}});
+        TestUtils.Simulate.blur(inputNode, { target: { value: 'third' } });
         clock.tick(1);
         onBlurSpy.should.have.been.called;
         onChangeSpy.should.have.not.been.called;
@@ -188,7 +187,7 @@ describe('Check Input without ValidationBox', () => {
         inputComponent = rootComponent.refs.component.refs.input;
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
-        TestUtils.Simulate.change(inputNode, {target: {value: 'fourth'}});
+        TestUtils.Simulate.change(inputNode, { target: { value: 'fourth' } });
         onChangeSpy.should.have.been.calledWith('fourth', 'third');
 
         clock.tick(1);
@@ -201,7 +200,7 @@ describe('Check Input without ValidationBox', () => {
         tree.get('form', 'field').should.be.equal('third');
         onSyncSpy.should.have.not.been.called;
 
-        TestUtils.Simulate.blur(inputNode, {target: {value: 'fourth'}});
+        TestUtils.Simulate.blur(inputNode, { target: { value: 'fourth' } });
 
         clock.tick(inputComponent.msToPoll + 2);
         inputComponent.state.value.should.be.equal('fourth');
@@ -227,7 +226,7 @@ describe('Check Input without ValidationBox', () => {
         inputComponent = rootComponent.refs.component.refs.input;
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
-        TestUtils.Simulate.change(inputNode, {target: {value: ''}});
+        TestUtils.Simulate.change(inputNode, { target: { value: '' } });
         onChangeSpy.should.have.been.calledWith('', 'fourth');
 
         clock.tick(1);
@@ -258,7 +257,7 @@ describe('Check Input without ValidationBox', () => {
         inputComponent = rootComponent.refs.component.refs.input;
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
-        TestUtils.Simulate.change(inputNode, {target: {value: 'fifth'}});
+        TestUtils.Simulate.change(inputNode, { target: { value: 'fifth' } });
         onChangeSpy.should.have.been.calledWith('fifth', '');
 
         clock.tick(1);

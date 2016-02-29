@@ -17,7 +17,7 @@ export default React.createClass({
         form: React.PropTypes.object,
     },
 
-    getDefaultProps: function() {
+    getDefaultProps: function () {
         return {
             validateOnFly: true,
             strategy: defaultStrategy(),
@@ -26,7 +26,7 @@ export default React.createClass({
         };
     },
 
-    getChildContext: function() {
+    getChildContext: function () {
         return {
             form: {
                 cursor: this.props.cursor,
@@ -39,30 +39,32 @@ export default React.createClass({
         };
     },
 
-    getInitialState: function() {
+    getInitialState: function () {
         if (this.props.formStateCursor) {
             return {};
         }
+
         return {
             errors: {},
             dirtyStates: {},
         };
     },
 
-    componentDidMount: function() {
+    componentDidMount: function () {
         if (this.props.validateOnFly) {
             this.props.cursor.on('update', this.onUpdate);
         }
+
         this.validate();
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         if (this.props.validateOnFly) {
             this.props.cursor.off('update', this.onUpdate);
         }
     },
 
-    render: function() {
+    render: function () {
         return (
           <form noValidate {...this.props} onSubmit={this.onFormSubmit}>
               {this.props.children}
@@ -70,7 +72,7 @@ export default React.createClass({
         );
     },
 
-    setFormState: function(nextState) {
+    setFormState: function (nextState) {
         if (this.props.formStateCursor) {
             this.props.formStateCursor.merge(nextState);
         } else {
@@ -78,33 +80,34 @@ export default React.createClass({
         }
     },
 
-    getFormState: function() {
+    getFormState: function () {
         if (this.props.formStateCursor) {
             return this.props.formStateCursor.get();
         }
+
         return this.state;
     },
 
-    onFormSubmit: function(evt) {
+    onFormSubmit: function (evt) {
         evt.preventDefault();
         this.submit();
     },
 
-    onUpdate: function() {
+    onUpdate: function () {
         this.validate();
     },
 
-    submit: function() {
+    submit: function () {
         this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
     },
 
-    validate: function(successCallback, errorCallback) {
+    validate: function (successCallback, errorCallback) {
         const data = this.props.cursor.get();
         const schema = _.isFunction(this.props.validationSchema) ?
             this.props.validationSchema(data) : this.props.validationSchema;
 
         this.props.strategy.validate(data, schema, {}, errors => {
-            this.setFormState({errors: errors});
+            this.setFormState({ errors: errors });
 
             if (_.isEmpty(errors)) {
                 successCallback && successCallback(data);
@@ -114,52 +117,54 @@ export default React.createClass({
         });
     },
 
-    getValidationErrors: function(fieldPath) {
+    getValidationErrors: function (fieldPath) {
         const formState = this.getFormState();
         if (fieldPath) {
             return _.get(formState.errors, fieldPath);
         }
+
         return formState.errors;
     },
 
-    isValid: function(fieldPath) {
+    isValid: function (fieldPath) {
         const formState = this.getFormState();
         if (fieldPath) {
             return !_.get(formState.errors, fieldPath);
         }
+
         return _.isEmpty(formState.errors);
     },
 
-    isDirty: function(fieldPath) {
+    isDirty: function (fieldPath) {
         const formState = this.getFormState();
         return !!_.get(formState.dirtyStates, fieldPath);
     },
 
-    resetDirtyStates: function() {
+    resetDirtyStates: function () {
         this.setFormState({
             dirtyStates: {},
         });
     },
 
-    resetValidationErrors: function() {
+    resetValidationErrors: function () {
         this.setValidationErrors({});
     },
 
-    setValidationErrors: function(errors) {
+    setValidationErrors: function (errors) {
         this.setFormState({
             errors: errors,
         });
     },
 
-    setDirtyState: function(fieldPath) {
+    setDirtyState: function (fieldPath) {
         this.updateDirtyState(fieldPath, true);
     },
 
-    setPristineState: function(fieldPath) {
+    setPristineState: function (fieldPath) {
         this.updateDirtyState(fieldPath, false);
     },
 
-    updateDirtyState: function(fieldPath, dirtyState) {
+    updateDirtyState: function (fieldPath, dirtyState) {
         if (this.isDirty(fieldPath) === dirtyState) {
             return;
         }

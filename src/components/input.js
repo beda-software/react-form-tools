@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
@@ -31,13 +31,13 @@ export default React.createClass({
 
     selection: null,
 
-    getInitialState: function() {
+    getInitialState: function () {
         return {
             value: this.props.toInternal(this.getCursor().get()) || '',
         };
     },
 
-    getDefaultProps: function() {
+    getDefaultProps: function () {
         return {
             type: 'text',
             nullable: true,
@@ -49,13 +49,15 @@ export default React.createClass({
         };
     },
 
-    getCursor: function(props) {
+    getCursor: function (props) {
         props = props || this.props;
         const cursor = props.cursor || this.context.form.cursor.select(this.context.fieldPath);
+
         if (!cursor) {
             throw 'react-form.tools Input: cursor must be set via `cursor` or ' +
                   'via higher order component ValidationBox with fieldPath';
         }
+
         return cursor;
     },
 
@@ -64,62 +66,63 @@ export default React.createClass({
             // Does not set state when component received props while user inputs
             return;
         }
+
         this.setState({
             value: this.props.toInternal(this.getCursor(nextProps).get()),
         });
     },
 
-    componentDidMount: function() {
+    componentDidMount: function () {
         if (this.props.autoFocus) {
             setTimeout(() => ReactDOM.findDOMNode(this.refs.input).focus(), 0);
         }
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.clearDeferredSyncTimer();
     },
 
-    inValidationBox: function() {
+    inValidationBox: function () {
         return !!(this.context.form && this.context.fieldPath);
     },
 
-    setDirtyState: function() {
+    setDirtyState: function () {
         if (this.inValidationBox()) {
             this.context.form.setDirtyState(this.context.fieldPath);
         }
     },
 
-    setPristineState: function() {
+    setPristineState: function () {
         if (this.inValidationBox()) {
             this.context.form.setPristineState(this.context.fieldPath);
         }
     },
 
-    isDirty: function() {
+    isDirty: function () {
         if (this.inValidationBox()) {
             return this.context.form.isDirty(this.context.fieldPath);
         }
     },
 
-    isValid: function() {
+    isValid: function () {
         if (this.inValidationBox()) {
             return this.context.form.isValid(this.context.fieldPath);
         }
     },
 
-    clearDeferredSyncTimer: function() {
+    clearDeferredSyncTimer: function () {
         if (this.deferredySyncTimer) {
             clearTimeout(this.deferredSyncTimer);
             this.deferredSyncTimer = null;
         }
     },
 
-    deferredSyncValue: function() {
+    deferredSyncValue: function () {
         this.clearDeferredSyncTimer();
         this.deferredSyncTimer = setTimeout(this.syncValue, this.msToPoll);
     },
 
-    syncValue: function() {
+    syncValue: function () {
         const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
         const previousValue = this.getCursor().get();
 
@@ -134,19 +137,20 @@ export default React.createClass({
         setTimeout(() => this.props.onSync(value, previousValue), 0);
     },
 
-    setValue: function(value, forceSync=false) {
-        this.setState({value}, function() {
+    setValue: function (value, forceSync=false) {
+        this.setState({ value }, function () {
             if (this.props.sync || forceSync) {
                 this.syncValue();
                 return;
             }
+
             if (!this.props.syncOnlyOnBlur) {
                 this.deferredSyncValue();
             }
         });
     },
 
-    onChange: function(evt) {
+    onChange: function (evt) {
         const value = this.props.toInternal(evt.target.value);
         const previousValue = this.state.value;
 
@@ -158,7 +162,7 @@ export default React.createClass({
         this.props.onChange(value, previousValue);
     },
 
-    onBlur: function(evt) {
+    onBlur: function (evt) {
         const value = this.props.toInternal(evt.target.value);
 
         // Prevent future updates
@@ -171,7 +175,7 @@ export default React.createClass({
         setTimeout(() => this.props.onBlur(evt), 0);
     },
 
-    render: function() {
+    render: function () {
         const props = {
             value: this.props.toRepresentation(this.state.value),
             onChange: this.onChange,
@@ -179,8 +183,9 @@ export default React.createClass({
         };
 
         if (this.props.type == 'textarea') {
-            return <textarea {...this.props} {...props} ref="input" />
+            return <textarea {...this.props} {...props} ref="input" />;
         }
+
         return <input type={this.props.type} {...this.props} {...props} ref="input" />;
     },
 });

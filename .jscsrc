@@ -1,5 +1,5 @@
 {
-    "preset": "node-style-guide",
+    "preset": "airbnb",
     "maxErrors": 100,
     "maximumLineLength": 120,
     "validateIndentation": 4,
