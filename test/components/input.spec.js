@@ -5,7 +5,7 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import {Form, Input} from '../../src/components';
+import {Form, Input, ValidationBox} from '../../src/components';
 import {Root} from '../utils';
 import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
 
@@ -39,7 +39,35 @@ const FormWithOneInput = React.createClass({
     },
 });
 
-describe('Input without ValidationBox', () => {
+const FormWithOneInputInValidationBox = React.createClass({
+    mixins: [SchemaBranchMixin],
+
+    schema: {
+        form: {
+            nested: {
+                field: '',
+            },
+        },
+    },
+
+    validationSchema: yup.object().shape({
+        nested: yup.object().shape({
+            field: yup.string().required(),
+        }),
+    }),
+
+    render: function () {
+        return (
+            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
+                <ValidationBox fieldPath="nested.field">
+                    <Input ref="input" {...this.props.inputProps} />
+                </ValidationBox>
+            </Form>
+        );
+    },
+});
+
+describe('Input outside ValidationBox', () => {
     let inputComponent, formComponent, treeState, onSyncSpy, onBlurSpy, onChangeSpy, clock;
 
     before(() => {
@@ -318,3 +346,86 @@ describe('Input without ValidationBox', () => {
     });
 });
 
+describe('Input inside ValidationBox', () => {
+    let inputComponent, formComponent, treeState, clock;
+
+    before(() => {
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                  component={FormWithOneInputInValidationBox}
+                  componentProps={{
+                    tree: tree.select(),
+                    inputProps: {},
+                }}/>
+        );
+        formComponent = rootComponent.refs.component.refs.form;
+        inputComponent = rootComponent.refs.component.refs.input;
+        treeState = tree.serialize();
+    });
+
+    beforeEach(() => {
+        clock = sinon.useFakeTimers();
+    });
+
+    after(() => {
+        inputComponent.componentWillUnmount();
+        formComponent.componentWillUnmount();
+        tree.set(treeState);
+    });
+
+    afterEach(() => {
+        clock.restore();
+    });
+
+    it('should getCursor returns correct cursor', () => {
+        inputComponent.getCursor().should.be.equal(tree.select('form', 'nested', 'field'));
+    });
+
+    it('should inValidationBox returns true', () => {
+        inputComponent.inValidationBox().should.be.true;
+    });
+
+    it('should isValid returns false for invalid input', (done) => {
+        formComponent.validate(null, () => {
+            inputComponent.isValid().should.be.false;
+            formComponent.isValid('nested.field').should.be.false;
+            done();
+        });
+    });
+
+    it('should isDirty returns false for pristine input', () => {
+        inputComponent.isDirty().should.be.false;
+    });
+
+    it('should changes cursor value correctly on change', () => {
+        const inputNode = ReactDOM.findDOMNode(inputComponent);
+        TestUtils.Simulate.change(inputNode, { target: { value: 'firth' } });
+
+        clock.tick(inputComponent.msToPoll + 1);
+        tree.get('form', 'nested', 'field').should.be.equal('firth');
+    });
+
+    it('should isValid returns true for valid input', (done) => {
+        formComponent.validate(() => {
+            inputComponent.isValid().should.be.true;
+            formComponent.isValid('nested.field').should.be.true;
+            done();
+        });
+    });
+
+    it('should isDirty returns false for dirty input', () => {
+        inputComponent.isDirty().should.be.true;
+    });
+
+    it('should setPristine makes pristine dirty input', () => {
+        inputComponent.setPristineState();
+        inputComponent.isDirty().should.be.false;
+        formComponent.isDirty('nested.field').should.be.false;
+    });
+
+    it('should setDirty makes dirty pristine input', () => {
+        inputComponent.setDirtyState();
+        inputComponent.isDirty().should.be.true;
+        formComponent.isDirty('nested.field').should.be.true;
+    });
+});

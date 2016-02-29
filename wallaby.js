@@ -41,5 +41,10 @@ module.exports = function (wallaby) {
 
             window.__moduleBundler.loadTests();
         },
+
+        delays: {
+            edit: 500,
+            run: 150,
+        },
     };
 };
