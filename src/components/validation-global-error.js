@@ -12,13 +12,13 @@ export default React.createClass({
         form: React.PropTypes.object.isRequired,
     },
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             globalErrorFieldName: '__all__',
         }
     },
 
-    render: function() {
+    render() {
         const form = this.context.form;
         // TODO: change fieldPath
         const fieldPath = ['attributes', this.props.globalErrorFieldName];

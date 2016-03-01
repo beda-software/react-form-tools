@@ -13,20 +13,21 @@ export default React.createClass({
         form: React.PropTypes.object.isRequired,
     },
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             disableIfInvalid: false,
         }
     },
 
-    render: function() {
+    render() {
         const disabled = !this.context.form.isValid();
 
         return (
-            <input type="submit"
-                   className={classNames(this.props.className, {_disabled: disabled})}
-                   disabled={this.props.disableIfInvalid && disabled}
-                   value={this.props.children} />
+            <input
+                type="submit"
+                className={classNames(this.props.className, {_disabled: disabled})}
+                disabled={this.props.disableIfInvalid && disabled}
+                value={this.props.children} />
         );
     },
 });

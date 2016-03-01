@@ -4,6 +4,7 @@
     "maximumLineLength": 120,
     "validateIndentation": 4,
     "esnext": true,
+    "requireEnhancedObjectLiterals": true,
     "validateQuoteMarks": {
         "mark": "'",
         "escape": true,

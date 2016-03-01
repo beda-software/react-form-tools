@@ -5,7 +5,7 @@
 react-form-tools
 =========
 
-Form validation and base form components for React+Baobab. 
+Form validation and base form components for React+Baobab.
 Based on [Baobab cursors](https://github.com/Yomguithereal/baobab).
 
 Form validation inspired by [react-validation-mixin](https://github.com/jurassix/react-validation-mixin).
@@ -13,9 +13,9 @@ Form validation inspired by [react-validation-mixin](https://github.com/jurassix
 ## Installation
 
   npm install baobab --save
-  
+
   npm install react-form-tools --save
-  
+
 ## Usage
 
 There are some useful components which provide flexible interface for validation and clever input.
@@ -37,7 +37,7 @@ React.createClass({
   validationSchema: yup.object().shape({
     field: yup.string().required(),
   }),
-  
+
   render: function () {
     return (
       <Form cursor={this.cursors.form} validationSchema={this.validationSchema}>
@@ -55,11 +55,11 @@ React.createClass({
 * **cursor** *cursor* - cursor to form data
 * **validationSchema** *object* - validation schema which uses with **strategy**
 * **strategy** *function* - validation strategy instance
-* **validateOnFly** *boolean* [`true`] - validate form on every change into form components  
-* **formStateCursor** *cursor* [`null`] - if `formStateCursor` is set to cursor, 
+* **validateOnFly** *boolean* [`true`] - validate form on every change into form components
+* **formStateCursor** *cursor* [`null`] - if `formStateCursor` is set to cursor,
 then this cursor will be used for storing `dirtyStates` and `errors`
 * **onSubmit(data)** *function* [`optional`] - callback of successful validation which will be called when user will submit form
-* **onInvalidSubmit(errors)** *function* [`optional`] - callback of unsuccessful validation which will be called when user will submit form 
+* **onInvalidSubmit(errors)** *function* [`optional`] - callback of unsuccessful validation which will be called when user will submit form
 
 #### Form API
 
@@ -69,10 +69,10 @@ Form API is available across refs. This methods are available in child context v
 * **isDirty(fieldPath)**
 * **getValidationErrors([fieldPath])**
 * **setDirtyState(fieldPath)**
-* **setPristineState(fieldPath)**             
+* **setPristineState(fieldPath)**
 
 ### Input
-  
+
 ```
 <Input cursor={this.cursors.form.select('field')} />
 ```
@@ -80,10 +80,11 @@ Form API is available across refs. This methods are available in child context v
 #### Input props
 
 * **cursor** *cursor* - cursor to input. Cursor must be set if Input is used outside ValidationBox
-* **nullable** *boolean* [`false`] - if `nullable` is set to true, then empty value will be converted to null  
+* **nullable** *boolean* [`false`] - if `nullable` is set to true, then empty value will be converted to null
 * **sync** *boolean* [`false`] - if `sync` is set to true, then synchronization will be applied on every change
 * **syncOnlyOnBlur** *boolean* [`false`] - if `syncOnlyOnBlur` is set to true, then synchronization will be applied only on blur
 * **onChange(value, previousValue)** *function* [`optional`] - callback which will be called on every change
+* **onSync(value, previousValue)** *function* [`optional`] - callback which will be called on every synchronization with cursor
 * **onBlur(event)** *function* [`optional`] - callback which will be called only on blur
 * **toRepresentation** *function* [`identity`] - function of transformation which is used for output
 * **toInternal** *function* [`identity`] - function of transformation which is used for inner storing

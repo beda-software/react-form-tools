@@ -16,13 +16,13 @@ export default React.createClass({
         alwaysShow: React.PropTypes.bool,
     },
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
             alwaysShow: false,
         };
     },
 
-    render: function() {
+    render() {
         const form = this.context.form;
 
         const error = form.getValidationErrors(this.props.fieldPath);

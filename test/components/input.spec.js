@@ -30,7 +30,7 @@ const FormWithOneInput = React.createClass({
         field: yup.string().required(),
     }),
 
-    render: function () {
+    render() {
         return (
             <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
                 <Input cursor={this.cursors.form.select('field')} ref="input" {...this.props.inputProps} />
@@ -56,7 +56,7 @@ const FormWithOneInputInValidationBox = React.createClass({
         }),
     }),
 
-    render: function () {
+    render() {
         return (
             <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
                 <ValidationBox fieldPath="nested.field">

@@ -22,13 +22,13 @@ export default React.createClass({
         fieldPath: React.PropTypes.array,
     },
 
-    getChildContext: function() {
+    getChildContext() {
         return {
             fieldPath: resolveFieldPath(this.props.fieldPath),
         };
     },
 
-    render: function() {
+    render() {
         const form = this.context.form;
         // TODO: use ValidationError instead of this code
         const error = form.getValidationErrors(this.props.fieldPath);

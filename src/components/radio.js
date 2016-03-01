@@ -8,7 +8,7 @@ export default React.createClass({
         cursor: BaobabPropTypes.cursor.isRequired,
     },
 
-    onChange: function() {
+    onChange() {
         const value = this.props.value;
 
         this.props.cursor.set(value);
@@ -18,16 +18,17 @@ export default React.createClass({
         }
     },
 
-    isChecked: function() {
+    isChecked() {
         return this.props.value == this.props.cursor.get();
     },
 
-    render: function() {
+    render() {
         return (
-          <input {...this.props}
-                 onChange={this.onChange}
-                 type="radio"
-                 checked={this.isChecked()} />
+          <input
+              {...this.props}
+              onChange={this.onChange}
+              type="radio"
+              checked={this.isChecked()} />
         );
     },
 });

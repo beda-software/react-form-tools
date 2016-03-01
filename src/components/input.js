@@ -31,13 +31,13 @@ export default React.createClass({
 
     selection: null,
 
-    getInitialState: function () {
+    getInitialState() {
         return {
             value: this.props.toInternal(this.getCursor().get()) || '',
         };
     },
 
-    getDefaultProps: function () {
+    getDefaultProps() {
         return {
             type: 'text',
             nullable: true,
@@ -49,80 +49,81 @@ export default React.createClass({
         };
     },
 
-    getCursor: function (props) {
+    getCursor(props, context) {
         props = props || this.props;
-        const cursor = props.cursor || this.context.form.cursor.select(this.context.fieldPath);
+        context = context || this.context;
 
-        if (!cursor) {
+        /* istanbul ignore next */
+        if (!props.cursor && !context.fieldPath) {
             throw 'react-form.tools Input: cursor must be set via `cursor` or ' +
                   'via higher order component ValidationBox with fieldPath';
         }
 
-        return cursor;
+        return props.cursor || context.form.cursor.select(context.fieldPath);
     },
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps, nextContext) {
         if (this.deferredSyncTimer) {
             // Does not set state when component received props while user inputs
             return;
         }
 
         this.setState({
-            value: this.props.toInternal(this.getCursor(nextProps).get()),
+            value: this.props.toInternal(this.getCursor(nextProps, nextContext).get()),
         });
     },
 
-    componentDidMount: function () {
+    componentDidMount() {
         if (this.props.autoFocus) {
             setTimeout(() => ReactDOM.findDOMNode(this.refs.input).focus(), 0);
         }
     },
 
-    componentWillUnmount: function () {
+    componentWillUnmount() {
         this.clearDeferredSyncTimer();
     },
 
-    inValidationBox: function () {
+    inValidationBox() {
         return !!(this.context.form && this.context.fieldPath);
     },
 
-    setDirtyState: function () {
+    setDirtyState() {
         if (this.inValidationBox()) {
             this.context.form.setDirtyState(this.context.fieldPath);
         }
     },
 
-    setPristineState: function () {
+    setPristineState() {
         if (this.inValidationBox()) {
             this.context.form.setPristineState(this.context.fieldPath);
         }
     },
 
-    isDirty: function () {
+    isDirty() {
         if (this.inValidationBox()) {
             return this.context.form.isDirty(this.context.fieldPath);
         }
     },
 
-    isValid: function () {
+    isValid() {
         if (this.inValidationBox()) {
             return this.context.form.isValid(this.context.fieldPath);
         }
     },
 
-    clearDeferredSyncTimer: function () {
+    clearDeferredSyncTimer() {
         if (this.deferredSyncTimer) {
             clearTimeout(this.deferredSyncTimer);
             this.deferredSyncTimer = null;
         }
     },
 
-    deferredSyncValue: function () {
+    deferredSyncValue() {
         this.clearDeferredSyncTimer();
         this.deferredSyncTimer = setTimeout(this.syncValue, this.msToPoll);
     },
 
-    syncValue: function () {
+    syncValue() {
         const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
         const previousValue = this.getCursor().get();
 
@@ -137,7 +138,7 @@ export default React.createClass({
         setTimeout(() => this.props.onSync(value, previousValue), 0);
     },
 
-    setValue: function (value, forceSync=false) {
+    setValue(value, forceSync=false) {
         this.setState({ value }, function () {
             if (this.props.sync || forceSync) {
                 this.syncValue();
@@ -150,7 +151,7 @@ export default React.createClass({
         });
     },
 
-    onChange: function (evt) {
+    onChange(evt) {
         const value = this.props.toInternal(evt.target.value);
         const previousValue = this.state.value;
 
@@ -162,7 +163,7 @@ export default React.createClass({
         this.props.onChange(value, previousValue);
     },
 
-    onBlur: function (evt) {
+    onBlur(evt) {
         const value = this.props.toInternal(evt.target.value);
 
         // Prevent future updates
@@ -175,7 +176,7 @@ export default React.createClass({
         setTimeout(() => this.props.onBlur(evt), 0);
     },
 
-    render: function () {
+    render() {
         const props = {
             value: this.props.toRepresentation(this.state.value),
             onChange: this.onChange,

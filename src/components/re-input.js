@@ -10,18 +10,19 @@ export default React.createClass({
         skip: React.PropTypes.string.isRequired,
     },
 
-    toInternal: function(value) {
+    toInternal(value) {
         const regexp = new RegExp(this.props.skip, 'g');
 
         return String(value).replace(regexp, '');
     },
 
-    render: function() {
+    render() {
         return (
-          <Input type="text"
-                 toInternal={this.toInternal}
-                 toRepresentation={this.toInternal}
-                 {...this.props} />
+            <Input
+                type="text"
+                toInternal={this.toInternal}
+                toRepresentation={this.toInternal}
+                {...this.props} />
         );
     },
 });
