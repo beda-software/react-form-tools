@@ -5,7 +5,7 @@ export default React.createClass({
     displayName: 'Submit',
 
     propTypes: {
-        className: React.PropTypes.string.isRequired,
+        className: React.PropTypes.string,
         disableIfInvalid: React.PropTypes.bool,
     },
 
@@ -16,7 +16,7 @@ export default React.createClass({
     getDefaultProps() {
         return {
             disableIfInvalid: false,
-        }
+        };
     },
 
     render() {
@@ -25,9 +25,9 @@ export default React.createClass({
         return (
             <input
                 type="submit"
-                className={classNames(this.props.className, {_disabled: disabled})}
+                className={classNames(this.props.className, { _disabled: disabled })}
                 disabled={this.props.disableIfInvalid && disabled}
-                value={this.props.children} />
+                value={this.props.children}/>
         );
     },
 });

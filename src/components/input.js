@@ -3,11 +3,12 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
+import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'Input',
 
-    mixins: [PureRenderMixin],
+    mixins: [PureRenderMixin, FormComponentMixin],
 
     propTypes: {
         cursor: BaobabPropTypes.cursor,
@@ -20,16 +21,9 @@ export default React.createClass({
         toRepresentation: React.PropTypes.func,
     },
 
-    contextTypes: {
-        form: React.PropTypes.object,
-        fieldPath: React.PropTypes.array,
-    },
-
     deferredSyncTimer: null,
 
     msToPoll: 200,
-
-    selection: null,
 
     getInitialState() {
         return {
@@ -46,20 +40,8 @@ export default React.createClass({
             onBlur: _.identity,
             onChange: _.identity,
             onSync: _.identity,
+            sync: false,
         };
-    },
-
-    getCursor(props, context) {
-        props = props || this.props;
-        context = context || this.context;
-
-        /* istanbul ignore next */
-        if (!props.cursor && !context.fieldPath) {
-            throw 'react-form.tools Input: cursor must be set via `cursor` or ' +
-                  'via higher order component ValidationBox with fieldPath';
-        }
-
-        return props.cursor || context.form.cursor.select(context.fieldPath);
     },
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -81,34 +63,6 @@ export default React.createClass({
 
     componentWillUnmount() {
         this.clearDeferredSyncTimer();
-    },
-
-    inValidationBox() {
-        return !!(this.context.form && this.context.fieldPath);
-    },
-
-    setDirtyState() {
-        if (this.inValidationBox()) {
-            this.context.form.setDirtyState(this.context.fieldPath);
-        }
-    },
-
-    setPristineState() {
-        if (this.inValidationBox()) {
-            this.context.form.setPristineState(this.context.fieldPath);
-        }
-    },
-
-    isDirty() {
-        if (this.inValidationBox()) {
-            return this.context.form.isDirty(this.context.fieldPath);
-        }
-    },
-
-    isValid() {
-        if (this.inValidationBox()) {
-            return this.context.form.isValid(this.context.fieldPath);
-        }
     },
 
     clearDeferredSyncTimer() {
@@ -184,9 +138,13 @@ export default React.createClass({
         };
 
         if (this.props.type == 'textarea') {
-            return <textarea {...this.props} {...props} ref="input" />;
+            return (
+                <textarea {...this.props} {...props} ref="input" />
+            );
         }
 
-        return <input type={this.props.type} {...this.props} {...props} ref="input" />;
+        return (
+            <input type={this.props.type} {...this.props} {...props} ref="input" />
+        );
     },
 });

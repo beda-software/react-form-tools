@@ -1,7 +1,7 @@
 import React from 'react';
 import yup from 'yup';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
-import {Form, ValidationBox, Input, Submit} from 'react-form-tools';
+import {Form, ValidationBox, Input, Radio, CheckBox, Submit} from 'react-form-tools';
 
 export default React.createClass({
     mixins: [SchemaBranchMixin],
@@ -35,15 +35,15 @@ export default React.createClass({
                 <div>
                     <ValidationBox fieldPath="fieldRadioInput">
                         <label>
-                            <Input type="radio" value="1" />
+                            <Radio value="1" />
                             1
                         </label>
                         <label>
-                            <Input type="radio" value="2" />
+                            <Radio value="2" />
                             2
                         </label>
                         <label>
-                            <Input type="radio" value="3" />
+                            <Radio value="3" />
                             3
                         </label>
                     </ValidationBox>
@@ -51,7 +51,7 @@ export default React.createClass({
 
                 <div>
                     <ValidationBox fieldPath="fieldCheckBoxInput">
-                        <Input type="checkbox" value={true} />
+                        <CheckBox value={true} /> Agree
                     </ValidationBox>
                 </div>
                 <div>
