@@ -386,6 +386,7 @@ describe('Input inside ValidationBox', () => {
     });
 
     it('should isValid returns false for invalid input', (done) => {
+        clock.restore();
         formComponent.validate(null, () => {
             inputComponent.isValid().should.be.false;
             formComponent.isValid('nested.field').should.be.false;
@@ -406,6 +407,7 @@ describe('Input inside ValidationBox', () => {
     });
 
     it('should isValid returns true for valid input', (done) => {
+        clock.restore();
         formComponent.validate(() => {
             inputComponent.isValid().should.be.true;
             formComponent.isValid('nested.field').should.be.true;

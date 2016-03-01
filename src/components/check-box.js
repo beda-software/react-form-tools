@@ -1,6 +1,5 @@
 import React from 'react';
 import BaobabPropTypes from 'baobab-prop-types';
-import { getNameFromFieldPath } from '../utils';
 import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
@@ -49,7 +48,6 @@ export default React.createClass({
             type: 'checkbox',
             onChange: this.onChange,
             checked: this.isChecked(),
-            name: this.props.name || getNameFromFieldPath(this.props.fieldPath),
         };
 
         return (

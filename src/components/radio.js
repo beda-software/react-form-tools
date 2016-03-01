@@ -1,7 +1,6 @@
 import React from 'react';
 import BaobabPropTypes from 'baobab-prop-types';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import { getNameFromFieldPath } from '../utils';
 import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
