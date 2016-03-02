@@ -58,21 +58,21 @@ Object.defineProperty(exports, 'ValidationError', {
   }
 });
 
-var _validationGlobalError = require('./validation-global-error');
-
-Object.defineProperty(exports, 'ValidationGlobalError', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_validationGlobalError).default;
-  }
-});
-
 var _form = require('./form');
 
 Object.defineProperty(exports, 'Form', {
   enumerable: true,
   get: function get() {
     return _interopRequireDefault(_form).default;
+  }
+});
+
+var _checkBox = require('./check-box');
+
+Object.defineProperty(exports, 'CheckBox', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_checkBox).default;
   }
 });
 

@@ -18,7 +18,7 @@ exports.default = _react2.default.createClass({
     displayName: 'Submit',
 
     propTypes: {
-        className: _react2.default.PropTypes.string.isRequired,
+        className: _react2.default.PropTypes.string,
         disableIfInvalid: _react2.default.PropTypes.bool
     },
 
@@ -31,11 +31,11 @@ exports.default = _react2.default.createClass({
             disableIfInvalid: false
         };
     },
-
     render: function render() {
         var disabled = !this.context.form.isValid();
 
-        return _react2.default.createElement('input', { type: 'submit',
+        return _react2.default.createElement('input', {
+            type: 'submit',
             className: (0, _classnames2.default)(this.props.className, { _disabled: disabled }),
             disabled: this.props.disableIfInvalid && disabled,
             value: this.props.children });

@@ -33,9 +33,9 @@ exports.default = _react2.default.createClass({
 
         return String(value).replace(regexp, '');
     },
-
     render: function render() {
-        return _react2.default.createElement(_input2.default, _extends({ type: 'text',
+        return _react2.default.createElement(_input2.default, _extends({
+            type: 'text',
             toInternal: this.toInternal,
             toRepresentation: this.toInternal
         }, this.props));

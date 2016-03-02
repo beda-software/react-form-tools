@@ -48,7 +48,6 @@ exports.default = _react2.default.createClass({
             onInvalidSubmit: _lodash2.default.identity
         };
     },
-
     getChildContext: function getChildContext() {
         return {
             form: {
@@ -61,30 +60,28 @@ exports.default = _react2.default.createClass({
             }
         };
     },
-
     getInitialState: function getInitialState() {
         if (this.props.formStateCursor) {
             return {};
         }
+
         return {
             errors: {},
             dirtyStates: {}
         };
     },
-
     componentDidMount: function componentDidMount() {
         if (this.props.validateOnFly) {
             this.props.cursor.on('update', this.onUpdate);
         }
+
         this.validate();
     },
-
     componentWillUnmount: function componentWillUnmount() {
         if (this.props.validateOnFly) {
             this.props.cursor.off('update', this.onUpdate);
         }
     },
-
     render: function render() {
         return _react2.default.createElement(
             'form',
@@ -92,7 +89,6 @@ exports.default = _react2.default.createClass({
             this.props.children
         );
     },
-
     setFormState: function setFormState(nextState) {
         if (this.props.formStateCursor) {
             this.props.formStateCursor.merge(nextState);
@@ -100,27 +96,23 @@ exports.default = _react2.default.createClass({
             this.setState(nextState);
         }
     },
-
     getFormState: function getFormState() {
         if (this.props.formStateCursor) {
             return this.props.formStateCursor.get();
         }
+
         return this.state;
     },
-
     onFormSubmit: function onFormSubmit(evt) {
         evt.preventDefault();
         this.submit();
     },
-
     onUpdate: function onUpdate() {
         this.validate();
     },
-
     submit: function submit() {
         this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
     },
-
     validate: function validate(successCallback, errorCallback) {
         var _this = this;
 
@@ -137,52 +129,45 @@ exports.default = _react2.default.createClass({
             }
         });
     },
-
     getValidationErrors: function getValidationErrors(fieldPath) {
         var formState = this.getFormState();
         if (fieldPath) {
             return _lodash2.default.get(formState.errors, fieldPath);
         }
+
         return formState.errors;
     },
-
     isValid: function isValid(fieldPath) {
         var formState = this.getFormState();
         if (fieldPath) {
             return !_lodash2.default.get(formState.errors, fieldPath);
         }
+
         return _lodash2.default.isEmpty(formState.errors);
     },
-
     isDirty: function isDirty(fieldPath) {
         var formState = this.getFormState();
         return !!_lodash2.default.get(formState.dirtyStates, fieldPath);
     },
-
     resetDirtyStates: function resetDirtyStates() {
         this.setFormState({
             dirtyStates: {}
         });
     },
-
     resetValidationErrors: function resetValidationErrors() {
         this.setValidationErrors({});
     },
-
     setValidationErrors: function setValidationErrors(errors) {
         this.setFormState({
             errors: errors
         });
     },
-
     setDirtyState: function setDirtyState(fieldPath) {
         this.updateDirtyState(fieldPath, true);
     },
-
     setPristineState: function setPristineState(fieldPath) {
         this.updateDirtyState(fieldPath, false);
     },
-
     updateDirtyState: function updateDirtyState(fieldPath, dirtyState) {
         if (this.isDirty(fieldPath) === dirtyState) {
             return;

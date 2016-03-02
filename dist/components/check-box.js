@@ -14,35 +14,34 @@ var _baobabPropTypes = require('baobab-prop-types');
 
 var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
 
-var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
-
-var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
-
 var _mixins = require('../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
-    displayName: 'Radio',
+    displayName: 'CheckBox',
 
     mixins: [_mixins.FormComponentMixin],
 
     propTypes: {
         value: _react2.default.PropTypes.any,
+        uncheckedValue: _react2.default.PropTypes.any,
         cursor: _baobabPropTypes2.default.cursor,
         onChange: _react2.default.PropTypes.func
     },
 
     getDefaultProps: function getDefaultProps() {
         return {
-            onChange: _.identity
+            onChange: _.identity,
+            value: true,
+            uncheckedValue: false
         };
     },
-    onChange: function onChange() {
+    onChange: function onChange(event) {
         var _this = this;
 
         var cursor = this.getCursor();
-        var value = this.props.value;
+        var value = event.target.checked ? this.props.value : this.props.uncheckedValue;
         var previousValue = cursor.get();
 
         if (value === previousValue) {
@@ -59,14 +58,9 @@ exports.default = _react2.default.createClass({
     isChecked: function isChecked() {
         return _.isEqual(this.props.value, this.getCursor().get());
     },
-    shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState, nextContext) {
-        var value = this.getCursor(nextProps, nextContext).get();
-
-        return !_.isEqual(this.props.value, value) || _reactAddonsPureRenderMixin2.default.shouldComponentUpdate.bind(this, nextProps, nextState);
-    },
     render: function render() {
         var props = {
-            type: 'radio',
+            type: 'checkbox',
             onChange: this.onChange,
             checked: this.isChecked()
         };
