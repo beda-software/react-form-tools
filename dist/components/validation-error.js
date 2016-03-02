@@ -41,7 +41,6 @@ exports.default = _react2.default.createClass({
         var className = (0, _classnames2.default)(this.props.className, {
             _dirty: isDirty
         });
-
         if (isValid || !this.props.alwaysShow && !isDirty) {
             return null;
         }

@@ -65,7 +65,7 @@ exports.default = _react2.default.createClass({
             this.props.children,
             isDirty || this.props.alwaysShowError ? _react2.default.createElement(
                 'div',
-                { className: this.props.className + '-msg' },
+                { className: 'validationbox-error-message' },
                 error
             ) : null
         );
