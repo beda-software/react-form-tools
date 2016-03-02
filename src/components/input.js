@@ -1,130 +1,150 @@
-import React from 'react'
+import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
+import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
-  displayName: 'Input',
+    displayName: 'Input',
 
-  mixins: [PureRenderMixin],
+    mixins: [PureRenderMixin, FormComponentMixin],
 
-  propTypes: {
-    onChange: React.PropTypes.func,
-    onBlur: React.PropTypes.func,
-    cursor: BaobabPropTypes.cursor.isRequired,
-    sync: React.PropTypes.bool,
-    syncOnlyOnBlur: React.PropTypes.bool,
-    autoFocus: React.PropTypes.bool
-  },
+    propTypes: {
+        cursor: BaobabPropTypes.cursor,
+        onChange: React.PropTypes.func,
+        onBlur: React.PropTypes.func,
+        sync: React.PropTypes.bool,
+        syncOnlyOnBlur: React.PropTypes.bool,
+        autoFocus: React.PropTypes.bool,
+        toInternal: React.PropTypes.func,
+        toRepresentation: React.PropTypes.func,
+    },
 
-  updateTimer: null,
+    deferredSyncTimer: null,
 
-  msToPoll: 200,
+    msToPoll: 200,
 
-  getInitialState: function () {
-    return {
-      value: this.props.toInternal(this.props.cursor.get())
-    }
-  },
+    getInitialState() {
+        return {
+            value: this.props.toInternal(this.getCursor().get()) || '',
+        };
+    },
 
-  getDefaultProps: function () {
-    return {
-      type: "text",
-      toInternal: x => x,
-      toRepresentation: x => x,
-      onBlur: _.identity,
-      onChange: _.identity
-    };
-  },
+    getDefaultProps() {
+        return {
+            type: 'text',
+            nullable: true,
+            toInternal: _.identity,
+            toRepresentation: _.identity,
+            onBlur: _.identity,
+            onChange: _.identity,
+            onSync: _.identity,
+            sync: false,
+        };
+    },
 
-  componentWillReceiveProps (nextProps) {
-    if (this.updateTimer) {
-      // Does not set state when component received props while user inputs
-      return;
-    }
-    this.setState({
-      value: this.props.toInternal(nextProps.cursor.get())
-    });
-  },
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (this.deferredSyncTimer) {
+            // Does not set state when component received props while user inputs
+            return;
+        }
 
-  componentDidMount: function () {
-    if (this.props.autoFocus) {
-      setTimeout(() => ReactDOM.findDOMNode(this.refs.input).focus(), 0);
-    }
-  },
+        this.setState({
+            value: this.props.toInternal(this.getCursor(nextProps, nextContext).get()),
+        });
+    },
 
-  componentWillUnmount: function () {
-    this.clearUpdateTimer();
-  },
+    componentDidMount() {
+        if (this.props.autoFocus) {
+            setTimeout(() => ReactDOM.findDOMNode(this.refs.input).focus(), 0);
+        }
+    },
 
-  clearUpdateTimer: function () {
-    if (this.updateTimer) {
-      clearTimeout(this.updateTimer);
-      this.updateTimer = null;
-    }
-  },
+    componentWillUnmount() {
+        this.clearDeferredSyncTimer();
+    },
 
-  setUpdateTimer: function () {
-    this.clearUpdateTimer();
-    this.updateTimer = setTimeout(this.syncValue, this.msToPoll);
-  },
+    clearDeferredSyncTimer() {
+        if (this.deferredSyncTimer) {
+            clearTimeout(this.deferredSyncTimer);
+            this.deferredSyncTimer = null;
+        }
+    },
 
-  syncValue: function () {
-    const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
-    const previousValue = this.props.cursor.get();
+    deferredSyncValue() {
+        this.clearDeferredSyncTimer();
+        this.deferredSyncTimer = setTimeout(this.syncValue, this.msToPoll);
+    },
 
-    if (value === previousValue) {
-      return;
-    }
+    syncValue() {
+        const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
+        const previousValue = this.getCursor().get();
 
-    this.props.cursor.set(value);
+        if (value === previousValue) {
+            return;
+        }
 
-    // Wait for next frame
-    setTimeout(() => this.props.onChange(value, previousValue), 0);
-  },
+        this.getCursor().set(value);
+        this.setDirtyState();
 
-  setValue: function (rawValue, forceSync=false) {
-    const value = this.props.toInternal(rawValue);
+        // Wait for next frame
+        setTimeout(() => this.props.onSync(value, previousValue), 0);
+    },
 
-    this.setState({value}, function () {
-      if (this.props.sync || forceSync) {
-        this.syncValue();
-        return;
-      }
-      if (!this.props.syncOnlyOnBlur) {
-        this.setUpdateTimer();
-      }
-    });
-  },
+    setValue(value, forceSync=false) {
+        this.setState({ value }, function () {
+            if (this.props.sync || forceSync) {
+                this.syncValue();
+                return;
+            }
 
-  onChange: function (evt) {
-    this.setValue(evt.target.value);
-  },
+            if (!this.props.syncOnlyOnBlur) {
+                this.deferredSyncValue();
+            }
+        });
+    },
 
-  onBlur: function (evt) {
-    // Prevent future updates
-    this.clearUpdateTimer();
+    onChange(evt) {
+        const value = this.props.toInternal(evt.target.value);
+        const previousValue = this.state.value;
 
-    // Set inner state value and force synchronization
-    this.setValue(evt.target.value, true);
+        if (value === previousValue) {
+            return;
+        }
 
-    // Wait for next frame
-    setTimeout(() => this.props.onBlur(evt), 0);
-  },
+        this.setValue(value);
+        this.props.onChange(value, previousValue);
+    },
 
+    onBlur(evt) {
+        const value = this.props.toInternal(evt.target.value);
 
-  render: function () {
-    const props = {
-      value: this.props.toRepresentation(this.state.value),
-      onChange: this.onChange,
-      onBlur: this.onBlur
-    };
+        // Prevent future updates
+        this.clearDeferredSyncTimer();
 
-    if (this.props.type == 'textarea') {
-      return <textarea {...this.props} {...props} ref="input" />
-    } else {
-      return <input type={this.props.type} {...this.props} {...props} ref="input" />;
-    }
-  }
+        // Set inner state value and force synchronization
+        this.setValue(value, true);
+
+        // Wait for next frame
+        setTimeout(() => this.props.onBlur(evt), 0);
+    },
+
+    render() {
+        const props = {
+            value: this.props.toRepresentation(this.state.value),
+            onChange: this.onChange,
+            onBlur: this.onBlur,
+        };
+
+        if (this.props.type == 'textarea') {
+            return (
+                <textarea {...this.props} {...props} ref="input" />
+            );
+        }
+
+        return (
+            <input type={this.props.type} {...this.props} {...props} ref="input" />
+        );
+    },
 });

@@ -1,5 +1,6 @@
+/examples/form-example/assets
+/examples/form-example/node_modules
 coverage/
 node_modules/
-dist/
 .idea/
 .coveralls.yml

@@ -1,15 +1,15 @@
 import React from 'react';
 import BaobabPropTypes from 'baobab-prop-types';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
-    displayName: 'Radio',
+    displayName: 'CheckBox',
 
     mixins: [FormComponentMixin],
 
     propTypes: {
         value: React.PropTypes.any,
+        uncheckedValue: React.PropTypes.any,
         cursor: BaobabPropTypes.cursor,
         onChange: React.PropTypes.func,
     },
@@ -17,12 +17,14 @@ export default React.createClass({
     getDefaultProps() {
         return {
             onChange: _.identity,
+            value: true,
+            uncheckedValue: false,
         };
     },
 
-    onChange() {
+    onChange(event) {
         const cursor = this.getCursor();
-        const value = this.props.value;
+        const value = event.target.checked ? this.props.value : this.props.uncheckedValue;
         const previousValue = cursor.get();
 
         if (value === previousValue) {
@@ -41,16 +43,9 @@ export default React.createClass({
         return _.isEqual(this.props.value, this.getCursor().get());
     },
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        const value = this.getCursor(nextProps, nextContext).get();
-
-        return !_.isEqual(this.props.value, value) ||
-            PureRenderMixin.shouldComponentUpdate.bind(this, nextProps, nextState);
-    },
-
     render() {
         const props = {
-            type: 'radio',
+            type: 'checkbox',
             onChange: this.onChange,
             checked: this.isChecked(),
         };

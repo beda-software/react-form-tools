@@ -1,9 +1,10 @@
 {
   "name": "react-form-tools",
-  "version": "1.0.16",
+  "version": "2.0.0",
   "description": "Form components with validation for React + Baobab",
   "main": "./dist/index.js",
   "scripts": {
+    "test-dev": "karma start karma.conf.js",
     "test": "karma start karma.conf.js --single-run",
     "compile": "babel --presets es2015,react --out-dir dist ./src",
     "prepublish": "npm run compile"
@@ -36,6 +37,7 @@
     "baobab-react": "^1.0.1",
     "baobab-react-schemabranchmixin": "^1.0.6",
     "chai": "^3.4.1",
+    "imports-loader": "^0.6.5",
     "isparta-loader": "^2.0.0",
     "karma": "^0.13.19",
     "karma-chai": "^0.1.0",
@@ -44,12 +46,17 @@
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-phantomjs-shim": "^1.1.2",
+    "karma-sinon": "^1.0.4",
+    "karma-sinon-chai": "^1.2.0",
     "karma-webpack": "^1.7.0",
+    "lolex": "^1.4.0",
     "mocha": "^2.3.4",
     "phantomjs": "^1.9.17",
     "react": "^0.14.6",
     "react-addons-test-utils": "^0.14.1",
     "react-dom": "^0.14.6",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0",
     "webpack": "^1.12.11"
   },
   "peerDependencies": {
