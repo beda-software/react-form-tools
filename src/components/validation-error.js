@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 export default React.createClass({
     displayName: 'ValidationError',
@@ -28,13 +29,16 @@ export default React.createClass({
         const error = form.getValidationErrors(this.props.fieldPath);
         const isValid = !error;
         const isDirty = form.isDirty(this.props.fieldPath);
+        const className = classNames(this.props.className, {
+            _dirty: isDirty,
+        });
 
         if (isValid || !this.props.alwaysShow && !isDirty) {
             return null;
         }
 
         return (
-            <div className={this.props.className}>
+            <div className={className}>
                 {error}
             </div>
         );

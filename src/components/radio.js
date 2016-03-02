@@ -11,10 +11,7 @@ export default React.createClass({
     propTypes: {
         value: React.PropTypes.any,
         cursor: BaobabPropTypes.cursor,
-    },
-
-    contextTypes: {
-        fieldPath: React.PropTypes.array,
+        onChange: React.PropTypes.func,
     },
 
     getDefaultProps() {
@@ -23,9 +20,9 @@ export default React.createClass({
         };
     },
 
-    onChange(event) {
+    onChange() {
         const cursor = this.getCursor();
-        const value = event.target.value;
+        const value = this.props.value;
         const previousValue = cursor.get();
 
         if (value === previousValue) {
@@ -41,13 +38,14 @@ export default React.createClass({
     },
 
     isChecked() {
-        return this.props.value === this.getCursor().get();
+        return _.isEqual(this.props.value, this.getCursor().get());
     },
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
         const value = this.getCursor(nextProps, nextContext).get();
 
-        return this.props.value !== value || PureRenderMixin.shouldComponentUpdate.bind(this, nextProps, nextState);
+        return !_.isEqual(this.props.value, value) ||
+            PureRenderMixin.shouldComponentUpdate.bind(this, nextProps, nextState);
     },
 
     render() {

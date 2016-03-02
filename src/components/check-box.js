@@ -9,22 +9,22 @@ export default React.createClass({
 
     propTypes: {
         value: React.PropTypes.any,
+        uncheckedValue: React.PropTypes.any,
         cursor: BaobabPropTypes.cursor,
-    },
-
-    contextTypes: {
-        fieldPath: React.PropTypes.array,
+        onChange: React.PropTypes.func,
     },
 
     getDefaultProps() {
         return {
             onChange: _.identity,
+            value: true,
+            uncheckedValue: false,
         };
     },
 
     onChange(event) {
         const cursor = this.getCursor();
-        const value = event.target.checked;
+        const value = event.target.checked ? this.props.value : this.props.uncheckedValue;
         const previousValue = cursor.get();
 
         if (value === previousValue) {
@@ -40,7 +40,7 @@ export default React.createClass({
     },
 
     isChecked() {
-        return !!this.getCursor().get();
+        return _.isEqual(this.props.value, this.getCursor().get());
     },
 
     render() {

@@ -58,8 +58,6 @@ export default React.createClass({
                     <Submit>Submit</Submit>
                 </div>
 
-
-
                 <div>
                     Form tree:
                     <pre>

@@ -22,7 +22,7 @@
     "express": "^4.13.4",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
-    "react-form-tools": "file:///home/badim/work/react-form-tools",
+    "react-form-tools": "../..",
     "webpack-livereload-plugin": "^0.6.0",
     "yup": "^0.14.1",
     "yup-validation-strategy": "^1.2.0"

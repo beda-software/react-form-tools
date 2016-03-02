@@ -91,14 +91,80 @@ Form API is available across refs. This methods are available in child context v
 
 And other html input props also available such as `autoFocus`, `readOnly` and etc.
 
-#### Input API
+### ValidationBox
 
-Input API is available across refs. Use this methods only if Input is inside ValidationBox.
+```
+<ValidationBox fieldPath="path.to.field">
+    <AnyFormComponent />
+</ValidationBox>
+```
 
-* **isDirty()**
-* **isValid()**
-* **setDirtyState()**
-* **setPristineState()**
+Any component can be used inside ValidationBox. When you use Component inside ValidationBox, component will use cursor
+from fieldPath is cursor is not set.
+If component inside ValidationBox is dirty, ValidationBox will have a class '_dirty'
+
+#### ValidationBox props
+
+* **alwaysShow** *boolean* [`false`] - is `alwaysShow` if set to true, error will be showed even if component is dirty
+
+### ValidationError
+
+```
+<ValidationError fieldPath="path.to.field" />
+```
+
+If component inside ValidationBox is dirty, ValidationError will have a class '_dirty'
+
+#### ValidationError Props
+
+* **alwaysShow** *boolean* [`false`] - is `alwaysShow` if set to true, error will be showed even if component is dirty
+
+### Radio
+
+```
+<ValidationBox fieldPath="path.to.field">
+    <Radio value={1} />
+    <Radio value={2} />
+    <Radio value={3} />
+</ValidationBox>
+```
+
+### CheckBox
+
+```
+<CheckBox value={1} cursor={this.cursors.field} />
+```
+
+### Submit
+
+```
+<Submit>
+    Submit
+</Submit>
+```
+
+If form is invalid, button will have a class '_disabled'
+
+#### Submit props
+
+* **disableIfInvalid** *boolean* [`false`] - if `disableIfInvalid` is set to true, button will be disabled
+
+### Own Form component
+
+For creating own component you can use FormComponentMixin from this package.
+`import { FormComponentMixin } from 'react-form-tools';`
+
+FormComponentMixin provides next useful methods:
+* **inValidationBox()** - returns true if component inside ValidationBox
+* **getCursor()** - returns current cursor of component
+* **isValid()** - returns true if component has valid value
+* **isDirty()** - returns true if component is dirty
+* **setDirtyState()** - set dirty state for component
+* **setPristineState()** - set pristine state for component
+
+### All Form Components API
+
+All components have FormComponentMixin, and all methods from mixin are available across refs.
 
 ## Tests
 
