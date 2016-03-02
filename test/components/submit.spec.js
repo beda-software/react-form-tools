@@ -59,7 +59,7 @@ describe('Submit', () => {
         tree.set(treeState);
     });
 
-    it('should has class _disabled for invalid form', (done) => {
+    it('should has a class _disabled for invalid form', (done) => {
         formComponent.validate(null, () => {
             const submitNode = ReactDOM.findDOMNode(submitComponent);
             formComponent.isValid().should.be.false;
@@ -69,7 +69,7 @@ describe('Submit', () => {
         });
     });
 
-    it('should does not have class _disabled for invalid form', (done) => {
+    it('should does not have a class _disabled for invalid form', (done) => {
         tree.set(['form', 'field'], 'value');
         formComponent.validate(() => {
             formComponent.isValid().should.be.true;

@@ -32,7 +32,6 @@ export default React.createClass({
         const className = classNames(this.props.className, {
             _dirty: isDirty,
         });
-
         if (isValid || !this.props.alwaysShow && !isDirty) {
             return null;
         }
