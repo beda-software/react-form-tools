@@ -5,7 +5,7 @@ import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import BaobabPropTypes from 'baobab-prop-types';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import {Form} from '../../src/components';
+import {Form, Submit} from '../../src/components';
 import {Root} from '../utils';
 
 const tree = new Baobab(
@@ -33,7 +33,7 @@ const FormComponentFactory = (formProps) => {
             formState: {},
         },
 
-        render: function () {
+        render() {
             return (
                 <Form cursor={this.cursors.form} ref="form" {...formProps}>
                     <input type="submit" className="submit" />

@@ -49,7 +49,7 @@ export default React.createClass({
             <div className={className}>
                 {this.props.children}
                 {isDirty || this.props.alwaysShowError ? (
-                    <div className={this.props.className + '-msg'}>
+                    <div className="validationbox-error-message">
                         {error}
                     </div>
                 ) : null}
