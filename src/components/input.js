@@ -34,7 +34,7 @@ export default React.createClass({
     getDefaultProps() {
         return {
             type: 'text',
-            nullable: true,
+            nullable: false,
             toInternal: _.identity,
             toRepresentation: _.identity,
             onBlur: _.identity,

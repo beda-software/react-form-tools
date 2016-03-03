@@ -47,7 +47,7 @@ export default React.createClass({
         });
 
         return (
-            <div className={className} dataFieldPath={getFieldPathAsString(fieldPath)}>
+            <div className={className} data-field-path={getFieldPathAsString(fieldPath)}>
                 {this.props.children}
                 {isDirty || this.props.alwaysShowError ? (
                     <div className="validationbox-error-message">
