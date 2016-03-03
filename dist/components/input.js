@@ -58,7 +58,7 @@ exports.default = _react2.default.createClass({
     getDefaultProps: function getDefaultProps() {
         return {
             type: 'text',
-            nullable: true,
+            nullable: false,
             toInternal: _lodash2.default.identity,
             toRepresentation: _lodash2.default.identity,
             onBlur: _lodash2.default.identity,

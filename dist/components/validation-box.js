@@ -62,7 +62,7 @@ exports.default = _react2.default.createClass({
 
         return _react2.default.createElement(
             'div',
-            { className: className, dataFieldPath: (0, _utils.getFieldPathAsString)(fieldPath) },
+            { className: className, 'data-field-path': (0, _utils.getFieldPathAsString)(fieldPath) },
             this.props.children,
             isDirty || this.props.alwaysShowError ? _react2.default.createElement(
                 'div',
