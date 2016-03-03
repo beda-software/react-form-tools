@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1
+* ValidationBox: Added dataFieldPath attribute
+
 ## 2.0.0
 * Form: Added formStateCursor for more flexible form state manipulation (#3)
 * Form: Added dynamic validationScheme (#4). validationScheme may be object or function
