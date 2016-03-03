@@ -50,9 +50,10 @@ exports.default = _react2.default.createClass({
         };
     },
     render: function render() {
+        var fieldPath = this.props.fieldPath;
         var form = this.context.form;
-        var error = form.getValidationErrors(this.props.fieldPath);
-        var isDirty = form.isDirty(this.props.fieldPath);
+        var error = form.getValidationErrors(fieldPath);
+        var isDirty = form.isDirty(fieldPath);
         var isValid = !error;
         var className = (0, _classnames2.default)(this.props.className, {
             _dirty: isDirty,
@@ -61,7 +62,7 @@ exports.default = _react2.default.createClass({
 
         return _react2.default.createElement(
             'div',
-            { className: className },
+            { className: className, dataFieldPath: (0, _utils.getFieldPathAsString)(fieldPath) },
             this.props.children,
             isDirty || this.props.alwaysShowError ? _react2.default.createElement(
                 'div',

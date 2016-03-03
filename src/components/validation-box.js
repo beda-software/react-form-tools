@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import BaobabPropTypes from 'baobab-prop-types';
-import {getFieldPathAsArray} from '../utils';
+import {getFieldPathAsArray, getFieldPathAsString} from '../utils';
 
 export default React.createClass({
     displayName: 'ValidationBox',
@@ -36,9 +36,10 @@ export default React.createClass({
     },
 
     render() {
+        const fieldPath = this.props.fieldPath;
         const form = this.context.form;
-        const error = form.getValidationErrors(this.props.fieldPath);
-        const isDirty = form.isDirty(this.props.fieldPath);
+        const error = form.getValidationErrors(fieldPath);
+        const isDirty = form.isDirty(fieldPath);
         const isValid = !error;
         const className = classNames(this.props.className, {
             _dirty: isDirty,
@@ -46,7 +47,7 @@ export default React.createClass({
         });
 
         return (
-            <div className={className}>
+            <div className={className} dataFieldPath={getFieldPathAsString(fieldPath)}>
                 {this.props.children}
                 {isDirty || this.props.alwaysShowError ? (
                     <div className="validationbox-error-message">
