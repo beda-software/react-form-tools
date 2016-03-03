@@ -1,7 +1,8 @@
 # Changelog
 
-## 2.0.1
-* ValidationBox: Added dataFieldPath attribute
+## 2.0.2
+* ValidationBox: Added data-field-path attribute
+* Input: nullable is set to false as default #11
 
 ## 2.0.0
 * Form: Added formStateCursor for more flexible form state manipulation (#3)
