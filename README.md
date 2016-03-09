@@ -8,7 +8,7 @@ react-form-tools
 Form validation and base form components for React+Baobab.
 Based on [Baobab cursors](https://github.com/Yomguithereal/baobab).
 
-Form validation inspired by [react-validation-mixin](https://github.com/jurassix/react-validation-mixin).
+Form validation is inspired by [react-validation-mixin](https://github.com/jurassix/react-validation-mixin).
 
 ## Installation
 
@@ -63,7 +63,7 @@ then this cursor will be used for storing `dirtyStates` and `errors`
 
 #### Form API
 
-Form API is available across refs. This methods are available in child context via `form`, which contains also `cursor` attribute to form data.
+Form API is available across refs. These methods are available in child context via `form`, which contains also `cursor` attribute to form data.
 
 * **isValid([fieldPath])**
 * **isDirty(fieldPath)**

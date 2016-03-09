@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.3
+* Fixed exports
+
 ## 2.0.2
 * ValidationBox: Added data-field-path attribute
 * Input: nullable is set to false as default #11

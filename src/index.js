@@ -1,2 +1,2 @@
 export * from './components/index';
-export { FormComponentMixin } from './utils';
+export { FormComponentMixin } from './mixins';
