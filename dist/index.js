@@ -22,11 +22,11 @@ for (var _key2 in _index) {
   if (_ret === 'continue') continue;
 }
 
-var _utils = require('./utils');
+var _mixins = require('./mixins');
 
 Object.defineProperty(exports, 'FormComponentMixin', {
   enumerable: true,
   get: function get() {
-    return _utils.FormComponentMixin;
+    return _mixins.FormComponentMixin;
   }
 });
