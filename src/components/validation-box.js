@@ -18,6 +18,7 @@ export default React.createClass({
     getDefaultProps() {
         return {
             alwaysShowError: false,
+            displayError: true,
         };
     },
 

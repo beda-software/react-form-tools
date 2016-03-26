@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import BaobabPropTypes from 'baobab-prop-types';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { FormComponentMixin } from '../mixins';
