@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.4
+* Fixed imports
+
 ## 2.0.3
 * Fixed exports
 
