@@ -10,6 +10,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _baobabPropTypes = require('baobab-prop-types');
 
 var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
@@ -35,7 +39,7 @@ exports.default = _react2.default.createClass({
 
     getDefaultProps: function getDefaultProps() {
         return {
-            onChange: _.identity
+            onChange: _lodash2.default.identity
         };
     },
     onChange: function onChange() {
@@ -57,12 +61,12 @@ exports.default = _react2.default.createClass({
         }, 0);
     },
     isChecked: function isChecked() {
-        return _.isEqual(this.props.value, this.getCursor().get());
+        return _lodash2.default.isEqual(this.props.value, this.getCursor().get());
     },
     shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState, nextContext) {
         var value = this.getCursor(nextProps, nextContext).get();
 
-        return !_.isEqual(this.props.value, value) || _reactAddonsPureRenderMixin2.default.shouldComponentUpdate.bind(this, nextProps, nextState);
+        return !_lodash2.default.isEqual(this.props.value, value) || _reactAddonsPureRenderMixin2.default.shouldComponentUpdate.bind(this, nextProps, nextState);
     },
     render: function render() {
         var props = {

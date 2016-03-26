@@ -31,7 +31,8 @@ exports.default = _react2.default.createClass({
 
     getDefaultProps: function getDefaultProps() {
         return {
-            alwaysShowError: false
+            alwaysShowError: false,
+            displayError: true
         };
     },
 
