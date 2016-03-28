@@ -1,5 +1,4 @@
 import React from 'react';
-import BaobabPropTypes from 'baobab-prop-types';
 
 export const FormComponentMixin = {
     contextTypes: {
