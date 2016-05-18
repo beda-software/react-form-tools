@@ -60,6 +60,7 @@ React.createClass({
 then this cursor will be used for storing `dirtyStates` and `errors`
 * **onSubmit(data)** *function* [`optional`] - callback of successful validation which will be called when user will submit form
 * **onInvalidSubmit(errors)** *function* [`optional`] - callback of unsuccessful validation which will be called when user will submit form
+* **useHtmlForm** *boolean* [`true`] - use html form instead of own emulation. Own emulation always used for nested form if both forms have `useHtmlForm=true`
 
 #### Form API
 
@@ -70,6 +71,9 @@ Form API is available across refs. These methods are available in child context 
 * **getValidationErrors([fieldPath])**
 * **setDirtyState(fieldPath)**
 * **setPristineState(fieldPath)**
+* **submit()**
+* **validate(successCallback, invalidCallback)**
+* **isHtmlForm()**
 
 ### Input
 
@@ -161,6 +165,9 @@ FormComponentMixin provides next useful methods:
 * **isDirty()** - returns true if component is dirty
 * **setDirtyState()** - set dirty state for component
 * **setPristineState()** - set pristine state for component
+* **processKeyPress(event)** - process key press event and catch only Enter key pressing for form submission
+
+Always use `processKeyPress` helper as `onKeyPress` attribute for own components if you wish to do form submission on enter (default html form component behaviour).
 
 ### All Form Components API
 

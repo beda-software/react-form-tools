@@ -47,8 +47,9 @@ export default React.createClass({
     render() {
         const props = {
             type: 'checkbox',
-            onChange: this.onChange,
             checked: this.isChecked(),
+            onChange: this.onChange,
+            onKeyPress: this.processKeyPress,
         };
 
         return (

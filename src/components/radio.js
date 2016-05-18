@@ -52,8 +52,9 @@ export default React.createClass({
     render() {
         const props = {
             type: 'radio',
-            onChange: this.onChange,
             checked: this.isChecked(),
+            onChange: this.onChange,
+            onKeyPress: this.processKeyPress,
         };
 
         return (

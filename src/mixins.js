@@ -1,9 +1,25 @@
 import React from 'react';
+import { isEnterPressed } from './utils';
 
 export const FormComponentMixin = {
     contextTypes: {
         form: React.PropTypes.object,
         fieldPath: React.PropTypes.array,
+    },
+
+    processKeyPress(event) {
+        // Helper method for form components
+        if (this.context.form) {
+            if (isEnterPressed(event)) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.context.form.submit();
+            }
+        }
+
+        if (_.isFunction(this.props.onKeyPress)) {
+            this.props.onKeyPress(event);
+        }
     },
 
     getCursor(props, context) {

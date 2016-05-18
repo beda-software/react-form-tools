@@ -4,6 +4,7 @@ import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
 import { FormComponentMixin } from '../mixins';
+import { isEnterPressed } from '../utils';
 
 export default React.createClass({
     displayName: 'Input',
@@ -13,6 +14,8 @@ export default React.createClass({
     propTypes: {
         cursor: BaobabPropTypes.cursor,
         onChange: React.PropTypes.func,
+        onKeyPress: React.PropTypes.func,
+        onSync: React.PropTypes.func,
         onBlur: React.PropTypes.func,
         sync: React.PropTypes.bool,
         syncOnlyOnBlur: React.PropTypes.bool,
@@ -40,6 +43,7 @@ export default React.createClass({
             onBlur: _.identity,
             onChange: _.identity,
             onSync: _.identity,
+            onKeyPress: _.identity,
             sync: false,
         };
     },
@@ -105,8 +109,8 @@ export default React.createClass({
         });
     },
 
-    onChange(evt) {
-        const value = this.props.toInternal(evt.target.value);
+    onChange(event) {
+        const value = this.props.toInternal(event.target.value);
         const previousValue = this.state.value;
 
         if (value === previousValue) {
@@ -117,8 +121,8 @@ export default React.createClass({
         this.props.onChange(value, previousValue);
     },
 
-    onBlur(evt) {
-        const value = this.props.toInternal(evt.target.value);
+    onBlur(event) {
+        const value = this.props.toInternal(event.target.value);
 
         // Prevent future updates
         this.clearDeferredSyncTimer();
@@ -127,7 +131,24 @@ export default React.createClass({
         this.setValue(value, true);
 
         // Wait for next frame
-        setTimeout(() => this.props.onBlur(evt), 0);
+        setTimeout(() => this.props.onBlur(event), 0);
+    },
+
+    onKeyPress(event) {
+        if (this.context.form) {
+            if (isEnterPressed(event)) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                this.clearDeferredSyncTimer();
+                this.syncValue();
+
+                // Wait for next frame (cursor synchronization)
+                setTimeout(this.context.form.submit, 0);
+            }
+        }
+
+        this.props.onKeyPress();
     },
 
     render() {
@@ -144,7 +165,10 @@ export default React.createClass({
         }
 
         return (
-            <input type={this.props.type} {...this.props} {...props} ref="input" />
+            <input {...this.props} {...props}
+                type={this.props.type}
+                onKeyPress={this.onKeyPress}
+                ref="input" />
         );
     },
 });

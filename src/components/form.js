@@ -8,12 +8,19 @@ export default React.createClass({
         onSubmit: React.PropTypes.func,
         onInvalidSubmit: React.PropTypes.func,
         cursor: BaobabPropTypes.cursor.isRequired,
+
+        // TODO: concretize type
         validationSchema: React.PropTypes.any.isRequired,
         formStateCursor: BaobabPropTypes.cursor,
         validateOnFly: React.PropTypes.bool,
+        useHtmlForm: React.PropTypes.bool,
     },
 
     childContextTypes: {
+        form: React.PropTypes.object,
+    },
+
+    contextTypes: {
         form: React.PropTypes.object,
     },
 
@@ -23,18 +30,25 @@ export default React.createClass({
             strategy: defaultStrategy(),
             onSubmit: _.identity,
             onInvalidSubmit: _.identity,
+            useHtmlForm: true,
         };
     },
 
     getChildContext() {
         return {
             form: {
+                parentForm: this.context.form,
+                isHtmlForm: this.isHtmlForm,
+
                 cursor: this.props.cursor,
                 isValid: this.isValid,
                 isDirty: this.isDirty,
                 getValidationErrors: this.getValidationErrors,
                 setDirtyState: this.setDirtyState,
                 setPristineState: this.setPristineState,
+
+                submit: this.submit,
+                validate: this.validate,
             },
         };
     },
@@ -65,11 +79,23 @@ export default React.createClass({
     },
 
     render() {
+        if (this.isHtmlForm()) {
+            return (
+                <form noValidate {...this.props} onSubmit={this.onFormSubmit}>
+                    {this.props.children}
+                </form>
+            );
+        }
+
         return (
-          <form noValidate {...this.props} onSubmit={this.onFormSubmit}>
-              {this.props.children}
-          </form>
+            <div {...this.props}>
+                {this.props.children}
+            </div>
         );
+    },
+
+    isHtmlForm() {
+        return this.props.useHtmlForm && (!this.context.form || !this.context.form.isHtmlForm());
     },
 
     setFormState(nextState) {
@@ -88,8 +114,9 @@ export default React.createClass({
         return this.state;
     },
 
-    onFormSubmit(evt) {
-        evt.preventDefault();
+    onFormSubmit(event) {
+        event.preventDefault();
+        event.stopPropagation();
         this.submit();
     },
 
@@ -107,7 +134,7 @@ export default React.createClass({
             this.props.validationSchema(data) : this.props.validationSchema;
 
         this.props.strategy.validate(data, schema, {}, errors => {
-            this.setFormState({ errors: errors });
+            this.setFormState({ errors });
 
             if (_.isEmpty(errors)) {
                 successCallback && successCallback(data);
@@ -152,7 +179,7 @@ export default React.createClass({
 
     setValidationErrors(errors) {
         this.setFormState({
-            errors: errors,
+            errors,
         });
     },
 

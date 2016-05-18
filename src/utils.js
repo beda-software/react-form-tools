@@ -7,3 +7,7 @@ export function getFieldPathAsArray(fieldPath) {
 export function getFieldPathAsString(fieldPath) {
     return _.isString(fieldPath) ? fieldPath : fieldPath.join('.');
 }
+
+export function isEnterPressed(event) {
+    return event.which === 13 || event.keyCode === 13;
+}
