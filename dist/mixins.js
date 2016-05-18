@@ -9,6 +9,8 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _utils = require('./utils');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var FormComponentMixin = exports.FormComponentMixin = {
@@ -17,6 +19,20 @@ var FormComponentMixin = exports.FormComponentMixin = {
         fieldPath: _react2.default.PropTypes.array
     },
 
+    processKeyPress: function processKeyPress(event) {
+        // Helper method for form components
+        if (this.context.form) {
+            if ((0, _utils.isEnterPressed)(event)) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.context.form.submit();
+            }
+        }
+
+        if (_.isFunction(this.props.onKeyPress)) {
+            this.props.onKeyPress(event);
+        }
+    },
     getCursor: function getCursor(props, context) {
         props = props || this.props;
         context = context || this.context;

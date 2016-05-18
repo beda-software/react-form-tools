@@ -28,6 +28,8 @@ var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
 
 var _mixins = require('../mixins');
 
+var _utils = require('../utils');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
@@ -38,6 +40,8 @@ exports.default = _react2.default.createClass({
     propTypes: {
         cursor: _baobabPropTypes2.default.cursor,
         onChange: _react2.default.PropTypes.func,
+        onKeyPress: _react2.default.PropTypes.func,
+        onSync: _react2.default.PropTypes.func,
         onBlur: _react2.default.PropTypes.func,
         sync: _react2.default.PropTypes.bool,
         syncOnlyOnBlur: _react2.default.PropTypes.bool,
@@ -64,6 +68,7 @@ exports.default = _react2.default.createClass({
             onBlur: _lodash2.default.identity,
             onChange: _lodash2.default.identity,
             onSync: _lodash2.default.identity,
+            onKeyPress: _lodash2.default.identity,
             sync: false
         };
     },
@@ -131,8 +136,8 @@ exports.default = _react2.default.createClass({
             }
         });
     },
-    onChange: function onChange(evt) {
-        var value = this.props.toInternal(evt.target.value);
+    onChange: function onChange(event) {
+        var value = this.props.toInternal(event.target.value);
         var previousValue = this.state.value;
 
         if (value === previousValue) {
@@ -142,10 +147,10 @@ exports.default = _react2.default.createClass({
         this.setValue(value);
         this.props.onChange(value, previousValue);
     },
-    onBlur: function onBlur(evt) {
+    onBlur: function onBlur(event) {
         var _this3 = this;
 
-        var value = this.props.toInternal(evt.target.value);
+        var value = this.props.toInternal(event.target.value);
 
         // Prevent future updates
         this.clearDeferredSyncTimer();
@@ -155,8 +160,24 @@ exports.default = _react2.default.createClass({
 
         // Wait for next frame
         setTimeout(function () {
-            return _this3.props.onBlur(evt);
+            return _this3.props.onBlur(event);
         }, 0);
+    },
+    onKeyPress: function onKeyPress(event) {
+        if (this.context.form) {
+            if ((0, _utils.isEnterPressed)(event)) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                this.clearDeferredSyncTimer();
+                this.syncValue();
+
+                // Wait for next frame (cursor synchronization)
+                setTimeout(this.context.form.submit, 0);
+            }
+        }
+
+        this.props.onKeyPress();
     },
     render: function render() {
         var props = {
@@ -169,6 +190,9 @@ exports.default = _react2.default.createClass({
             return _react2.default.createElement('textarea', _extends({}, this.props, props, { ref: 'input' }));
         }
 
-        return _react2.default.createElement('input', _extends({ type: this.props.type }, this.props, props, { ref: 'input' }));
+        return _react2.default.createElement('input', _extends({}, this.props, props, {
+            type: this.props.type,
+            onKeyPress: this.onKeyPress,
+            ref: 'input' }));
     }
 });

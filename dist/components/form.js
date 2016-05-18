@@ -31,12 +31,19 @@ exports.default = _react2.default.createClass({
         onSubmit: _react2.default.PropTypes.func,
         onInvalidSubmit: _react2.default.PropTypes.func,
         cursor: _baobabPropTypes2.default.cursor.isRequired,
+
+        // TODO: concretize type
         validationSchema: _react2.default.PropTypes.any.isRequired,
         formStateCursor: _baobabPropTypes2.default.cursor,
-        validateOnFly: _react2.default.PropTypes.bool
+        validateOnFly: _react2.default.PropTypes.bool,
+        useHtmlForm: _react2.default.PropTypes.bool
     },
 
     childContextTypes: {
+        form: _react2.default.PropTypes.object
+    },
+
+    contextTypes: {
         form: _react2.default.PropTypes.object
     },
 
@@ -45,18 +52,25 @@ exports.default = _react2.default.createClass({
             validateOnFly: true,
             strategy: (0, _yupValidationStrategy2.default)(),
             onSubmit: _lodash2.default.identity,
-            onInvalidSubmit: _lodash2.default.identity
+            onInvalidSubmit: _lodash2.default.identity,
+            useHtmlForm: true
         };
     },
     getChildContext: function getChildContext() {
         return {
             form: {
+                parentForm: this.context.form,
+                isHtmlForm: this.isHtmlForm,
+
                 cursor: this.props.cursor,
                 isValid: this.isValid,
                 isDirty: this.isDirty,
                 getValidationErrors: this.getValidationErrors,
                 setDirtyState: this.setDirtyState,
-                setPristineState: this.setPristineState
+                setPristineState: this.setPristineState,
+
+                submit: this.submit,
+                validate: this.validate
             }
         };
     },
@@ -83,11 +97,22 @@ exports.default = _react2.default.createClass({
         }
     },
     render: function render() {
+        if (this.isHtmlForm()) {
+            return _react2.default.createElement(
+                'form',
+                _extends({ noValidate: true }, this.props, { onSubmit: this.onFormSubmit }),
+                this.props.children
+            );
+        }
+
         return _react2.default.createElement(
-            'form',
-            _extends({ noValidate: true }, this.props, { onSubmit: this.onFormSubmit }),
+            'div',
+            this.props,
             this.props.children
         );
+    },
+    isHtmlForm: function isHtmlForm() {
+        return this.props.useHtmlForm && (!this.context.form || !this.context.form.isHtmlForm());
     },
     setFormState: function setFormState(nextState) {
         if (this.props.formStateCursor) {
@@ -103,8 +128,9 @@ exports.default = _react2.default.createClass({
 
         return this.state;
     },
-    onFormSubmit: function onFormSubmit(evt) {
-        evt.preventDefault();
+    onFormSubmit: function onFormSubmit(event) {
+        event.preventDefault();
+        event.stopPropagation();
         this.submit();
     },
     onUpdate: function onUpdate() {

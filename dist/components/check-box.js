@@ -65,8 +65,9 @@ exports.default = _react2.default.createClass({
     render: function render() {
         var props = {
             type: 'checkbox',
+            checked: this.isChecked(),
             onChange: this.onChange,
-            checked: this.isChecked()
+            onKeyPress: this.processKeyPress
         };
 
         return _react2.default.createElement('input', _extends({}, this.props, props));
