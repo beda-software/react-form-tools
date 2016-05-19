@@ -87,7 +87,11 @@ exports.default = _react2.default.createClass({
 
         if (this.props.autoFocus) {
             setTimeout(function () {
-                return _reactDom2.default.findDOMNode(_this.refs.input).focus();
+                var element = _reactDom2.default.findDOMNode(_this.refs.input);
+
+                if (element) {
+                    element.focus();
+                }
             }, 0);
         }
     },

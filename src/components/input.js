@@ -61,7 +61,13 @@ export default React.createClass({
 
     componentDidMount() {
         if (this.props.autoFocus) {
-            setTimeout(() => ReactDOM.findDOMNode(this.refs.input).focus(), 0);
+            setTimeout(() => {
+                const element = ReactDOM.findDOMNode(this.refs.input);
+
+                if (element) {
+                    element.focus();
+                }
+            }, 0);
         }
     },
 
