@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import { isEnterPressed } from './utils';
 
 export const FormComponentMixin = {
@@ -37,6 +38,16 @@ export const FormComponentMixin = {
 
     inValidationBox() {
         return !!(this.context.form && this.context.fieldPath);
+    },
+
+    setValue(value, callback) {
+        const cursor = this.getCursor();
+
+        if (_.isFunction(callback)) {
+            cursor.once('update', callback);
+        }
+
+        cursor.set(value);
     },
 
     setDirtyState() {

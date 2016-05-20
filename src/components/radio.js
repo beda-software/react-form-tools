@@ -30,12 +30,10 @@ export default React.createClass({
             return;
         }
 
-        cursor.set(value);
-        this.setDirtyState();
-
-        setTimeout(() => {
+        this.setValue(value, () => {
+            this.setDirtyState();
             this.props.onChange(value, previousValue);
-        }, 0);
+        });
     },
 
     isChecked() {

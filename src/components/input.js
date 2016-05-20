@@ -82,35 +82,44 @@ export default React.createClass({
         }
     },
 
-    deferredSyncValue() {
+    deferredSyncValue(eventCallback) {
         this.clearDeferredSyncTimer();
-        this.deferredSyncTimer = setTimeout(this.syncValue, this.msToPoll);
+        this.deferredSyncTimer = setTimeout(() => this.syncValue(eventCallback), this.msToPoll);
     },
 
-    syncValue() {
+    syncValue(eventCallback) {
+        // Synchronizes value with cursor
         const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
         const previousValue = this.getCursor().get();
 
         if (value === previousValue) {
+            if (_.isFunction(eventCallback)) {
+                eventCallback();
+            }
+
             return;
         }
 
-        this.getCursor().set(value);
-        this.setDirtyState();
+        this.setValue(value, () => {
+            this.setDirtyState();
+            this.props.onSync(value, previousValue);
 
-        // Wait for next frame
-        setTimeout(() => this.props.onSync(value, previousValue), 0);
+            if (_.isFunction(eventCallback)) {
+                eventCallback();
+            }
+        });
     },
 
-    setValue(value, forceSync=false) {
+    updateValue(value, forceSync=false, eventCallback) {
+        // Synchronizes value with state
         this.setState({ value }, function () {
             if (this.props.sync || forceSync) {
-                this.syncValue();
+                this.syncValue(eventCallback);
                 return;
             }
 
             if (!this.props.syncOnlyOnBlur) {
-                this.deferredSyncValue();
+                this.deferredSyncValue(eventCallback);
             }
         });
     },
@@ -123,7 +132,7 @@ export default React.createClass({
             return;
         }
 
-        this.setValue(value);
+        this.updateValue(value);
         this.props.onChange(value, previousValue);
     },
 
@@ -134,10 +143,7 @@ export default React.createClass({
         this.clearDeferredSyncTimer();
 
         // Set inner state value and force synchronization
-        this.setValue(value, true);
-
-        // Wait for next frame
-        setTimeout(() => this.props.onBlur(event), 0);
+        this.updateValue(value, true, () => this.props.onBlur(event));
     },
 
     onKeyPress(event) {
@@ -147,10 +153,7 @@ export default React.createClass({
                 event.stopPropagation();
 
                 this.clearDeferredSyncTimer();
-                this.syncValue();
-
-                // Wait for next frame (cursor synchronization)
-                setTimeout(this.context.form.submit, 0);
+                this.syncValue(() => this.context.form.submit());
             }
         }
 

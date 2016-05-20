@@ -4,6 +4,7 @@
 * Form: Add nested forms support #16
 * Form: Add new prop `useHtmlForm` with default true value
 * Form: Add `submit`, `validate`, `isHtmlForm` methods into form child context
+* Form: fix synchronizing problem with `updateDirtyState`
 * FormComponentMixin: Add processKeyPress helper for form components
 
 ## 2.0.5
