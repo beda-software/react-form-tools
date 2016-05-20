@@ -53,12 +53,10 @@ exports.default = _react2.default.createClass({
             return;
         }
 
-        cursor.set(value);
-        this.setDirtyState();
-
-        setTimeout(function () {
+        this.setValue(value, function () {
+            _this.setDirtyState();
             _this.props.onChange(value, previousValue);
-        }, 0);
+        });
     },
     isChecked: function isChecked() {
         return _lodash2.default.isEqual(this.props.value, this.getCursor().get());

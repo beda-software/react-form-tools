@@ -104,39 +104,51 @@ exports.default = _react2.default.createClass({
             this.deferredSyncTimer = null;
         }
     },
-    deferredSyncValue: function deferredSyncValue() {
-        this.clearDeferredSyncTimer();
-        this.deferredSyncTimer = setTimeout(this.syncValue, this.msToPoll);
-    },
-    syncValue: function syncValue() {
+    deferredSyncValue: function deferredSyncValue(eventCallback) {
         var _this2 = this;
 
+        this.clearDeferredSyncTimer();
+        this.deferredSyncTimer = setTimeout(function () {
+            return _this2.syncValue(eventCallback);
+        }, this.msToPoll);
+    },
+    syncValue: function syncValue(eventCallback) {
+        var _this3 = this;
+
+        // Synchronizes value with cursor
         var value = this.props.nullable && this.state.value === '' ? null : this.state.value;
         var previousValue = this.getCursor().get();
 
         if (value === previousValue) {
+            if (_lodash2.default.isFunction(eventCallback)) {
+                eventCallback();
+            }
+
             return;
         }
 
-        this.getCursor().set(value);
-        this.setDirtyState();
+        this.setValue(value, function () {
+            _this3.setDirtyState();
+            _this3.props.onSync(value, previousValue);
 
-        // Wait for next frame
-        setTimeout(function () {
-            return _this2.props.onSync(value, previousValue);
-        }, 0);
+            if (_lodash2.default.isFunction(eventCallback)) {
+                eventCallback();
+            }
+        });
     },
-    setValue: function setValue(value) {
+    updateValue: function updateValue(value) {
         var forceSync = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+        var eventCallback = arguments[2];
 
+        // Synchronizes value with state
         this.setState({ value: value }, function () {
             if (this.props.sync || forceSync) {
-                this.syncValue();
+                this.syncValue(eventCallback);
                 return;
             }
 
             if (!this.props.syncOnlyOnBlur) {
-                this.deferredSyncValue();
+                this.deferredSyncValue(eventCallback);
             }
         });
     },
@@ -148,11 +160,11 @@ exports.default = _react2.default.createClass({
             return;
         }
 
-        this.setValue(value);
+        this.updateValue(value);
         this.props.onChange(value, previousValue);
     },
     onBlur: function onBlur(event) {
-        var _this3 = this;
+        var _this4 = this;
 
         var value = this.props.toInternal(event.target.value);
 
@@ -160,24 +172,22 @@ exports.default = _react2.default.createClass({
         this.clearDeferredSyncTimer();
 
         // Set inner state value and force synchronization
-        this.setValue(value, true);
-
-        // Wait for next frame
-        setTimeout(function () {
-            return _this3.props.onBlur(event);
-        }, 0);
+        this.updateValue(value, true, function () {
+            return _this4.props.onBlur(event);
+        });
     },
     onKeyPress: function onKeyPress(event) {
+        var _this5 = this;
+
         if (this.context.form) {
             if ((0, _utils.isEnterPressed)(event)) {
                 event.preventDefault();
                 event.stopPropagation();
 
                 this.clearDeferredSyncTimer();
-                this.syncValue();
-
-                // Wait for next frame (cursor synchronization)
-                setTimeout(this.context.form.submit, 0);
+                this.syncValue(function () {
+                    return _this5.context.form.submit();
+                });
             }
         }
 

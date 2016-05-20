@@ -161,6 +161,7 @@ For creating own component you can use FormComponentMixin from this package.
 FormComponentMixin provides next useful methods:
 * **inValidationBox()** - returns true if component inside ValidationBox
 * **getCursor()** - returns current cursor of component
+* **setValue(value, callback)** - sets cursor value and calls callback after synchronization
 * **isValid()** - returns true if component has valid value
 * **isDirty()** - returns true if component is dirty
 * **setDirtyState()** - set dirty state for component

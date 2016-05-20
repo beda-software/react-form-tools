@@ -9,6 +9,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _utils = require('./utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -29,7 +33,7 @@ var FormComponentMixin = exports.FormComponentMixin = {
             }
         }
 
-        if (_.isFunction(this.props.onKeyPress)) {
+        if (_lodash2.default.isFunction(this.props.onKeyPress)) {
             this.props.onKeyPress(event);
         }
     },
@@ -46,6 +50,15 @@ var FormComponentMixin = exports.FormComponentMixin = {
     },
     inValidationBox: function inValidationBox() {
         return !!(this.context.form && this.context.fieldPath);
+    },
+    setValue: function setValue(value, callback) {
+        var cursor = this.getCursor();
+
+        if (_lodash2.default.isFunction(callback)) {
+            cursor.once('update', callback);
+        }
+
+        cursor.set(value);
     },
     setDirtyState: function setDirtyState() {
         if (this.inValidationBox()) {
