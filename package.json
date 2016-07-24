@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "baobab-prop-types": "^1.0.0",
+    "baobab-react-mixins": "^1.0.0",
     "classnames": "^2.2.3",
     "lodash": "^3.10.1",
     "react-addons-pure-render-mixin": "^0.14.6"

@@ -2,17 +2,25 @@ import React from 'react';
 import _ from 'lodash';
 import BaobabPropTypes from 'baobab-prop-types';
 import { FormComponentMixin } from '../mixins';
+import { BranchMixin } from 'baobab-react-mixins';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default React.createClass({
     displayName: 'CheckBox',
 
-    mixins: [FormComponentMixin],
+    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
 
     propTypes: {
         value: React.PropTypes.any,
         uncheckedValue: React.PropTypes.any,
         cursor: BaobabPropTypes.cursor,
         onChange: React.PropTypes.func,
+    },
+
+    cursors(props, context) {
+        return {
+            value: this.getCursor(props, context),
+        };
     },
 
     getDefaultProps() {
@@ -24,9 +32,8 @@ export default React.createClass({
     },
 
     onChange(event) {
-        const cursor = this.getCursor();
         const value = event.target.checked ? this.props.value : this.props.uncheckedValue;
-        const previousValue = cursor.get();
+        const previousValue = this.state.value;
 
         if (value === previousValue) {
             return;
@@ -39,7 +46,7 @@ export default React.createClass({
     },
 
     isChecked() {
-        return _.isEqual(this.props.value, this.getCursor().get());
+        return _.isEqual(this.props.value, this.state.value);
     },
 
     render() {

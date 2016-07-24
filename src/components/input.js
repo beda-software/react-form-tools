@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
+import { BranchMixin } from 'baobab-react-mixins';
 import { FormComponentMixin } from '../mixins';
 import { isEnterPressed } from '../utils';
 
 export default React.createClass({
     displayName: 'Input',
 
-    mixins: [PureRenderMixin, FormComponentMixin],
+    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
 
     propTypes: {
         cursor: BaobabPropTypes.cursor,
@@ -27,6 +28,12 @@ export default React.createClass({
     deferredSyncTimer: null,
 
     msToPoll: 200,
+
+    cursors(props, context) {
+        return {
+            cursorValue: this.getCursor(props, context),
+        };
+    },
 
     getInitialState() {
         return {
@@ -48,15 +55,17 @@ export default React.createClass({
         };
     },
 
-    componentWillReceiveProps(nextProps, nextContext) {
+    componentDidUpdate(prevProps, prevState, prevContext) {
         if (this.deferredSyncTimer) {
             // Does not set state when component received props while user inputs
             return;
         }
 
-        this.setState({
-            value: this.props.toInternal(this.getCursor(nextProps, nextContext).get()),
-        });
+        if (this.state.cursorValue !== prevState.cursorValue) {
+            this.setState({
+                value: this.state.cursorValue,
+            });
+        }
     },
 
     componentDidMount() {
@@ -90,7 +99,7 @@ export default React.createClass({
     syncValue(eventCallback) {
         // Synchronizes value with cursor
         const value = this.props.nullable && this.state.value === '' ? null : this.state.value;
-        const previousValue = this.getCursor().get();
+        const previousValue = this.state.cursorValue;
 
         if (value === previousValue) {
             if (_.isFunction(eventCallback)) {

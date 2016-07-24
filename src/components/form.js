@@ -117,7 +117,8 @@ export default React.createClass({
     onFormSubmit(event) {
         event.preventDefault();
         event.stopPropagation();
-        this.submit();
+
+        return this.submit();
     },
 
     onUpdate() {
@@ -125,7 +126,7 @@ export default React.createClass({
     },
 
     submit() {
-        this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
+        return this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
     },
 
     validate(successCallback, errorCallback) {
@@ -137,9 +138,13 @@ export default React.createClass({
             this.setFormState({ errors });
 
             if (_.isEmpty(errors)) {
-                successCallback && successCallback(data);
+                if (successCallback) {
+                    return successCallback(data);
+                }
             } else {
-                errorCallback && errorCallback(errors);
+                if (errorCallback) {
+                    return errorCallback(errors);
+                }
             }
         });
     },
