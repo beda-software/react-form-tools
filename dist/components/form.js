@@ -47,6 +47,7 @@ exports.default = _react2.default.createClass({
         form: _react2.default.PropTypes.object
     },
 
+    subscribers: [],
     _isHtmlForm: null,
 
     getDefaultProps: function getDefaultProps() {
@@ -72,7 +73,10 @@ exports.default = _react2.default.createClass({
                 setPristineState: this.setPristineState,
 
                 submit: this.submit,
-                validate: this.validate
+                validate: this.validate,
+
+                subscribe: this.subscribe,
+                unsubscribe: this.unsubscribe
             }
         };
     },
@@ -131,11 +135,30 @@ exports.default = _react2.default.createClass({
 
         return this._isHtmlForm;
     },
+    subscribe: function subscribe(subscriber) {
+        this.subscribers = _lodash2.default.concat(this.subscribers, subscriber);
+    },
+    unsubscribe: function unsubscribe(subscriber) {
+        this.subscribers = _lodash2.default.without(this.subscribers, subscriber);
+    },
+    onFormStateUpdate: function onFormStateUpdate(data) {
+        _lodash2.default.each(this.subscribers, function (subscriber) {
+            return subscriber(data);
+        });
+    },
     setFormState: function setFormState(nextState) {
+        var _this = this;
+
         if (this.props.formStateCursor) {
+            this.props.formStateCursor.once('update', function (_ref) {
+                var data = _ref.data;
+                return _this.onFormStateUpdate(data.currentData);
+            });
             this.props.formStateCursor.merge(nextState);
         } else {
-            this.setState(nextState);
+            this.setState(nextState, function () {
+                return _this.onFormStateUpdate(_this.state);
+            });
         }
     },
     getFormState: function getFormState() {
@@ -158,13 +181,13 @@ exports.default = _react2.default.createClass({
         return this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
     },
     validate: function validate(successCallback, errorCallback) {
-        var _this = this;
+        var _this2 = this;
 
         var data = this.props.cursor.get();
         var schema = _lodash2.default.isFunction(this.props.validationSchema) ? this.props.validationSchema(data) : this.props.validationSchema;
 
         this.props.strategy.validate(data, schema, {}, function (errors) {
-            _this.setFormState({ errors: errors });
+            _this2.setFormState({ errors: errors });
 
             if (_lodash2.default.isEmpty(errors)) {
                 if (successCallback) {

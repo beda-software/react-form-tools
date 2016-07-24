@@ -14,10 +14,18 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 var _utils = require('../utils');
 
+var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
+
+var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
+
+var _mixins = require('../mixins');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
     displayName: 'ValidationBox',
+
+    mixins: [_mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         fieldPath: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string.isRequired, _react2.default.PropTypes.array.isRequired]),
@@ -48,11 +56,9 @@ exports.default = _react2.default.createClass({
         };
     },
     render: function render() {
-        var fieldPath = this.props.fieldPath;
-        var form = this.context.form;
-        var error = form.getValidationErrors(fieldPath);
-        var isDirty = form.isDirty(fieldPath);
-        var isValid = !error;
+        var errors = this.getErrors();
+        var isDirty = this.isDirty();
+        var isValid = this.isValid();
         var className = (0, _classnames2.default)(this.props.className, {
             _dirty: isDirty,
             _error: (isDirty || this.props.alwaysShowError) && !isValid
@@ -60,12 +66,13 @@ exports.default = _react2.default.createClass({
 
         return _react2.default.createElement(
             'div',
-            { className: className, 'data-field-path': (0, _utils.getFieldPathAsString)(fieldPath) },
+            { className: className,
+                'data-field-path': (0, _utils.getFieldPathAsString)(this.getFieldPath()) },
             this.props.children,
             this.props.displayError && (isDirty || this.props.alwaysShowError) ? _react2.default.createElement(
                 'div',
                 { className: 'validationbox-error-message' },
-                error
+                errors
             ) : null
         );
     }

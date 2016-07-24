@@ -1,9 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
-import {getFieldPathAsArray, getFieldPathAsString} from '../utils';
+import { getFieldPathAsArray, getFieldPathAsString } from '../utils';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'ValidationBox',
+
+    mixins: [FormComponentMixin, PureRenderMixin],
 
     propTypes: {
         fieldPath: React.PropTypes.oneOfType([
@@ -37,22 +41,21 @@ export default React.createClass({
     },
 
     render() {
-        const fieldPath = this.props.fieldPath;
-        const form = this.context.form;
-        const error = form.getValidationErrors(fieldPath);
-        const isDirty = form.isDirty(fieldPath);
-        const isValid = !error;
+        const errors = this.getErrors();
+        const isDirty = this.isDirty();
+        const isValid = this.isValid();
         const className = classNames(this.props.className, {
             _dirty: isDirty,
             _error: (isDirty || this.props.alwaysShowError) && !isValid,
         });
 
         return (
-            <div className={className} data-field-path={getFieldPathAsString(fieldPath)}>
+            <div className={className}
+                data-field-path={getFieldPathAsString(this.getFieldPath())}>
                 {this.props.children}
                 {this.props.displayError && (isDirty || this.props.alwaysShowError) ? (
                     <div className="validationbox-error-message">
-                        {error}
+                        {errors}
                     </div>
                 ) : null}
             </div>

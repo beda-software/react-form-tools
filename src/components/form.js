@@ -24,6 +24,7 @@ export default React.createClass({
         form: React.PropTypes.object,
     },
 
+    subscribers: [],
     _isHtmlForm: null,
 
     getDefaultProps() {
@@ -51,6 +52,9 @@ export default React.createClass({
 
                 submit: this.submit,
                 validate: this.validate,
+
+                subscribe: this.subscribe,
+                unsubscribe: this.unsubscribe,
             },
         };
     },
@@ -116,11 +120,30 @@ export default React.createClass({
         return this._isHtmlForm;
     },
 
+    subscribe(subscriber) {
+        this.subscribers = _.concat(this.subscribers, subscriber);
+    },
+
+    unsubscribe(subscriber) {
+        this.subscribers = _.without(this.subscribers, subscriber);
+    },
+
+    onFormStateUpdate(data) {
+        _.each(this.subscribers, (subscriber) => subscriber(data));
+    },
+
     setFormState(nextState) {
         if (this.props.formStateCursor) {
+            this.props.formStateCursor.once(
+                'update',
+                ({ data }) => this.onFormStateUpdate(data.currentData)
+            );
             this.props.formStateCursor.merge(nextState);
         } else {
-            this.setState(nextState);
+            this.setState(
+                nextState,
+                () => this.onFormStateUpdate(this.state)
+            );
         }
     },
 

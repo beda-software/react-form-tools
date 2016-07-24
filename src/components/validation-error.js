@@ -1,8 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'ValidationError',
+
+    mixins: [FormComponentMixin, PureRenderMixin],
 
     contextTypes: {
         form: React.PropTypes.object.isRequired,
@@ -24,11 +28,10 @@ export default React.createClass({
     },
 
     render() {
-        const form = this.context.form;
+        const errors = this.getErrors();
+        const isValid = this.isValid();
+        const isDirty = this.isDirty();
 
-        const error = form.getValidationErrors(this.props.fieldPath);
-        const isValid = !error;
-        const isDirty = form.isDirty(this.props.fieldPath);
         const className = classNames(this.props.className, {
             _dirty: isDirty,
         });
@@ -38,7 +41,7 @@ export default React.createClass({
 
         return (
             <div className={className}>
-                {error}
+                {errors}
             </div>
         );
     },

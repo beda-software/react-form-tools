@@ -18,12 +18,18 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
+var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
+
+var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 exports.default = _react2.default.createClass({
     displayName: 'Submit',
+
+    mixins: [_reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         className: _react2.default.PropTypes.string,
@@ -43,6 +49,11 @@ exports.default = _react2.default.createClass({
             onClick: _lodash2.default.identity
         };
     },
+    getInitialState: function getInitialState() {
+        return {
+            isValid: false
+        };
+    },
     onClick: function onClick(event) {
         if (!this.context.form.isHtmlForm()) {
             event.preventDefault();
@@ -52,8 +63,21 @@ exports.default = _react2.default.createClass({
 
         this.props.onClick(event);
     },
+    onFormStateUpdate: function onFormStateUpdate(data) {
+        var isValid = _lodash2.default.isEmpty(_lodash2.default.get(data, 'errors'));
+
+        this.setState({
+            isValid: isValid
+        });
+    },
+    componentDidMount: function componentDidMount() {
+        this.context.form.subscribe(this.onFormStateUpdate);
+    },
+    componentWillUnmount: function componentWillUnmount() {
+        this.context.form.unsubscribe(this.onFormStateUpdate);
+    },
     render: function render() {
-        var disabled = !this.context.form.isValid();
+        var disabled = !this.state.isValid;
 
         return _react2.default.createElement('input', _extends({}, _lodash2.default.omit(this.props, 'children'), {
             type: 'submit',

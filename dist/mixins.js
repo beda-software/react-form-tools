@@ -46,6 +46,20 @@ var FormComponentMixin = exports.FormComponentMixin = {
             this.props.onKeyPress(event);
         }
     },
+    getFieldPath: function getFieldPath(props, context) {
+        props = props || this.props;
+        context = context || this.context;
+
+        if (props.fieldPath) {
+            return (0, _utils.getFieldPathAsArray)(props.fieldPath);
+        }
+
+        if (context.fieldPath) {
+            return context.fieldPath;
+        }
+
+        return null;
+    },
     getCursor: function getCursor(props, context) {
         props = props || this.props;
         context = context || this.context;
@@ -54,19 +68,17 @@ var FormComponentMixin = exports.FormComponentMixin = {
             return props.cursor;
         }
 
-        if (props.fieldPath) {
-            return context.form.cursor.select((0, _utils.getFieldPathAsArray)(props.fieldPath));
-        }
+        var fieldPath = this.getFieldPath(props, context);
 
-        if (context.fieldPath) {
-            return context.form.cursor.select(context.fieldPath);
+        if (fieldPath) {
+            return context.form.cursor.select(fieldPath);
         }
 
         /* istanbul ignore next */
         throw 'react-form.tools ' + this.displayName + ': cursor must be set via \'cursor\',\n               \'fieldPath\' or via higher order component ValidationBox with \'fieldPath\'';
     },
     inValidationBox: function inValidationBox() {
-        return !!(this.context.form && this.context.fieldPath);
+        return !!(this.context.form && this.getFieldPath());
     },
     setValue: function setValue(value, callback) {
         var cursor = this.getCursor();
@@ -79,22 +91,56 @@ var FormComponentMixin = exports.FormComponentMixin = {
     },
     setDirtyState: function setDirtyState() {
         if (this.inValidationBox()) {
-            this.context.form.setDirtyState(this.context.fieldPath);
+            this.context.form.setDirtyState(this.getFieldPath());
         }
     },
     setPristineState: function setPristineState() {
         if (this.inValidationBox()) {
-            this.context.form.setPristineState(this.context.fieldPath);
+            this.context.form.setPristineState(this.getFieldPath());
         }
     },
     isDirty: function isDirty() {
         if (this.inValidationBox()) {
-            return this.context.form.isDirty(this.context.fieldPath);
+            return this.state.isDirty;
         }
     },
     isValid: function isValid() {
         if (this.inValidationBox()) {
-            return this.context.form.isValid(this.context.fieldPath);
+            return this.state.isValid;
+        }
+    },
+    getErrors: function getErrors() {
+        if (this.inValidationBox()) {
+            return this.state.errors;
+        }
+    },
+    getInitialState: function getInitialState() {
+        return {
+            isDirty: false,
+            errors: []
+        };
+    },
+    onFormStateUpdate: function onFormStateUpdate(data) {
+        var fieldPath = this.getFieldPath();
+
+        var errors = _lodash2.default.get(data, _lodash2.default.concat('errors', fieldPath));
+        var isDirty = !!_lodash2.default.get(data, _lodash2.default.concat('dirtyStates', fieldPath));
+        var isValid = _lodash2.default.isEmpty(errors);
+
+        this.setState({
+            isDirty: isDirty,
+            errors: errors,
+            isValid: isValid
+        });
+    },
+    componentDidMount: function componentDidMount() {
+        if (this.inValidationBox()) {
+            this.context.form.subscribe(this.onFormStateUpdate);
+        }
+    },
+    componentWillUnmount: function componentWillUnmount() {
+        if (this.inValidationBox()) {
+            this.context.form.unsubscribe(this.onFormStateUpdate);
         }
     }
 };

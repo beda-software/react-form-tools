@@ -1,9 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default React.createClass({
     displayName: 'Submit',
+
+    mixins: [PureRenderMixin],
 
     propTypes: {
         className: React.PropTypes.string,
@@ -24,6 +27,12 @@ export default React.createClass({
         };
     },
 
+    getInitialState() {
+        return {
+            isValid: false,
+        };
+    },
+
     onClick(event) {
         if (!this.context.form.isHtmlForm()) {
             event.preventDefault();
@@ -34,8 +43,24 @@ export default React.createClass({
         this.props.onClick(event);
     },
 
+    onFormStateUpdate(data) {
+        const isValid = _.isEmpty(_.get(data, 'errors'));
+
+        this.setState({
+            isValid,
+        });
+    },
+
+    componentDidMount() {
+        this.context.form.subscribe(this.onFormStateUpdate);
+    },
+
+    componentWillUnmount() {
+        this.context.form.unsubscribe(this.onFormStateUpdate);
+    },
+
     render() {
-        const disabled = !this.context.form.isValid();
+        const disabled = !this.state.isValid;
 
         return (
             <input

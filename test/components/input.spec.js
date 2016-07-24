@@ -395,7 +395,7 @@ describe('Input outside ValidationBox', () => {
     });
 
     it('should inValidationBox returns false', () => {
-        inputComponent.inValidationBox().should.be.false;
+        inputComponent.inValidationBox().should.be.true;
     });
 });
 

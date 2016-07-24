@@ -29,6 +29,21 @@ export const FormComponentMixin = {
         }
     },
 
+    getFieldPath(props, context) {
+        props = props || this.props;
+        context = context || this.context;
+
+        if (props.fieldPath) {
+            return getFieldPathAsArray(props.fieldPath);
+        }
+
+        if (context.fieldPath) {
+            return context.fieldPath;
+        }
+
+        return null;
+    },
+
     getCursor(props, context) {
         props = props || this.props;
         context = context || this.context;
@@ -37,12 +52,10 @@ export const FormComponentMixin = {
             return props.cursor;
         }
 
-        if (props.fieldPath) {
-            return context.form.cursor.select(getFieldPathAsArray(props.fieldPath));
-        }
+        const fieldPath = this.getFieldPath(props, context);
 
-        if (context.fieldPath) {
-            return context.form.cursor.select(context.fieldPath);
+        if (fieldPath) {
+            return context.form.cursor.select(fieldPath);
         }
 
         /* istanbul ignore next */
@@ -51,7 +64,7 @@ export const FormComponentMixin = {
     },
 
     inValidationBox() {
-        return !!(this.context.form && this.context.fieldPath);
+        return !!(this.context.form && this.getFieldPath());
     },
 
     setValue(value, callback) {
@@ -66,25 +79,64 @@ export const FormComponentMixin = {
 
     setDirtyState() {
         if (this.inValidationBox()) {
-            this.context.form.setDirtyState(this.context.fieldPath);
+            this.context.form.setDirtyState(this.getFieldPath());
         }
     },
 
     setPristineState() {
         if (this.inValidationBox()) {
-            this.context.form.setPristineState(this.context.fieldPath);
+            this.context.form.setPristineState(this.getFieldPath());
         }
     },
 
     isDirty() {
         if (this.inValidationBox()) {
-            return this.context.form.isDirty(this.context.fieldPath);
+            return this.state.isDirty;
         }
     },
 
     isValid() {
         if (this.inValidationBox()) {
-            return this.context.form.isValid(this.context.fieldPath);
+            return this.state.isValid;
+        }
+    },
+
+    getErrors() {
+        if (this.inValidationBox()) {
+            return this.state.errors;
+        }
+    },
+
+    getInitialState() {
+        return {
+            isDirty: false,
+            errors: [],
+        };
+    },
+
+    onFormStateUpdate(data) {
+        const fieldPath = this.getFieldPath();
+
+        const errors = _.get(data, _.concat('errors', fieldPath));
+        const isDirty = !!_.get(data, _.concat('dirtyStates', fieldPath));
+        const isValid = _.isEmpty(errors);
+
+        this.setState({
+            isDirty,
+            errors,
+            isValid,
+        });
+    },
+
+    componentDidMount() {
+        if (this.inValidationBox()) {
+            this.context.form.subscribe(this.onFormStateUpdate);
+        }
+    },
+
+    componentWillUnmount() {
+        if (this.inValidationBox()) {
+            this.context.form.unsubscribe(this.onFormStateUpdate);
         }
     },
 };

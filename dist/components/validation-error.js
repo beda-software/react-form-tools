@@ -12,10 +12,18 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
+var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
+
+var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
+
+var _mixins = require('../mixins');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
     displayName: 'ValidationError',
+
+    mixins: [_mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
 
     contextTypes: {
         form: _react2.default.PropTypes.object.isRequired
@@ -33,11 +41,10 @@ exports.default = _react2.default.createClass({
         };
     },
     render: function render() {
-        var form = this.context.form;
+        var errors = this.getErrors();
+        var isValid = this.isValid();
+        var isDirty = this.isDirty();
 
-        var error = form.getValidationErrors(this.props.fieldPath);
-        var isValid = !error;
-        var isDirty = form.isDirty(this.props.fieldPath);
         var className = (0, _classnames2.default)(this.props.className, {
             _dirty: isDirty
         });
@@ -48,7 +55,7 @@ exports.default = _react2.default.createClass({
         return _react2.default.createElement(
             'div',
             { className: className },
-            error
+            errors
         );
     }
 });
