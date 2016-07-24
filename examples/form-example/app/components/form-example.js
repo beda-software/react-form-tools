@@ -6,6 +6,7 @@ import {
     ValidationBox,
     Input,
     Radio,
+    MultipleCheckBox,
     CheckBox,
     Submit
 } from 'react-form-tools';
@@ -16,7 +17,8 @@ const NestedForm = React.createClass({
     mixins: [SchemaBranchMixin],
 
     schema: {
-        form: {},
+        form: {
+        },
     },
 
     validationSchema: yup.object().shape({}),
@@ -58,7 +60,9 @@ export default React.createClass({
 
     schema: {
         nestedForm: {},
-        form: {},
+        form: {
+            fieldMultipleCheckBoxInput: [],
+        },
         formState: {},
     },
 
@@ -103,6 +107,23 @@ export default React.createClass({
                         </label>
                         <label>
                             <Radio value="3" />
+                            3
+                        </label>
+                    </ValidationBox>
+                </div>
+
+                <div>
+                    <ValidationBox fieldPath="fieldMultipleCheckBoxInput">
+                        <label>
+                            <MultipleCheckBox value="1" />
+                            1
+                        </label>
+                        <label>
+                            <MultipleCheckBox value="2" />
+                            2
+                        </label>
+                        <label>
+                            <MultipleCheckBox value="3" />
                             3
                         </label>
                     </ValidationBox>
