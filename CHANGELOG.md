@@ -1,7 +1,10 @@
 # Changelog
 
-# 2.1.1
-* Fix problem with input's cursor value changing
+## 2.1.2
+* ValidationBox: Add `dispalyError` attribute
+
+## 2.1.1
+* Input: Fix problem with input's cursor value changing
 
 ## 2.1.0
 * Clever components with cursor-state synchronization #14

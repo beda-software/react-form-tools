@@ -22,7 +22,8 @@ exports.default = _react2.default.createClass({
     propTypes: {
         fieldPath: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string.isRequired, _react2.default.PropTypes.array.isRequired]),
         className: _react2.default.PropTypes.string,
-        alwaysShowError: _react2.default.PropTypes.bool
+        alwaysShowError: _react2.default.PropTypes.bool,
+        displayError: _react2.default.PropTypes.bool
     },
 
     getDefaultProps: function getDefaultProps() {
@@ -61,7 +62,7 @@ exports.default = _react2.default.createClass({
             'div',
             { className: className, 'data-field-path': (0, _utils.getFieldPathAsString)(fieldPath) },
             this.props.children,
-            isDirty || this.props.alwaysShowError ? _react2.default.createElement(
+            this.props.displayError && (isDirty || this.props.alwaysShowError) ? _react2.default.createElement(
                 'div',
                 { className: 'validationbox-error-message' },
                 error

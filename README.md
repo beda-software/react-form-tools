@@ -110,8 +110,8 @@ If component inside ValidationBox is dirty, ValidationBox will have a class '_di
 
 #### ValidationBox props
 
-* **alwaysShow** *boolean* [`false`] - is `alwaysShow` if set to true, error will be showed even if component is dirty
-
+* **alwaysShowError** *boolean* [`false`] - if `alwaysShowError` is set to true, error will be shown even if component is dirty
+* **displayError** *boolean* [`true`] - if `displayError` is set to true, error will be shown
 ### ValidationError
 
 ```

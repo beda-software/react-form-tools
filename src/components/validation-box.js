@@ -12,6 +12,7 @@ export default React.createClass({
         ]),
         className: React.PropTypes.string,
         alwaysShowError: React.PropTypes.bool,
+        displayError: React.PropTypes.bool,
     },
 
     getDefaultProps() {
@@ -49,7 +50,7 @@ export default React.createClass({
         return (
             <div className={className} data-field-path={getFieldPathAsString(fieldPath)}>
                 {this.props.children}
-                {isDirty || this.props.alwaysShowError ? (
+                {this.props.displayError && (isDirty || this.props.alwaysShowError) ? (
                     <div className="validationbox-error-message">
                         {error}
                     </div>
