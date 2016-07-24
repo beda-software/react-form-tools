@@ -62,7 +62,7 @@ export default React.createClass({
 
         if (this.state.cursorValue !== prevState.cursorValue) {
             this.setState({
-                value: this.state.cursorValue,
+                value: this.props.toInternal(this.state.cursorValue) || '',
             });
         }
     },
