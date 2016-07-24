@@ -39,6 +39,28 @@ const FormWithOneInput = React.createClass({
     },
 });
 
+const FormWithOneInputWithFieldPath = React.createClass({
+    mixins: [SchemaBranchMixin],
+
+    schema: {
+        form: {
+            field: '',
+        },
+    },
+
+    validationSchema: yup.object().shape({
+        field: yup.string().required(),
+    }),
+
+    render() {
+        return (
+            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
+                <Input fieldPath="field" ref="input" {...this.props.inputProps} />
+            </Form>
+        );
+    },
+});
+
 const FormWithOneInputInValidationBox = React.createClass({
     mixins: [SchemaBranchMixin],
 
@@ -343,6 +365,30 @@ describe('Input outside ValidationBox', () => {
 
         clock.tick(inputComponent.msToPoll + 1);
         onSyncSpy.should.have.been.calledWith('sixth', 'fifth');
+    });
+});
+
+describe('Input outside ValidationBox', () => {
+    let inputComponent, formComponent;
+
+    before(() => {
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithOneInputWithFieldPath}
+                componentProps={{
+                    tree: tree.select(),
+                }} />
+        );
+        formComponent = rootComponent.refs.component.refs.form;
+        inputComponent = rootComponent.refs.component.refs.input;
+    });
+
+    it('should getCursor returns correct cursor', () => {
+        inputComponent.getCursor().should.be.equal(tree.select('form', 'field'));
+    });
+
+    it('should inValidationBox returns false', () => {
+        inputComponent.inValidationBox().should.be.false;
     });
 });
 

@@ -27,13 +27,21 @@ export const FormComponentMixin = {
         props = props || this.props;
         context = context || this.context;
 
-        /* istanbul ignore next */
-        if (!props.cursor && !context.fieldPath) {
-            throw 'react-form.tools ' + this.displayName + ': cursor must be set via `cursor` or ' +
-                  'via higher order component ValidationBox with fieldPath';
+        if (props.cursor) {
+            return props.cursor;
         }
 
-        return props.cursor || context.form.cursor.select(context.fieldPath);
+        if (props.fieldPath) {
+            return context.form.cursor.select(props.fieldPath);
+        }
+
+        if (context.fieldPath) {
+            return context.form.cursor.select(context.fieldPath);
+        }
+
+        /* istanbul ignore next */
+        throw `react-form.tools ${this.displayName}: cursor must be set via 'cursor',
+               'fieldPath' or via higher order component ValidationBox with 'fieldPath'`;
     },
 
     inValidationBox() {
