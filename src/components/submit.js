@@ -8,6 +8,7 @@ export default React.createClass({
     propTypes: {
         className: React.PropTypes.string,
         disableIfInvalid: React.PropTypes.bool,
+        disabledClassName: React.PropTypes.string,
         onClick: React.PropTypes.func,
     },
 
@@ -18,6 +19,7 @@ export default React.createClass({
     getDefaultProps() {
         return {
             disableIfInvalid: false,
+            disabledClassName: '_disabled',
             onClick: _.identity,
         };
     },
@@ -40,7 +42,7 @@ export default React.createClass({
                 {..._.omit(this.props, 'children')}
                 type="submit"
                 onClick={this.onClick}
-                className={classNames(this.props.className, { _disabled: disabled })}
+                className={classNames(this.props.className, { [this.props.disabledClassName]: disabled })}
                 disabled={this.props.disableIfInvalid && disabled}
                 value={this.props.value || this.props.children} />
         );

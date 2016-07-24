@@ -84,6 +84,7 @@ Form API is available across refs. These methods are available in child context 
 #### Input props
 
 * **cursor** *cursor* - cursor to input. Cursor must be set if Input is used outside ValidationBox
+* **fieldPath** *string* - relative path to input cursor from form cursor.
 * **nullable** *boolean* [`false`] - if `nullable` is set to true, then empty value will be converted to null
 * **sync** *boolean* [`false`] - if `sync` is set to true, then synchronization will be applied on every change
 * **syncOnlyOnBlur** *boolean* [`false`] - if `syncOnlyOnBlur` is set to true, then synchronization will be applied only on blur
@@ -152,7 +153,7 @@ If form is invalid, button will have a class '_disabled'
 #### Submit props
 
 * **disableIfInvalid** *boolean* [`false`] - if `disableIfInvalid` is set to true, button will be disabled
-
+* **disabledClassName** *string* [`_disabled`]
 ### Own Form component
 
 For creating own component you can use FormComponentMixin from this package.
