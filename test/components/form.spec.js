@@ -5,8 +5,8 @@ import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import BaobabPropTypes from 'baobab-prop-types';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import {Form, Submit} from '../../src/components';
-import {Root} from '../utils';
+import { Form, Submit } from '../../src/components';
+import { Root } from '../utils';
 
 const tree = new Baobab(
     {},
@@ -222,7 +222,7 @@ describe('Form with on fly validation', () => {
                 componentProps={{
                 tree: tree.select(),
             }} />
-    );
+        );
         formComponent = rootComponent.refs.component.refs.form;
         treeState = tree.serialize();
     });
@@ -263,7 +263,7 @@ describe('Form with dynamic validation schema', () => {
                 componentProps={{
                 tree: tree.select(),
             }} />
-    );
+        );
         formComponent = rootComponent.refs.component.refs.form;
         treeState = tree.serialize();
     });
@@ -305,7 +305,7 @@ describe('Form formStateCursor', () => {
                 componentProps={{
                 tree: tree.select(),
             }} />
-    );
+        );
         formComponent = rootComponent.refs.component.refs.form;
         treeState = tree.serialize();
     });

@@ -156,17 +156,10 @@ export default React.createClass({
     },
 
     onKeyPress(event) {
-        if (this.context.form) {
-            if (isEnterPressed(event)) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                this.clearDeferredSyncTimer();
-                this.syncValue(() => this.context.form.submit());
-            }
-        }
-
-        this.props.onKeyPress();
+        this.processKeyPress(() => {
+            this.clearDeferredSyncTimer();
+            this.syncValue(() => this.context.form.submit());
+        });
     },
 
     render() {

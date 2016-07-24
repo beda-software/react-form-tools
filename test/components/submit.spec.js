@@ -5,8 +5,8 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import {Form, Submit} from '../../src/components';
-import {Root} from '../utils';
+import { Form, Submit } from '../../src/components';
+import { Root } from '../utils';
 
 const tree = new Baobab(
     {},
@@ -31,7 +31,8 @@ const FormWithSubmit = React.createClass({
 
     render() {
         return (
-            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema} ref="form">
                 <Submit ref="submit" {...this.props.submitProps}>Submit</Submit>
             </Form>
         );

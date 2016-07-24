@@ -51,7 +51,7 @@ export default React.createClass({
             type: 'radio',
             checked: this.isChecked(),
             onChange: this.onChange,
-            onKeyPress: this.processKeyPress,
+            onKeyPress: this.processKeyPressForSubmit,
         };
 
         return (

@@ -5,8 +5,8 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import {Form, CheckBox} from '../../src/components';
-import {Root} from '../utils';
+import { Form, CheckBox } from '../../src/components';
+import { Root } from '../utils';
 import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
 
 const tree = new Baobab(
@@ -32,8 +32,10 @@ const FormWithOneInput = React.createClass({
 
     render() {
         return (
-            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
-                <CheckBox cursor={this.cursors.form.select('field')} ref="input" {...this.props.inputProps} />
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema} ref="form">
+                <CheckBox cursor={this.cursors.form.select('field')}
+                    ref="input" {...this.props.inputProps} />
             </Form>
         );
     },
@@ -76,7 +78,7 @@ describe('CheckBox', () => {
         onChangeSpy.reset();
     });
 
-    it('should synchronizes with cursor when user changes to checked', () => {
+    it('should synchronize with cursor when user changes to checked', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         inputNode.checked.should.be.false;
         TestUtils.Simulate.change(inputNode, { target: { checked: true } });
@@ -87,7 +89,7 @@ describe('CheckBox', () => {
         inputNode.checked.should.be.true;
     });
 
-    it('should nothing happens when user double changes to checked', () => {
+    it('should nothing happen when user double changes to checked', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { checked: true } });
 
@@ -96,7 +98,7 @@ describe('CheckBox', () => {
         inputNode.checked.should.be.true;
     });
 
-    it('should synchronizes with cursor when user changes to unchecked', () => {
+    it('should synchronize with cursor when user changes to unchecked', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { checked: false } });
 

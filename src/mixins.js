@@ -8,13 +8,19 @@ export const FormComponentMixin = {
         fieldPath: React.PropTypes.array,
     },
 
-    processKeyPress(event) {
+    processKeyPressForSubmit(event) {
         // Helper method for form components
+        // Submits form on enter by default
+        this.processKeyPress(event, () => this.context.form.submit());
+    },
+    
+    processKeyPress(event, fn) {
+        // Callback `fn` will be called on enter press
         if (this.context.form) {
             if (isEnterPressed(event)) {
                 event.preventDefault();
                 event.stopPropagation();
-                this.context.form.submit();
+                fn();
             }
         }
 

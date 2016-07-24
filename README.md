@@ -140,6 +140,20 @@ If component inside ValidationBox is dirty, ValidationError will have a class '_
 <CheckBox value={1} cursor={this.cursors.field} />
 ```
 
+
+### MultipleCheckBox
+
+*Warning*: cursor must be an array!
+
+```
+<ValidationBox fieldPath="path.to.field">
+    <MultipleCheckBox value={1} />
+    <MultipleCheckBox value={2} />
+    <MultipleCheckBox value={3} />
+</ValidationBox>
+```
+
+
 ### Submit
 
 ```
@@ -175,6 +189,15 @@ Always use `processKeyPress` helper as `onKeyPress` attribute for own components
 
 All components have FormComponentMixin, and all methods from mixin are available across refs.
 
+## Examples
+
+    cd examples/form-example
+    npm i
+    npm run start
+
+Example app starts on http://localhost:3000 by default
+
+
 ## Tests
 
-  npm test
+    npm test

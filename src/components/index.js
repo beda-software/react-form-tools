@@ -6,3 +6,4 @@ export {default as ValidationBox} from './validation-box';
 export {default as ValidationError} from './validation-error';
 export {default as Form} from './form';
 export {default as CheckBox} from './check-box';
+export {default as MultipleCheckBox} from './multiple-check-box';

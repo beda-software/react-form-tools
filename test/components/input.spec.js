@@ -5,8 +5,8 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import {Form, Input, ValidationBox} from '../../src/components';
-import {Root} from '../utils';
+import { Form, Input, ValidationBox } from '../../src/components';
+import { Root } from '../utils';
 import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
 
 const tree = new Baobab(
@@ -32,8 +32,10 @@ const FormWithOneInput = React.createClass({
 
     render() {
         return (
-            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
-                <Input cursor={this.cursors.form.select('field')} ref="input" {...this.props.inputProps} />
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema} ref="form">
+                <Input cursor={this.cursors.form.select('field')}
+                    ref="input" {...this.props.inputProps} />
             </Form>
         );
     },
@@ -54,8 +56,10 @@ const FormWithOneInputWithFieldPath = React.createClass({
 
     render() {
         return (
-            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
-                <Input fieldPath="field" ref="input" {...this.props.inputProps} />
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema} ref="form">
+                <Input fieldPath="field"
+                    ref="input" {...this.props.inputProps} />
             </Form>
         );
     },
@@ -80,7 +84,8 @@ const FormWithOneInputInValidationBox = React.createClass({
 
     render() {
         return (
-            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema} ref="form">
                 <ValidationBox fieldPath="nested.field">
                     <Input ref="input" {...this.props.inputProps} />
                 </ValidationBox>
@@ -398,11 +403,11 @@ describe('Input inside ValidationBox', () => {
     before(() => {
         const rootComponent = TestUtils.renderIntoDocument(
             <Root tree={tree}
-                  component={FormWithOneInputInValidationBox}
-                  componentProps={{
+                component={FormWithOneInputInValidationBox}
+                componentProps={{
                     tree: tree.select(),
                     inputProps: {},
-                }}/>
+                }} />
         );
         formComponent = rootComponent.refs.component.refs.form;
         inputComponent = rootComponent.refs.component.refs.input;
