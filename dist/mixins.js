@@ -23,13 +23,22 @@ var FormComponentMixin = exports.FormComponentMixin = {
         fieldPath: _react2.default.PropTypes.array
     },
 
-    processKeyPress: function processKeyPress(event) {
+    processKeyPressForSubmit: function processKeyPressForSubmit(event) {
+        var _this = this;
+
         // Helper method for form components
-        if (this.context.form) {
+        // Submits form on enter by default
+        this.processKeyPress(event, function () {
+            return _this.context.form.submit();
+        });
+    },
+    processKeyPress: function processKeyPress(event, fn) {
+        // Callback `fn` will be called on enter press
+        if (!this.context.form.isHtmlForm()) {
             if ((0, _utils.isEnterPressed)(event)) {
                 event.preventDefault();
                 event.stopPropagation();
-                this.context.form.submit();
+                fn();
             }
         }
 
@@ -41,12 +50,20 @@ var FormComponentMixin = exports.FormComponentMixin = {
         props = props || this.props;
         context = context || this.context;
 
-        /* istanbul ignore next */
-        if (!props.cursor && !context.fieldPath) {
-            throw 'react-form.tools ' + this.displayName + ': cursor must be set via `cursor` or ' + 'via higher order component ValidationBox with fieldPath';
+        if (props.cursor) {
+            return props.cursor;
         }
 
-        return props.cursor || context.form.cursor.select(context.fieldPath);
+        if (props.fieldPath) {
+            return context.form.cursor.select((0, _utils.getFieldPathAsArray)(props.fieldPath));
+        }
+
+        if (context.fieldPath) {
+            return context.form.cursor.select(context.fieldPath);
+        }
+
+        /* istanbul ignore next */
+        throw 'react-form.tools ' + this.displayName + ': cursor must be set via \'cursor\',\n               \'fieldPath\' or via higher order component ValidationBox with \'fieldPath\'';
     },
     inValidationBox: function inValidationBox() {
         return !!(this.context.form && this.context.fieldPath);

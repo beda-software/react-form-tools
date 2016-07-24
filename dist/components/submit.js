@@ -20,12 +20,15 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 exports.default = _react2.default.createClass({
     displayName: 'Submit',
 
     propTypes: {
         className: _react2.default.PropTypes.string,
         disableIfInvalid: _react2.default.PropTypes.bool,
+        disabledClassName: _react2.default.PropTypes.string,
         onClick: _react2.default.PropTypes.func
     },
 
@@ -36,6 +39,7 @@ exports.default = _react2.default.createClass({
     getDefaultProps: function getDefaultProps() {
         return {
             disableIfInvalid: false,
+            disabledClassName: '_disabled',
             onClick: _lodash2.default.identity
         };
     },
@@ -54,7 +58,7 @@ exports.default = _react2.default.createClass({
         return _react2.default.createElement('input', _extends({}, _lodash2.default.omit(this.props, 'children'), {
             type: 'submit',
             onClick: this.onClick,
-            className: (0, _classnames2.default)(this.props.className, { _disabled: disabled }),
+            className: (0, _classnames2.default)(this.props.className, _defineProperty({}, this.props.disabledClassName, disabled)),
             disabled: this.props.disableIfInvalid && disabled,
             value: this.props.value || this.props.children }));
     }

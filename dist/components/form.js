@@ -47,6 +47,8 @@ exports.default = _react2.default.createClass({
         form: _react2.default.PropTypes.object
     },
 
+    _isHtmlForm: null,
+
     getDefaultProps: function getDefaultProps() {
         return {
             validateOnFly: true,
@@ -111,8 +113,23 @@ exports.default = _react2.default.createClass({
             this.props.children
         );
     },
+    hasParentHtmlForm: function hasParentHtmlForm() {
+        var parentForm = this.context.form;
+
+        while (parentForm) {
+            if (parentForm.isHtmlForm()) {
+                return true;
+            }
+
+            parentForm = parentForm.parentForm;
+        }
+    },
     isHtmlForm: function isHtmlForm() {
-        return this.props.useHtmlForm && (!this.context.form || !this.context.form.isHtmlForm());
+        if (this._isHtmlForm === null) {
+            this._isHtmlForm = this.props.useHtmlForm && !this.hasParentHtmlForm();
+        }
+
+        return this._isHtmlForm;
     },
     setFormState: function setFormState(nextState) {
         if (this.props.formStateCursor) {
@@ -131,13 +148,14 @@ exports.default = _react2.default.createClass({
     onFormSubmit: function onFormSubmit(event) {
         event.preventDefault();
         event.stopPropagation();
-        this.submit();
+
+        return this.submit();
     },
     onUpdate: function onUpdate() {
         this.validate();
     },
     submit: function submit() {
-        this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
+        return this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
     },
     validate: function validate(successCallback, errorCallback) {
         var _this = this;
@@ -149,9 +167,13 @@ exports.default = _react2.default.createClass({
             _this.setFormState({ errors: errors });
 
             if (_lodash2.default.isEmpty(errors)) {
-                successCallback && successCallback(data);
+                if (successCallback) {
+                    return successCallback(data);
+                }
             } else {
-                errorCallback && errorCallback(errors);
+                if (errorCallback) {
+                    return errorCallback(errors);
+                }
             }
         });
     },
@@ -165,6 +187,7 @@ exports.default = _react2.default.createClass({
     },
     isValid: function isValid(fieldPath) {
         var formState = this.getFormState();
+
         if (fieldPath) {
             return !_lodash2.default.get(formState.errors, fieldPath);
         }
@@ -173,6 +196,7 @@ exports.default = _react2.default.createClass({
     },
     isDirty: function isDirty(fieldPath) {
         var formState = this.getFormState();
+
         return !!_lodash2.default.get(formState.dirtyStates, fieldPath);
     },
     resetDirtyStates: function resetDirtyStates() {

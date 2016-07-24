@@ -26,16 +26,16 @@ var _baobabPropTypes = require('baobab-prop-types');
 
 var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
 
-var _mixins = require('../mixins');
+var _baobabReactMixins = require('baobab-react-mixins');
 
-var _utils = require('../utils');
+var _mixins = require('../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
     displayName: 'Input',
 
-    mixins: [_reactAddonsPureRenderMixin2.default, _mixins.FormComponentMixin],
+    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         cursor: _baobabPropTypes2.default.cursor,
@@ -54,6 +54,11 @@ exports.default = _react2.default.createClass({
 
     msToPoll: 200,
 
+    cursors: function cursors(props, context) {
+        return {
+            cursorValue: this.getCursor(props, context)
+        };
+    },
     getInitialState: function getInitialState() {
         return {
             value: this.props.toInternal(this.getCursor().get()) || ''
@@ -72,15 +77,17 @@ exports.default = _react2.default.createClass({
             sync: false
         };
     },
-    componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+    componentDidUpdate: function componentDidUpdate(prevProps, prevState, prevContext) {
         if (this.deferredSyncTimer) {
             // Does not set state when component received props while user inputs
             return;
         }
 
-        this.setState({
-            value: this.props.toInternal(this.getCursor(nextProps, nextContext).get())
-        });
+        if (this.state.cursorValue !== prevState.cursorValue) {
+            this.setState({
+                value: this.state.cursorValue
+            });
+        }
     },
     componentDidMount: function componentDidMount() {
         var _this = this;
@@ -117,7 +124,7 @@ exports.default = _react2.default.createClass({
 
         // Synchronizes value with cursor
         var value = this.props.nullable && this.state.value === '' ? null : this.state.value;
-        var previousValue = this.getCursor().get();
+        var previousValue = this.state.cursorValue;
 
         if (value === previousValue) {
             if (_lodash2.default.isFunction(eventCallback)) {
@@ -179,19 +186,12 @@ exports.default = _react2.default.createClass({
     onKeyPress: function onKeyPress(event) {
         var _this5 = this;
 
-        if (this.context.form) {
-            if ((0, _utils.isEnterPressed)(event)) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                this.clearDeferredSyncTimer();
-                this.syncValue(function () {
-                    return _this5.context.form.submit();
-                });
-            }
-        }
-
-        this.props.onKeyPress();
+        this.processKeyPress(event, function () {
+            _this5.clearDeferredSyncTimer();
+            _this5.syncValue(function () {
+                return _this5.context.form.submit();
+            });
+        });
     },
     render: function render() {
         var props = {
