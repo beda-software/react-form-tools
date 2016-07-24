@@ -33,7 +33,9 @@ const FormWithOneInput = React.createClass({
     render() {
         return (
             <Form cursor={this.cursors.form}
-                validationSchema={this.validationSchema} ref="form">
+                validationSchema={this.validationSchema}
+                {...this.props.formProps}
+                ref="form">
                 <Input cursor={this.cursors.form.select('field')}
                     ref="input" {...this.props.inputProps} />
             </Form>
@@ -480,5 +482,55 @@ describe('Input inside ValidationBox', () => {
         inputComponent.setDirtyState();
         inputComponent.isDirty().should.be.true;
         formComponent.isDirty('nested.field').should.be.true;
+    });
+});
+
+describe('Input in not html form', () => {
+    let inputComponent, formComponent, treeState, onSubmitSpy;
+
+    before(() => {
+        onSubmitSpy = sinon.spy();
+
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithOneInput}
+                componentProps={{
+                    tree: tree.select(),
+                    inputProps: {},
+                    formProps: {
+                        useHtmlForm: false,
+                        onSubmit: onSubmitSpy,
+                    },
+                }} />
+        );
+        formComponent = rootComponent.refs.component.refs.form;
+        inputComponent = rootComponent.refs.component.refs.input;
+        treeState = tree.serialize();
+    });
+
+    after(() => {
+        inputComponent.componentWillUnmount();
+        formComponent.componentWillUnmount();
+        tree.set(treeState);
+    });
+
+    afterEach(() => {
+        onSubmitSpy.reset();
+    });
+
+    it('should submit form when user presses enter', (done) => {
+        const inputNode = ReactDOM.findDOMNode(inputComponent);
+        TestUtils.Simulate.change(inputNode, { target: { value: 'value' } });
+
+        TestUtils.Simulate.keyPress(inputNode, {
+            key: 'Enter',
+            keyCode: 13,
+            which: 13,
+        });
+
+        setTimeout(() => {
+            onSubmitSpy.should.have.been.called;
+            done();
+        }, 0);
     });
 });

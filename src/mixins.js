@@ -13,10 +13,10 @@ export const FormComponentMixin = {
         // Submits form on enter by default
         this.processKeyPress(event, () => this.context.form.submit());
     },
-    
+
     processKeyPress(event, fn) {
         // Callback `fn` will be called on enter press
-        if (this.context.form) {
+        if (!this.context.form.isHtmlForm()) {
             if (isEnterPressed(event)) {
                 event.preventDefault();
                 event.stopPropagation();

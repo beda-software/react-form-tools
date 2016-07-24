@@ -89,7 +89,7 @@ describe('CheckBox', () => {
         inputNode.checked.should.be.true;
     });
 
-    it('should nothing happen when user double changes to checked', () => {
+    it('should nothing happens when user double changes to checked', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { checked: true } });
 

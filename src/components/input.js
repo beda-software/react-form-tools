@@ -156,7 +156,7 @@ export default React.createClass({
     },
 
     onKeyPress(event) {
-        this.processKeyPress(() => {
+        this.processKeyPress(event, () => {
             this.clearDeferredSyncTimer();
             this.syncValue(() => this.context.form.submit());
         });

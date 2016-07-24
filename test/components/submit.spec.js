@@ -32,7 +32,9 @@ const FormWithSubmit = React.createClass({
     render() {
         return (
             <Form cursor={this.cursors.form}
-                validationSchema={this.validationSchema} ref="form">
+                validationSchema={this.validationSchema}
+                ref="form"
+                {...this.props.formProps}>
                 <Submit ref="submit" {...this.props.submitProps}>Submit</Submit>
             </Form>
         );
@@ -60,7 +62,7 @@ describe('Submit', () => {
         tree.set(treeState);
     });
 
-    it('should has a class _disabled for invalid form', (done) => {
+    it('should have a class _disabled for invalid form', (done) => {
         formComponent.validate(null, () => {
             const submitNode = ReactDOM.findDOMNode(submitComponent);
             formComponent.isValid().should.be.false;
@@ -70,7 +72,7 @@ describe('Submit', () => {
         });
     });
 
-    it('should does not have a class _disabled for invalid form', (done) => {
+    it('should not have a class _disabled for invalid form', (done) => {
         tree.set(['form', 'field'], 'value');
         formComponent.validate(() => {
             formComponent.isValid().should.be.true;
@@ -110,5 +112,58 @@ describe('Submit', () => {
             submitNode.disabled.should.be.true;
             done();
         });
+    });
+
+    it('should not submit form when user clicks in html form', (done) => {
+        tree.set(['form', 'field'], 'value');
+
+        const onSubmitSpy = sinon.spy();
+
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithSubmit}
+                componentProps={{
+                    tree: tree.select(),
+                    formProps: {
+                        onSubmit: onSubmitSpy,
+                    },
+                }} />
+        );
+        formComponent = rootComponent.refs.component.refs.form;
+        submitComponent = rootComponent.refs.component.refs.submit;
+        const submitNode = ReactDOM.findDOMNode(submitComponent);
+        TestUtils.Simulate.click(submitNode);
+
+        setTimeout(() => {
+            onSubmitSpy.should.have.not.been.called;
+            done();
+        }, 0);
+    });
+
+    it('should submit form when user clicks in not html form', (done) => {
+        tree.set(['form', 'field'], 'value');
+
+        const onSubmitSpy = sinon.spy();
+
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithSubmit}
+                componentProps={{
+                    tree: tree.select(),
+                    formProps: {
+                        useHtmlForm: false,
+                        onSubmit: onSubmitSpy,
+                    },
+                }} />
+        );
+        formComponent = rootComponent.refs.component.refs.form;
+        submitComponent = rootComponent.refs.component.refs.submit;
+        const submitNode = ReactDOM.findDOMNode(submitComponent);
+        TestUtils.Simulate.click(submitNode);
+
+        setTimeout(() => {
+            onSubmitSpy.should.have.been.called;
+            done();
+        }, 0);
     });
 });
