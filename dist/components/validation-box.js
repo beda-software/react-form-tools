@@ -12,10 +12,6 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _baobabPropTypes = require('baobab-prop-types');
-
-var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
-
 var _utils = require('../utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }

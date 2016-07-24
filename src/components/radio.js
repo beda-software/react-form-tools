@@ -2,17 +2,24 @@ import React from 'react';
 import _ from 'lodash';
 import BaobabPropTypes from 'baobab-prop-types';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import { BranchMixin } from 'baobab-react-mixins';
 import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'Radio',
 
-    mixins: [FormComponentMixin],
+    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
 
     propTypes: {
         value: React.PropTypes.any,
         cursor: BaobabPropTypes.cursor,
         onChange: React.PropTypes.func,
+    },
+
+    cursors(props, context) {
+        return {
+            value: this.getCursor(props, context),
+        };
     },
 
     getDefaultProps() {
@@ -22,38 +29,29 @@ export default React.createClass({
     },
 
     onChange() {
-        const cursor = this.getCursor();
         const value = this.props.value;
-        const previousValue = cursor.get();
+        const previousValue = this.state.value;
 
         if (value === previousValue) {
             return;
         }
 
-        cursor.set(value);
-        this.setDirtyState();
-
-        setTimeout(() => {
+        this.setValue(value, () => {
+            this.setDirtyState();
             this.props.onChange(value, previousValue);
-        }, 0);
+        });
     },
 
     isChecked() {
-        return _.isEqual(this.props.value, this.getCursor().get());
-    },
-
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        const value = this.getCursor(nextProps, nextContext).get();
-
-        return !_.isEqual(this.props.value, value) ||
-            PureRenderMixin.shouldComponentUpdate.bind(this, nextProps, nextState);
+        return _.isEqual(this.props.value, this.state.value);
     },
 
     render() {
         const props = {
             type: 'radio',
-            onChange: this.onChange,
             checked: this.isChecked(),
+            onChange: this.onChange,
+            onKeyPress: this.processKeyPressForSubmit,
         };
 
         return (

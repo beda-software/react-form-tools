@@ -76,4 +76,13 @@ Object.defineProperty(exports, 'CheckBox', {
   }
 });
 
+var _multipleCheckBox = require('./multiple-check-box');
+
+Object.defineProperty(exports, 'MultipleCheckBox', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_multipleCheckBox).default;
+  }
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }

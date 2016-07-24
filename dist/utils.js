@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getFieldPathAsArray = getFieldPathAsArray;
 exports.getFieldPathAsString = getFieldPathAsString;
+exports.isEnterPressed = isEnterPressed;
 
 var _lodash = require('lodash');
 
@@ -18,4 +19,8 @@ function getFieldPathAsArray(fieldPath) {
 
 function getFieldPathAsString(fieldPath) {
     return _lodash2.default.isString(fieldPath) ? fieldPath : fieldPath.join('.');
+}
+
+function isEnterPressed(event) {
+    return event.which === 13 || event.keyCode === 13;
 }

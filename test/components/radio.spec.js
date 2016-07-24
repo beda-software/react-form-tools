@@ -5,8 +5,8 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import {Form, Radio, ValidationBox} from '../../src/components';
-import {Root} from '../utils';
+import { Form, Radio, ValidationBox } from '../../src/components';
+import { Root } from '../utils';
 import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
 
 const tree = new Baobab(
@@ -32,7 +32,8 @@ const FormWithThreeInput = React.createClass({
 
     render() {
         return (
-            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema} ref="form">
                 <ValidationBox fieldPath="field">
                     <Radio value={1} ref="radio1" {...this.props.inputProps} />
                     <Radio value={2} ref="radio2" {...this.props.inputProps} />

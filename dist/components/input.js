@@ -26,6 +26,8 @@ var _baobabPropTypes = require('baobab-prop-types');
 
 var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
 
+var _baobabReactMixins = require('baobab-react-mixins');
+
 var _mixins = require('../mixins');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -33,11 +35,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _react2.default.createClass({
     displayName: 'Input',
 
-    mixins: [_reactAddonsPureRenderMixin2.default, _mixins.FormComponentMixin],
+    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         cursor: _baobabPropTypes2.default.cursor,
         onChange: _react2.default.PropTypes.func,
+        onKeyPress: _react2.default.PropTypes.func,
+        onSync: _react2.default.PropTypes.func,
         onBlur: _react2.default.PropTypes.func,
         sync: _react2.default.PropTypes.bool,
         syncOnlyOnBlur: _react2.default.PropTypes.bool,
@@ -50,6 +54,11 @@ exports.default = _react2.default.createClass({
 
     msToPoll: 200,
 
+    cursors: function cursors(props, context) {
+        return {
+            cursorValue: this.getCursor(props, context)
+        };
+    },
     getInitialState: function getInitialState() {
         return {
             value: this.props.toInternal(this.getCursor().get()) || ''
@@ -64,25 +73,32 @@ exports.default = _react2.default.createClass({
             onBlur: _lodash2.default.identity,
             onChange: _lodash2.default.identity,
             onSync: _lodash2.default.identity,
+            onKeyPress: _lodash2.default.identity,
             sync: false
         };
     },
-    componentWillReceiveProps: function componentWillReceiveProps(nextProps, nextContext) {
+    componentDidUpdate: function componentDidUpdate(prevProps, prevState, prevContext) {
         if (this.deferredSyncTimer) {
             // Does not set state when component received props while user inputs
             return;
         }
 
-        this.setState({
-            value: this.props.toInternal(this.getCursor(nextProps, nextContext).get())
-        });
+        if (this.state.cursorValue !== prevState.cursorValue) {
+            this.setState({
+                value: this.state.cursorValue
+            });
+        }
     },
     componentDidMount: function componentDidMount() {
         var _this = this;
 
         if (this.props.autoFocus) {
             setTimeout(function () {
-                return _reactDom2.default.findDOMNode(_this.refs.input).focus();
+                var element = _reactDom2.default.findDOMNode(_this.refs.input);
+
+                if (element) {
+                    element.focus();
+                }
             }, 0);
         }
     },
@@ -95,68 +111,87 @@ exports.default = _react2.default.createClass({
             this.deferredSyncTimer = null;
         }
     },
-    deferredSyncValue: function deferredSyncValue() {
-        this.clearDeferredSyncTimer();
-        this.deferredSyncTimer = setTimeout(this.syncValue, this.msToPoll);
-    },
-    syncValue: function syncValue() {
+    deferredSyncValue: function deferredSyncValue(eventCallback) {
         var _this2 = this;
 
+        this.clearDeferredSyncTimer();
+        this.deferredSyncTimer = setTimeout(function () {
+            return _this2.syncValue(eventCallback);
+        }, this.msToPoll);
+    },
+    syncValue: function syncValue(eventCallback) {
+        var _this3 = this;
+
+        // Synchronizes value with cursor
         var value = this.props.nullable && this.state.value === '' ? null : this.state.value;
-        var previousValue = this.getCursor().get();
+        var previousValue = this.state.cursorValue;
 
         if (value === previousValue) {
+            if (_lodash2.default.isFunction(eventCallback)) {
+                eventCallback();
+            }
+
             return;
         }
 
-        this.getCursor().set(value);
-        this.setDirtyState();
+        this.setValue(value, function () {
+            _this3.setDirtyState();
+            _this3.props.onSync(value, previousValue);
 
-        // Wait for next frame
-        setTimeout(function () {
-            return _this2.props.onSync(value, previousValue);
-        }, 0);
+            if (_lodash2.default.isFunction(eventCallback)) {
+                eventCallback();
+            }
+        });
     },
-    setValue: function setValue(value) {
+    updateValue: function updateValue(value) {
         var forceSync = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+        var eventCallback = arguments[2];
 
+        // Synchronizes value with state
         this.setState({ value: value }, function () {
             if (this.props.sync || forceSync) {
-                this.syncValue();
+                this.syncValue(eventCallback);
                 return;
             }
 
             if (!this.props.syncOnlyOnBlur) {
-                this.deferredSyncValue();
+                this.deferredSyncValue(eventCallback);
             }
         });
     },
-    onChange: function onChange(evt) {
-        var value = this.props.toInternal(evt.target.value);
+    onChange: function onChange(event) {
+        var value = this.props.toInternal(event.target.value);
         var previousValue = this.state.value;
 
         if (value === previousValue) {
             return;
         }
 
-        this.setValue(value);
+        this.updateValue(value);
         this.props.onChange(value, previousValue);
     },
-    onBlur: function onBlur(evt) {
-        var _this3 = this;
+    onBlur: function onBlur(event) {
+        var _this4 = this;
 
-        var value = this.props.toInternal(evt.target.value);
+        var value = this.props.toInternal(event.target.value);
 
         // Prevent future updates
         this.clearDeferredSyncTimer();
 
         // Set inner state value and force synchronization
-        this.setValue(value, true);
+        this.updateValue(value, true, function () {
+            return _this4.props.onBlur(event);
+        });
+    },
+    onKeyPress: function onKeyPress(event) {
+        var _this5 = this;
 
-        // Wait for next frame
-        setTimeout(function () {
-            return _this3.props.onBlur(evt);
-        }, 0);
+        this.processKeyPress(event, function () {
+            _this5.clearDeferredSyncTimer();
+            _this5.syncValue(function () {
+                return _this5.context.form.submit();
+            });
+        });
     },
     render: function render() {
         var props = {
@@ -169,6 +204,9 @@ exports.default = _react2.default.createClass({
             return _react2.default.createElement('textarea', _extends({}, this.props, props, { ref: 'input' }));
         }
 
-        return _react2.default.createElement('input', _extends({ type: this.props.type }, this.props, props, { ref: 'input' }));
+        return _react2.default.createElement('input', _extends({}, this.props, props, {
+            type: this.props.type,
+            onKeyPress: this.onKeyPress,
+            ref: 'input' }));
     }
 });

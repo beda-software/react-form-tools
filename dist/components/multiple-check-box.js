@@ -14,65 +14,66 @@ var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _baobabPropTypes = require('baobab-prop-types');
+var _mixins = require('../mixins');
 
-var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
+var _baobabReactMixins = require('baobab-react-mixins');
 
 var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
 
 var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
 
-var _baobabReactMixins = require('baobab-react-mixins');
+var _baobabPropTypes = require('baobab-prop-types');
 
-var _mixins = require('../mixins');
+var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
-    displayName: 'Radio',
+    displayName: 'MultiCheckBox',
 
     mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
-        value: _react2.default.PropTypes.any,
+        value: _react2.default.PropTypes.any.isRequired,
         cursor: _baobabPropTypes2.default.cursor,
         onChange: _react2.default.PropTypes.func
     },
 
-    cursors: function cursors(props, context) {
-        return {
-            value: this.getCursor(props, context)
-        };
-    },
     getDefaultProps: function getDefaultProps() {
         return {
             onChange: _lodash2.default.identity
         };
     },
-    onChange: function onChange() {
+    cursors: function cursors(props, context) {
+        return {
+            value: this.getCursor(props, context)
+        };
+    },
+    onChange: function onChange(event) {
         var _this = this;
 
-        var value = this.props.value;
-        var previousValue = this.state.value;
+        var wasChecked = this.isChecked();
+        var isChecked = event.target.checked;
 
-        if (value === previousValue) {
+        if (isChecked === wasChecked) {
             return;
         }
 
+        var value = isChecked ? _lodash2.default.concat(this.state.value, this.props.value) : _lodash2.default.without(this.state.value, this.props.value);
+
         this.setValue(value, function () {
             _this.setDirtyState();
-            _this.props.onChange(value, previousValue);
+            _this.props.onChange(isChecked, !isChecked);
         });
     },
     isChecked: function isChecked() {
-        return _lodash2.default.isEqual(this.props.value, this.state.value);
+        return _lodash2.default.includes(this.state.value, this.props.value);
     },
     render: function render() {
         var props = {
-            type: 'radio',
-            checked: this.isChecked(),
+            type: 'checkbox',
             onChange: this.onChange,
-            onKeyPress: this.processKeyPressForSubmit
+            checked: this.isChecked()
         };
 
         return _react2.default.createElement('input', _extends({}, this.props, props));

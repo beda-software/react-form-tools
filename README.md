@@ -60,6 +60,7 @@ React.createClass({
 then this cursor will be used for storing `dirtyStates` and `errors`
 * **onSubmit(data)** *function* [`optional`] - callback of successful validation which will be called when user will submit form
 * **onInvalidSubmit(errors)** *function* [`optional`] - callback of unsuccessful validation which will be called when user will submit form
+* **useHtmlForm** *boolean* [`true`] - use html form instead of own emulation. Own emulation always used for nested form if both forms have `useHtmlForm=true`
 
 #### Form API
 
@@ -70,6 +71,9 @@ Form API is available across refs. These methods are available in child context 
 * **getValidationErrors([fieldPath])**
 * **setDirtyState(fieldPath)**
 * **setPristineState(fieldPath)**
+* **submit()**
+* **validate(successCallback, invalidCallback)**
+* **isHtmlForm()**
 
 ### Input
 
@@ -80,6 +84,7 @@ Form API is available across refs. These methods are available in child context 
 #### Input props
 
 * **cursor** *cursor* - cursor to input. Cursor must be set if Input is used outside ValidationBox
+* **fieldPath** *string* - relative path to input cursor from form cursor.
 * **nullable** *boolean* [`false`] - if `nullable` is set to true, then empty value will be converted to null
 * **sync** *boolean* [`false`] - if `sync` is set to true, then synchronization will be applied on every change
 * **syncOnlyOnBlur** *boolean* [`false`] - if `syncOnlyOnBlur` is set to true, then synchronization will be applied only on blur
@@ -135,6 +140,20 @@ If component inside ValidationBox is dirty, ValidationError will have a class '_
 <CheckBox value={1} cursor={this.cursors.field} />
 ```
 
+
+### MultipleCheckBox
+
+*Warning*: cursor must be an array!
+
+```
+<ValidationBox fieldPath="path.to.field">
+    <MultipleCheckBox value={1} />
+    <MultipleCheckBox value={2} />
+    <MultipleCheckBox value={3} />
+</ValidationBox>
+```
+
+
 ### Submit
 
 ```
@@ -148,7 +167,7 @@ If form is invalid, button will have a class '_disabled'
 #### Submit props
 
 * **disableIfInvalid** *boolean* [`false`] - if `disableIfInvalid` is set to true, button will be disabled
-
+* **disabledClassName** *string* [`_disabled`]
 ### Own Form component
 
 For creating own component you can use FormComponentMixin from this package.
@@ -157,15 +176,28 @@ For creating own component you can use FormComponentMixin from this package.
 FormComponentMixin provides next useful methods:
 * **inValidationBox()** - returns true if component inside ValidationBox
 * **getCursor()** - returns current cursor of component
+* **setValue(value, callback)** - sets cursor value and calls callback after synchronization
 * **isValid()** - returns true if component has valid value
 * **isDirty()** - returns true if component is dirty
 * **setDirtyState()** - set dirty state for component
 * **setPristineState()** - set pristine state for component
+* **processKeyPress(event)** - process key press event and catch only Enter key pressing for form submission
+
+Always use `processKeyPress` helper as `onKeyPress` attribute for own components if you wish to do form submission on enter (default html form component behaviour).
 
 ### All Form Components API
 
 All components have FormComponentMixin, and all methods from mixin are available across refs.
 
+## Examples
+
+    cd examples/form-example
+    npm i
+    npm run start
+
+Example app starts on http://localhost:3000 by default
+
+
 ## Tests
 
-  npm test
+    npm test

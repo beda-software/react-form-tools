@@ -1,20 +1,25 @@
 import React from 'react';
 import _ from 'lodash';
-import BaobabPropTypes from 'baobab-prop-types';
 import { FormComponentMixin } from '../mixins';
 import { BranchMixin } from 'baobab-react-mixins';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import BaobabPropTypes from 'baobab-prop-types';
 
 export default React.createClass({
-    displayName: 'CheckBox',
+    displayName: 'MultiCheckBox',
 
     mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
 
     propTypes: {
-        value: React.PropTypes.any,
-        uncheckedValue: React.PropTypes.any,
+        value: React.PropTypes.any.isRequired,
         cursor: BaobabPropTypes.cursor,
         onChange: React.PropTypes.func,
+    },
+
+    getDefaultProps() {
+        return {
+            onChange: _.identity,
+        };
     },
 
     cursors(props, context) {
@@ -23,38 +28,37 @@ export default React.createClass({
         };
     },
 
-    getDefaultProps() {
-        return {
-            onChange: _.identity,
-            value: true,
-            uncheckedValue: false,
-        };
-    },
-
     onChange(event) {
-        const value = event.target.checked ? this.props.value : this.props.uncheckedValue;
-        const previousValue = this.state.value;
+        const wasChecked = this.isChecked();
+        const isChecked = event.target.checked;
 
-        if (value === previousValue) {
+        if (isChecked === wasChecked) {
             return;
         }
 
+        const value = isChecked ?
+            _.concat(
+                this.state.value, this.props.value
+            ) :
+            _.without(
+                this.state.value, this.props.value
+            );
+
         this.setValue(value, () => {
             this.setDirtyState();
-            this.props.onChange(value, previousValue);
+            this.props.onChange(isChecked, !isChecked);
         });
     },
 
     isChecked() {
-        return _.isEqual(this.props.value, this.state.value);
+        return _.includes(this.state.value, this.props.value);
     },
-    
+
     render() {
         const props = {
             type: 'checkbox',
-            checked: this.isChecked(),
             onChange: this.onChange,
-            onKeyPress: this.processKeyPressForSubmit,
+            checked: this.isChecked(),
         };
 
         return (

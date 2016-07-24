@@ -23,6 +23,7 @@
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-form-tools": "../..",
+    "webpack": "^1.13.0",
     "webpack-livereload-plugin": "^0.6.0",
     "yup": "^0.14.1",
     "yup-validation-strategy": "^1.2.0"

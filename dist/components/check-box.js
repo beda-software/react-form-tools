@@ -20,12 +20,18 @@ var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
 
 var _mixins = require('../mixins');
 
+var _baobabReactMixins = require('baobab-react-mixins');
+
+var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
+
+var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
     displayName: 'CheckBox',
 
-    mixins: [_mixins.FormComponentMixin],
+    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         value: _react2.default.PropTypes.any,
@@ -34,6 +40,11 @@ exports.default = _react2.default.createClass({
         onChange: _react2.default.PropTypes.func
     },
 
+    cursors: function cursors(props, context) {
+        return {
+            value: this.getCursor(props, context)
+        };
+    },
     getDefaultProps: function getDefaultProps() {
         return {
             onChange: _lodash2.default.identity,
@@ -44,29 +55,27 @@ exports.default = _react2.default.createClass({
     onChange: function onChange(event) {
         var _this = this;
 
-        var cursor = this.getCursor();
         var value = event.target.checked ? this.props.value : this.props.uncheckedValue;
-        var previousValue = cursor.get();
+        var previousValue = this.state.value;
 
         if (value === previousValue) {
             return;
         }
 
-        cursor.set(value);
-        this.setDirtyState();
-
-        setTimeout(function () {
+        this.setValue(value, function () {
+            _this.setDirtyState();
             _this.props.onChange(value, previousValue);
-        }, 0);
+        });
     },
     isChecked: function isChecked() {
-        return _lodash2.default.isEqual(this.props.value, this.getCursor().get());
+        return _lodash2.default.isEqual(this.props.value, this.state.value);
     },
     render: function render() {
         var props = {
             type: 'checkbox',
+            checked: this.isChecked(),
             onChange: this.onChange,
-            checked: this.isChecked()
+            onKeyPress: this.processKeyPressForSubmit
         };
 
         return _react2.default.createElement('input', _extends({}, this.props, props));

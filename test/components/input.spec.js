@@ -5,8 +5,8 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import {Form, Input, ValidationBox} from '../../src/components';
-import {Root} from '../utils';
+import { Form, Input, ValidationBox } from '../../src/components';
+import { Root } from '../utils';
 import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
 
 const tree = new Baobab(
@@ -32,8 +32,36 @@ const FormWithOneInput = React.createClass({
 
     render() {
         return (
-            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
-                <Input cursor={this.cursors.form.select('field')} ref="input" {...this.props.inputProps} />
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema}
+                {...this.props.formProps}
+                ref="form">
+                <Input cursor={this.cursors.form.select('field')}
+                    ref="input" {...this.props.inputProps} />
+            </Form>
+        );
+    },
+});
+
+const FormWithOneInputWithFieldPath = React.createClass({
+    mixins: [SchemaBranchMixin],
+
+    schema: {
+        form: {
+            field: '',
+        },
+    },
+
+    validationSchema: yup.object().shape({
+        field: yup.string().required(),
+    }),
+
+    render() {
+        return (
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema} ref="form">
+                <Input fieldPath="field"
+                    ref="input" {...this.props.inputProps} />
             </Form>
         );
     },
@@ -58,7 +86,8 @@ const FormWithOneInputInValidationBox = React.createClass({
 
     render() {
         return (
-            <Form cursor={this.cursors.form} validationSchema={this.validationSchema} ref="form">
+            <Form cursor={this.cursors.form}
+                validationSchema={this.validationSchema} ref="form">
                 <ValidationBox fieldPath="nested.field">
                     <Input ref="input" {...this.props.inputProps} />
                 </ValidationBox>
@@ -346,17 +375,41 @@ describe('Input outside ValidationBox', () => {
     });
 });
 
+describe('Input outside ValidationBox', () => {
+    let inputComponent, formComponent;
+
+    before(() => {
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithOneInputWithFieldPath}
+                componentProps={{
+                    tree: tree.select(),
+                }} />
+        );
+        formComponent = rootComponent.refs.component.refs.form;
+        inputComponent = rootComponent.refs.component.refs.input;
+    });
+
+    it('should getCursor returns correct cursor', () => {
+        inputComponent.getCursor().should.be.equal(tree.select('form', 'field'));
+    });
+
+    it('should inValidationBox returns false', () => {
+        inputComponent.inValidationBox().should.be.false;
+    });
+});
+
 describe('Input inside ValidationBox', () => {
     let inputComponent, formComponent, treeState, clock;
 
     before(() => {
         const rootComponent = TestUtils.renderIntoDocument(
             <Root tree={tree}
-                  component={FormWithOneInputInValidationBox}
-                  componentProps={{
+                component={FormWithOneInputInValidationBox}
+                componentProps={{
                     tree: tree.select(),
                     inputProps: {},
-                }}/>
+                }} />
         );
         formComponent = rootComponent.refs.component.refs.form;
         inputComponent = rootComponent.refs.component.refs.input;
@@ -429,5 +482,55 @@ describe('Input inside ValidationBox', () => {
         inputComponent.setDirtyState();
         inputComponent.isDirty().should.be.true;
         formComponent.isDirty('nested.field').should.be.true;
+    });
+});
+
+describe('Input in not html form', () => {
+    let inputComponent, formComponent, treeState, onSubmitSpy;
+
+    before(() => {
+        onSubmitSpy = sinon.spy();
+
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithOneInput}
+                componentProps={{
+                    tree: tree.select(),
+                    inputProps: {},
+                    formProps: {
+                        useHtmlForm: false,
+                        onSubmit: onSubmitSpy,
+                    },
+                }} />
+        );
+        formComponent = rootComponent.refs.component.refs.form;
+        inputComponent = rootComponent.refs.component.refs.input;
+        treeState = tree.serialize();
+    });
+
+    after(() => {
+        inputComponent.componentWillUnmount();
+        formComponent.componentWillUnmount();
+        tree.set(treeState);
+    });
+
+    afterEach(() => {
+        onSubmitSpy.reset();
+    });
+
+    it('should submit form when user presses enter', (done) => {
+        const inputNode = ReactDOM.findDOMNode(inputComponent);
+        TestUtils.Simulate.change(inputNode, { target: { value: 'value' } });
+
+        TestUtils.Simulate.keyPress(inputNode, {
+            key: 'Enter',
+            keyCode: 13,
+            which: 13,
+        });
+
+        setTimeout(() => {
+            onSubmitSpy.should.have.been.called;
+            done();
+        }, 0);
     });
 });

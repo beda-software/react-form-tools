@@ -1,6 +1,6 @@
 {
   "name": "react-form-tools",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "description": "Form components with validation for React + Baobab",
   "main": "./dist/index.js",
   "scripts": {
@@ -47,7 +47,7 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-phantomjs-shim": "^1.1.2",
     "karma-sinon": "^1.0.4",
-    "karma-sinon-chai": "^1.2.0",
+    "karma-sinon-chai": "1.2.1",
     "karma-webpack": "^1.7.0",
     "lolex": "^1.4.0",
     "mocha": "^2.3.4",
@@ -57,7 +57,9 @@
     "react-dom": "^0.14.6",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
-    "webpack": "^1.12.11"
+    "webpack": "^1.12.11",
+    "yup": "^0.12.0",
+    "yup-validation-strategy": "^1.2.0"
   },
   "peerDependencies": {
     "yup": "^0.12.0",
@@ -65,8 +67,9 @@
   },
   "dependencies": {
     "baobab-prop-types": "^1.0.0",
+    "baobab-react-mixins": "^1.0.0",
     "classnames": "^2.2.3",
-    "lodash": "^3.10.1",
+    "lodash": "^4.13.1",
     "react-addons-pure-render-mixin": "^0.14.6"
   }
 }

@@ -8,14 +8,23 @@ export default React.createClass({
         onSubmit: React.PropTypes.func,
         onInvalidSubmit: React.PropTypes.func,
         cursor: BaobabPropTypes.cursor.isRequired,
+
+        // TODO: concretize type
         validationSchema: React.PropTypes.any.isRequired,
         formStateCursor: BaobabPropTypes.cursor,
         validateOnFly: React.PropTypes.bool,
+        useHtmlForm: React.PropTypes.bool,
     },
 
     childContextTypes: {
         form: React.PropTypes.object,
     },
+
+    contextTypes: {
+        form: React.PropTypes.object,
+    },
+
+    _isHtmlForm: null,
 
     getDefaultProps() {
         return {
@@ -23,18 +32,25 @@ export default React.createClass({
             strategy: defaultStrategy(),
             onSubmit: _.identity,
             onInvalidSubmit: _.identity,
+            useHtmlForm: true,
         };
     },
 
     getChildContext() {
         return {
             form: {
+                parentForm: this.context.form,
+                isHtmlForm: this.isHtmlForm,
+
                 cursor: this.props.cursor,
                 isValid: this.isValid,
                 isDirty: this.isDirty,
                 getValidationErrors: this.getValidationErrors,
                 setDirtyState: this.setDirtyState,
                 setPristineState: this.setPristineState,
+
+                submit: this.submit,
+                validate: this.validate,
             },
         };
     },
@@ -65,11 +81,39 @@ export default React.createClass({
     },
 
     render() {
+        if (this.isHtmlForm()) {
+            return (
+                <form noValidate {...this.props} onSubmit={this.onFormSubmit}>
+                    {this.props.children}
+                </form>
+            );
+        }
+
         return (
-          <form noValidate {...this.props} onSubmit={this.onFormSubmit}>
-              {this.props.children}
-          </form>
+            <div {...this.props}>
+                {this.props.children}
+            </div>
         );
+    },
+
+    hasParentHtmlForm() {
+        let parentForm = this.context.form;
+
+        while (parentForm) {
+            if (parentForm.isHtmlForm()) {
+                return true;
+            }
+
+            parentForm = parentForm.parentForm;
+        }
+    },
+
+    isHtmlForm() {
+        if (this._isHtmlForm === null) {
+            this._isHtmlForm = this.props.useHtmlForm && !this.hasParentHtmlForm();
+        }
+
+        return this._isHtmlForm;
     },
 
     setFormState(nextState) {
@@ -88,9 +132,11 @@ export default React.createClass({
         return this.state;
     },
 
-    onFormSubmit(evt) {
-        evt.preventDefault();
-        this.submit();
+    onFormSubmit(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        return this.submit();
     },
 
     onUpdate() {
@@ -98,7 +144,7 @@ export default React.createClass({
     },
 
     submit() {
-        this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
+        return this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
     },
 
     validate(successCallback, errorCallback) {
@@ -107,12 +153,16 @@ export default React.createClass({
             this.props.validationSchema(data) : this.props.validationSchema;
 
         this.props.strategy.validate(data, schema, {}, errors => {
-            this.setFormState({ errors: errors });
+            this.setFormState({ errors });
 
             if (_.isEmpty(errors)) {
-                successCallback && successCallback(data);
+                if (successCallback) {
+                    return successCallback(data);
+                }
             } else {
-                errorCallback && errorCallback(errors);
+                if (errorCallback) {
+                    return errorCallback(errors);
+                }
             }
         });
     },
@@ -128,6 +178,7 @@ export default React.createClass({
 
     isValid(fieldPath) {
         const formState = this.getFormState();
+
         if (fieldPath) {
             return !_.get(formState.errors, fieldPath);
         }
@@ -137,6 +188,7 @@ export default React.createClass({
 
     isDirty(fieldPath) {
         const formState = this.getFormState();
+
         return !!_.get(formState.dirtyStates, fieldPath);
     },
 
@@ -152,7 +204,7 @@ export default React.createClass({
 
     setValidationErrors(errors) {
         this.setFormState({
-            errors: errors,
+            errors,
         });
     },
 

@@ -1,5 +1,18 @@
 # Changelog
 
+
+## 2.1.0
+* Clever components with cursor-state synchronization #14
+* Fix devDependencies #13
+* MultipleCheckBox: Add checkbox component which can work with multiple values inside one validation box #21
+* Form: Add nested forms support #16
+* Form: Add new prop `useHtmlForm` with default true value
+* Form: Add `submit`, `validate`, `isHtmlForm` methods into form child context
+* Form: fix synchronizing problem with `updateDirtyState`
+* Submit: Add ability to set disabledClass in Submit component #15
+* FormComponentMixin: Add processKeyPress helper for form components
+* FormComponentMixin: Allow setting fieldPath in ordinary inputs #19
+
 ## 2.0.5
 * Fixed imports
 
