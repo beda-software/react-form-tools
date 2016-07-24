@@ -29,7 +29,7 @@ var _baobabPropTypes2 = _interopRequireDefault(_baobabPropTypes);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _react2.default.createClass({
-    displayName: 'MultiCheckBox',
+    displayName: 'MultipleCheckBox',
 
     mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
 

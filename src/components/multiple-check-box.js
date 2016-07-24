@@ -6,7 +6,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
 
 export default React.createClass({
-    displayName: 'MultiCheckBox',
+    displayName: 'MultipleCheckBox',
 
     mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
 
