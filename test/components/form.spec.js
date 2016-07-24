@@ -16,32 +16,59 @@ const tree = new Baobab(
     }
 );
 
-const FormComponentFactory = (formProps) => {
-    return React.createClass({
-        mixins: [SchemaBranchMixin],
+const FormComponentFactory = (formProps) => React.createClass({
+    mixins: [SchemaBranchMixin],
 
-        schema: {
-            form: {
-                firstName: null,
-                lastName: null,
-                second: {
-                    field: null,
-                },
-                num1: null,
-                num2: null,
+    schema: {
+        form: {
+            firstName: null,
+            lastName: null,
+            second: {
+                field: null,
             },
-            formState: {},
+            num1: null,
+            num2: null,
         },
+        formState: {},
+    },
 
-        render() {
-            return (
-                <Form cursor={this.cursors.form} ref="form" {...formProps}>
-                    <input type="submit" className="submit" />
+    render() {
+        return (
+            <Form cursor={this.cursors.form} ref="form" {...formProps}>
+                <input type="submit" className="submit" />
+            </Form>
+        );
+    },
+});
+
+const FormWithNestedForms = React.createClass({
+    mixins: [SchemaBranchMixin],
+
+    schema: {
+        form1: {},
+        form2: {},
+        form3: {},
+    },
+
+    validationSchema: yup.object().shape({}),
+
+    render() {
+        return (
+            <Form cursor={this.cursors.form1} ref="form1"
+                validationSchema={this.validationSchema}>
+                <Submit className="submit1" />
+                <Form cursor={this.cursors.form2} ref="form2"
+                    validationSchema={this.validationSchema}>
+                    <Submit className="submit2" />
+                    <Form cursor={this.cursors.form3} ref="form3"
+                        validationSchema={this.validationSchema}>
+                        <Submit className="submit3" />
+                    </Form>
                 </Form>
-            );
-        },
-    });
-};
+            </Form>
+        );
+    },
+});
 
 describe('Form without on fly validation', () => {
     let formComponent, treeState;
@@ -375,5 +402,37 @@ describe('Form formStateCursor', () => {
             });
             done();
         });
+    });
+});
+
+describe('Form with nested forms', () => {
+    let firstFormComponent, secondFormComponent, thirdFormComponent, treeState;
+
+    before(() => {
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithNestedForms}
+                componentProps={{
+                tree: tree.select(),
+            }} />
+        );
+        firstFormComponent = rootComponent.refs.component.refs.form1;
+        secondFormComponent = rootComponent.refs.component.refs.form2;
+        thirdFormComponent = rootComponent.refs.component.refs.form3;
+
+        treeState = tree.serialize();
+    });
+
+    after(() => {
+        firstFormComponent.componentWillUnmount();
+        secondFormComponent.componentWillUnmount();
+        thirdFormComponent.componentWillUnmount();
+        tree.set(treeState);
+    });
+
+    it('should forms have correct isHtmlForm values', () => {
+        expect(firstFormComponent.isHtmlForm()).to.be.true;
+        expect(secondFormComponent.isHtmlForm()).to.be.false;
+        expect(thirdFormComponent.isHtmlForm()).to.be.false;
     });
 });

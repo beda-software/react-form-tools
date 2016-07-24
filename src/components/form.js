@@ -24,6 +24,8 @@ export default React.createClass({
         form: React.PropTypes.object,
     },
 
+    _isHtmlForm: null,
+
     getDefaultProps() {
         return {
             validateOnFly: true,
@@ -94,8 +96,24 @@ export default React.createClass({
         );
     },
 
+    hasParentHtmlForm() {
+        let parentForm = this.context.form;
+
+        while (parentForm) {
+            if (parentForm.isHtmlForm()) {
+                return true;
+            }
+
+            parentForm = parentForm.parentForm;
+        }
+    },
+
     isHtmlForm() {
-        return this.props.useHtmlForm && (!this.context.form || !this.context.form.isHtmlForm());
+        if (this._isHtmlForm === null) {
+            this._isHtmlForm = this.props.useHtmlForm && !this.hasParentHtmlForm();
+        }
+
+        return this._isHtmlForm;
     },
 
     setFormState(nextState) {
@@ -160,6 +178,7 @@ export default React.createClass({
 
     isValid(fieldPath) {
         const formState = this.getFormState();
+
         if (fieldPath) {
             return !_.get(formState.errors, fieldPath);
         }
@@ -169,6 +188,7 @@ export default React.createClass({
 
     isDirty(fieldPath) {
         const formState = this.getFormState();
+
         return !!_.get(formState.dirtyStates, fieldPath);
     },
 
