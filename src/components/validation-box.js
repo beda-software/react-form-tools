@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import BaobabPropTypes from 'baobab-prop-types';
 import {getFieldPathAsArray, getFieldPathAsString} from '../utils';
 
 export default React.createClass({

@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { isEnterPressed } from './utils';
+import { isEnterPressed, getFieldPathAsArray } from './utils';
 
 export const FormComponentMixin = {
     contextTypes: {
@@ -38,7 +38,7 @@ export const FormComponentMixin = {
         }
 
         if (props.fieldPath) {
-            return context.form.cursor.select(props.fieldPath);
+            return context.form.cursor.select(getFieldPathAsArray(props.fieldPath));
         }
 
         if (context.fieldPath) {

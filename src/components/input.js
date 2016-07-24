@@ -5,7 +5,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
 import { BranchMixin } from 'baobab-react-mixins';
 import { FormComponentMixin } from '../mixins';
-import { isEnterPressed } from '../utils';
 
 export default React.createClass({
     displayName: 'Input',
