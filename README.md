@@ -67,13 +67,15 @@ then this cursor will be used for storing `dirtyStates` and `errors`
 Form API is available across refs. These methods are available in child context via `form`, which contains also `cursor` attribute to form data.
 
 * **isValid([fieldPath])**
-* **isDirty(fieldPath)**
+* **isDirty([fieldPath])**
 * **getValidationErrors([fieldPath])**
-* **setDirtyState(fieldPath)**
-* **setPristineState(fieldPath)**
+* **setDirtyState([fieldPath])**
+* **setPristineState([fieldPath])**
 * **submit()**
 * **validate(successCallback, invalidCallback)**
 * **isHtmlForm()**
+* **subscribe(handler)**
+* **unsubscribe(handler)**
 
 ### Input
 

@@ -188,11 +188,18 @@ describe('Form without on fly validation', () => {
         expect(formComponent.isValid('second.field')).to.be.true;
     });
 
+    it('should setDirtyState without arguments works correctly', () => {
+        formComponent.setDirtyState();
+        expect(formComponent.isDirty('firstName')).to.be.true;
+        expect(formComponent.isDirty()).to.be.true;
+    });
+
     it('should setPristineState without arguments works correctly', () => {
         formComponent.setPristineState();
         expect(formComponent.isDirty('firstName')).to.be.false;
         expect(formComponent.isDirty('lastName')).to.be.false;
         expect(formComponent.isDirty('second.field')).to.be.false;
+        expect(formComponent.isDirty()).to.be.false;
     });
 
     it('should setDirtyState works correctly', () => {
