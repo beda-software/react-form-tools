@@ -115,16 +115,16 @@ export const FormComponentMixin = {
         }
     },
 
-    onFormStateUpdate(data) {
+    onFormStateUpdate({ dirtyStates, isFormDirty, errors }) {
         const fieldPath = this.getFieldPath();
 
-        const errors = _.get(data, _.concat('errors', fieldPath));
-        const isDirty = !!_.get(data, _.concat('dirtyStates', fieldPath));
-        const isValid = _.isEmpty(errors);
+        const fieldErrors = _.get(errors, fieldPath);
+        const isValid = _.isEmpty(fieldErrors);
+        const isDirty = !!_.get(dirtyStates, fieldPath) || isFormDirty;
 
         this.setState({
+            errors: fieldErrors,
             isDirty,
-            errors,
             isValid,
         });
     },

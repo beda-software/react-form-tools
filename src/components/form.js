@@ -128,7 +128,7 @@ export default React.createClass({
     subscribe(subscriber) {
         this.subscribers = _.concat(this.subscribers, subscriber);
 
-        // // Notify new subscriber about initial form state
+        // Notify new subscriber about initial form state
         subscriber(this.getFormState(), null);
     },
 
@@ -137,6 +137,11 @@ export default React.createClass({
     },
 
     onFormStateUpdate(data, previousData) {
+        // Notify subscribers about changed data only
+        if (_.isEqual(data, previousData)) {
+            return;
+        }
+
         this.publish(data, previousData);
     },
 
@@ -277,10 +282,13 @@ export default React.createClass({
             return;
         }
 
-        const formState = this.getFormState();
+        let { dirtyStates } = this.getFormState();
+
+        dirtyStates = _.cloneDeep(dirtyStates || {});
+        _.set(dirtyStates, fieldPath, dirtyState);
 
         this.setFormState({
-            dirtyStates: _.set(formState.dirtyStates || {}, fieldPath, dirtyState),
+            dirtyStates,
         });
     },
 });

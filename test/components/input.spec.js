@@ -463,6 +463,7 @@ describe('Input inside ValidationBox', () => {
 
     it('should isDirty returns false for dirty input', () => {
         inputComponent.isDirty().should.be.true;
+        formComponent.isDirty('nested.field').should.be.true;
     });
 
     it('should setPristine makes pristine dirty input', () => {
