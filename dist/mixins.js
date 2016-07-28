@@ -23,6 +23,13 @@ var FormComponentMixin = exports.FormComponentMixin = {
         fieldPath: _react2.default.PropTypes.array
     },
 
+    getInitialState: function getInitialState() {
+        return {
+            isDirty: false,
+            isValid: true,
+            errors: []
+        };
+    },
     processKeyPressForSubmit: function processKeyPressForSubmit(event) {
         var _this = this;
 
@@ -114,22 +121,20 @@ var FormComponentMixin = exports.FormComponentMixin = {
             return this.state.errors;
         }
     },
-    getInitialState: function getInitialState() {
-        return {
-            isDirty: false,
-            errors: []
-        };
-    },
-    onFormStateUpdate: function onFormStateUpdate(data) {
+    onFormStateUpdate: function onFormStateUpdate(_ref) {
+        var dirtyStates = _ref.dirtyStates;
+        var isFormDirty = _ref.isFormDirty;
+        var errors = _ref.errors;
+
         var fieldPath = this.getFieldPath();
 
-        var errors = _lodash2.default.get(data, _lodash2.default.concat('errors', fieldPath));
-        var isDirty = !!_lodash2.default.get(data, _lodash2.default.concat('dirtyStates', fieldPath));
-        var isValid = _lodash2.default.isEmpty(errors);
+        var fieldErrors = _lodash2.default.get(errors, fieldPath);
+        var isValid = _lodash2.default.isEmpty(fieldErrors);
+        var isDirty = !!_lodash2.default.get(dirtyStates, fieldPath) || isFormDirty;
 
         this.setState({
+            errors: fieldErrors,
             isDirty: isDirty,
-            errors: errors,
             isValid: isValid
         });
     },
