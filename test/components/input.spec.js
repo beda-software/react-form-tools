@@ -400,7 +400,7 @@ describe('Input outside ValidationBox', () => {
 });
 
 describe('Input inside ValidationBox', () => {
-    let inputComponent, formComponent, treeState, clock;
+    let inputComponent, formComponent, treeState;
 
     before(() => {
         const rootComponent = TestUtils.renderIntoDocument(
@@ -416,18 +416,10 @@ describe('Input inside ValidationBox', () => {
         treeState = tree.serialize();
     });
 
-    beforeEach(() => {
-        clock = sinon.useFakeTimers();
-    });
-
     after(() => {
         inputComponent.componentWillUnmount();
         formComponent.componentWillUnmount();
         tree.set(treeState);
-    });
-
-    afterEach(() => {
-        clock.restore();
     });
 
     it('should getCursor returns correct cursor', () => {
@@ -439,7 +431,6 @@ describe('Input inside ValidationBox', () => {
     });
 
     it('should isValid returns false for invalid input', (done) => {
-        clock.restore();
         formComponent.validate(null, () => {
             inputComponent.isValid().should.be.false;
             formComponent.isValid('nested.field').should.be.false;
@@ -452,15 +443,17 @@ describe('Input inside ValidationBox', () => {
     });
 
     it('should changes cursor value correctly on change', () => {
+        const clock = sinon.useFakeTimers();
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'firth' } });
 
         clock.tick(inputComponent.msToPoll + 1);
         tree.get('form', 'nested', 'field').should.be.equal('firth');
+
+        clock.restore();
     });
 
     it('should isValid returns true for valid input', (done) => {
-        clock.restore();
         formComponent.validate(() => {
             inputComponent.isValid().should.be.true;
             formComponent.isValid('nested.field').should.be.true;

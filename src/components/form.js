@@ -67,6 +67,7 @@ export default React.createClass({
         return {
             errors: {},
             dirtyStates: {},
+            isFormDirty: false,
         };
     },
 
@@ -120,29 +121,38 @@ export default React.createClass({
         return this._isHtmlForm;
     },
 
+    publish(...args) {
+        _.each(this.subscribers, (subscriber) => subscriber(...args));
+    },
+
     subscribe(subscriber) {
         this.subscribers = _.concat(this.subscribers, subscriber);
+
+        // // Notify new subscriber about initial form state
+        subscriber(this.getFormState(), null);
     },
 
     unsubscribe(subscriber) {
         this.subscribers = _.without(this.subscribers, subscriber);
     },
 
-    onFormStateUpdate(data) {
-        _.each(this.subscribers, (subscriber) => subscriber(data));
+    onFormStateUpdate(data, previousData) {
+        this.publish(data, previousData);
     },
 
     setFormState(nextState) {
+        const prevState = this.getFormState();
+
         if (this.props.formStateCursor) {
             this.props.formStateCursor.once(
                 'update',
-                ({ data }) => this.onFormStateUpdate(data.currentData)
+                ({ data }) => this.onFormStateUpdate(data.currentData, prevState)
             );
             this.props.formStateCursor.merge(nextState);
         } else {
             this.setState(
                 nextState,
-                () => this.onFormStateUpdate(this.state)
+                () => this.onFormStateUpdate(this.state, prevState)
             );
         }
     },
@@ -170,8 +180,12 @@ export default React.createClass({
         return this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
     },
 
+    getFormData() {
+        return this.props.cursor.get();
+    },
+
     validate(successCallback, errorCallback) {
-        const data = this.props.cursor.get();
+        const data = this.getFormData();
         const schema = _.isFunction(this.props.validationSchema) ?
             this.props.validationSchema(data) : this.props.validationSchema;
 
@@ -211,14 +225,17 @@ export default React.createClass({
 
     isDirty(fieldPath) {
         const formState = this.getFormState();
+        const isFormDirty = formState.isFormDirty;
+
+        if (isFormDirty) {
+            return true;
+        }
+
+        if (!fieldPath) {
+            return !_.isEmpty(formState.dirtyStates);
+        }
 
         return !!_.get(formState.dirtyStates, fieldPath);
-    },
-
-    resetDirtyStates() {
-        this.setFormState({
-            dirtyStates: {},
-        });
     },
 
     resetValidationErrors() {
@@ -232,10 +249,26 @@ export default React.createClass({
     },
 
     setDirtyState(fieldPath) {
+        if (!fieldPath) {
+            this.setFormState({
+                dirtyStates: {},
+                isFormDirty: true,
+            });
+            return;
+        }
+
         this.updateDirtyState(fieldPath, true);
     },
 
     setPristineState(fieldPath) {
+        if (!fieldPath) {
+            this.setFormState({
+                dirtyStates: {},
+                isFormDirty: false,
+            });
+            return;
+        }
+
         this.updateDirtyState(fieldPath, false);
     },
 

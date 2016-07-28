@@ -8,6 +8,14 @@ export const FormComponentMixin = {
         fieldPath: React.PropTypes.array,
     },
 
+    getInitialState() {
+        return {
+            isDirty: false,
+            isValid: true,
+            errors: [],
+        };
+    },
+
     processKeyPressForSubmit(event) {
         // Helper method for form components
         // Submits form on enter by default
@@ -105,13 +113,6 @@ export const FormComponentMixin = {
         if (this.inValidationBox()) {
             return this.state.errors;
         }
-    },
-
-    getInitialState() {
-        return {
-            isDirty: false,
-            errors: [],
-        };
     },
 
     onFormStateUpdate(data) {
