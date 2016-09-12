@@ -1,7 +1,11 @@
 # Changelog
 
+## 2.2.0
+* Submit: Add `disabled` property #25
+* ValidationBox: Add warning when ValidationBox, ValidationError, Submit are used outside Form #24
+
 ## 2.1.2
-* ValidationBox: Add `dispalyError` attribute
+* ValidationBox: Add `displayError` attribute
 
 ## 2.1.1
 * Input: Fix problem with input's cursor value changing

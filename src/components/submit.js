@@ -36,6 +36,13 @@ export default React.createClass({
         this.props.onClick(event);
     },
 
+    componentWillMount() {
+        /* istanbul ignore next */
+        if (!this.context.form) {
+            throw `react-form.tools: Submit must be used only inside Form component`;
+        }
+    },
+
     render() {
         const isValid = this.context.form.isValid();
 
