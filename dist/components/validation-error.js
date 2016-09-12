@@ -32,6 +32,12 @@ exports.default = _react2.default.createClass({
             alwaysShow: false
         };
     },
+    componentWillMount: function componentWillMount() {
+        /* istanbul ignore next */
+        if (!this.context.form) {
+            throw 'react-form.tools: ValidationError must be used only inside Form component';
+        }
+    },
     render: function render() {
         var form = this.context.form;
 
