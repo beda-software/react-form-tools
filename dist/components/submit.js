@@ -34,6 +34,7 @@ exports.default = _react2.default.createClass({
     propTypes: {
         className: _react2.default.PropTypes.string,
         disableIfInvalid: _react2.default.PropTypes.bool,
+        disabled: _react2.default.PropTypes.bool,
         disabledClassName: _react2.default.PropTypes.string,
         onClick: _react2.default.PropTypes.func
     },
@@ -44,6 +45,7 @@ exports.default = _react2.default.createClass({
 
     getDefaultProps: function getDefaultProps() {
         return {
+            disabled: false,
             disableIfInvalid: false,
             disabledClassName: '_disabled',
             onClick: _lodash2.default.identity
@@ -70,6 +72,12 @@ exports.default = _react2.default.createClass({
             isValid: isValid
         });
     },
+    componentWillMount: function componentWillMount() {
+        /* istanbul ignore next */
+        if (!this.context.form) {
+            throw 'react-form.tools: Submit must be used only inside Form component';
+        }
+    },
     componentDidMount: function componentDidMount() {
         this.context.form.subscribe(this.onFormStateUpdate);
     },
@@ -77,13 +85,13 @@ exports.default = _react2.default.createClass({
         this.context.form.unsubscribe(this.onFormStateUpdate);
     },
     render: function render() {
-        var disabled = !this.state.isValid;
+        var isValid = this.state.isValid;
 
         return _react2.default.createElement('input', _extends({}, _lodash2.default.omit(this.props, 'children'), {
             type: 'submit',
             onClick: this.onClick,
-            className: (0, _classnames2.default)(this.props.className, _defineProperty({}, this.props.disabledClassName, disabled)),
-            disabled: this.props.disableIfInvalid && disabled,
+            className: (0, _classnames2.default)(this.props.className, _defineProperty({}, this.props.disabledClassName, !isValid || this.props.disabled)),
+            disabled: this.props.disableIfInvalid && !isValid || this.props.disabled,
             value: this.props.value || this.props.children }));
     }
 });

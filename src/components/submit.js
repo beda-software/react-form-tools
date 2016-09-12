@@ -11,6 +11,7 @@ export default React.createClass({
     propTypes: {
         className: React.PropTypes.string,
         disableIfInvalid: React.PropTypes.bool,
+        disabled: React.PropTypes.bool,
         disabledClassName: React.PropTypes.string,
         onClick: React.PropTypes.func,
     },
@@ -21,6 +22,7 @@ export default React.createClass({
 
     getDefaultProps() {
         return {
+            disabled: false,
             disableIfInvalid: false,
             disabledClassName: '_disabled',
             onClick: _.identity,
@@ -51,6 +53,13 @@ export default React.createClass({
         });
     },
 
+    componentWillMount() {
+        /* istanbul ignore next */
+        if (!this.context.form) {
+            throw `react-form.tools: Submit must be used only inside Form component`;
+        }
+    },
+
     componentDidMount() {
         this.context.form.subscribe(this.onFormStateUpdate);
     },
@@ -60,15 +69,17 @@ export default React.createClass({
     },
 
     render() {
-        const disabled = !this.state.isValid;
+        const isValid = this.state.isValid;
 
         return (
             <input
                 {..._.omit(this.props, 'children')}
                 type="submit"
                 onClick={this.onClick}
-                className={classNames(this.props.className, { [this.props.disabledClassName]: disabled })}
-                disabled={this.props.disableIfInvalid && disabled}
+                className={classNames(this.props.className, {
+                    [this.props.disabledClassName]: !isValid || this.props.disabled,
+                })}
+                disabled={this.props.disableIfInvalid && !isValid || this.props.disabled}
                 value={this.props.value || this.props.children} />
         );
     },

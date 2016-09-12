@@ -114,6 +114,24 @@ describe('Submit', () => {
         });
     });
 
+    it('should be disabled if disabled is set to true', () => {
+        const rootComponent = TestUtils.renderIntoDocument(
+            <Root tree={tree}
+                component={FormWithSubmit}
+                componentProps={{
+                    tree: tree.select(),
+                    submitProps: {
+                        disabled: true,
+                    },
+                }} />
+        );
+
+        submitComponent = rootComponent.refs.component.refs.submit;
+        const submitNode = ReactDOM.findDOMNode(submitComponent);
+        submitNode.className.should.be.equal('_disabled');
+        submitNode.disabled.should.be.true;
+    });
+
     it('should not submit form when user clicks in html form', (done) => {
         tree.set(['form', 'field'], 'value');
 

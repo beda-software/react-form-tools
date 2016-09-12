@@ -40,6 +40,13 @@ export default React.createClass({
         };
     },
 
+    componentWillMount() {
+        /* istanbul ignore next */
+        if (!this.context.form) {
+            throw `react-form.tools: ValidationBox must be used only inside Form component`;
+        }
+    },
+
     render() {
         const errors = this.getErrors();
         const isDirty = this.isDirty();

@@ -55,6 +55,12 @@ exports.default = _react2.default.createClass({
             fieldPath: (0, _utils.getFieldPathAsArray)(this.props.fieldPath)
         };
     },
+    componentWillMount: function componentWillMount() {
+        /* istanbul ignore next */
+        if (!this.context.form) {
+            throw 'react-form.tools: ValidationBox must be used only inside Form component';
+        }
+    },
     render: function render() {
         var errors = this.getErrors();
         var isDirty = this.isDirty();

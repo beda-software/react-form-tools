@@ -27,6 +27,13 @@ export default React.createClass({
         };
     },
 
+    componentWillMount() {
+        /* istanbul ignore next */
+        if (!this.context.form) {
+            throw `react-form.tools: ValidationError must be used only inside Form component`;
+        }
+    },
+
     render() {
         const errors = this.getErrors();
         const isValid = this.isValid();
