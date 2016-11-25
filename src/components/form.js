@@ -146,6 +146,12 @@ export default React.createClass({
     },
 
     setFormState(nextState) {
+        // It is necessary because validation strategy is asynchronous and validation's
+        // callback might be called after component unmount
+        if (!this.isMounted()) {
+            return;
+        }
+
         const prevState = this.getFormState();
 
         if (this.props.formStateCursor) {
