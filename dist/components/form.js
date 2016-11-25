@@ -165,6 +165,12 @@ exports.default = _react2.default.createClass({
     setFormState: function setFormState(nextState) {
         var _this = this;
 
+        // It is necessary because validation strategy is asynchronous and validation's
+        // callback might be called after component unmount
+        if (!this.isMounted()) {
+            return;
+        }
+
         var prevState = this.getFormState();
 
         if (this.props.formStateCursor) {
