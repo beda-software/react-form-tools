@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0
+* ValidationBox receives `dirtyClassName`, `errorClassName`, `errorMessageClassName` for flexible customization #27
+* Fix #12
+* Fix #22
+* Fix #23
+
 ## 2.2.0
 * Submit: Add `disabled` property #25
 * ValidationBox: Add warning when ValidationBox, ValidationError, Submit are used outside Form #24

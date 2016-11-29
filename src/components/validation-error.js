@@ -18,12 +18,14 @@ export default React.createClass({
           React.PropTypes.array.isRequired,
         ]),
         className: React.PropTypes.string,
+        dirtyClassName: React.PropTypes.string,
         alwaysShow: React.PropTypes.bool,
     },
 
     getDefaultProps() {
         return {
             alwaysShow: false,
+            dirtyClassName: '_dirty',
         };
     },
 
@@ -35,19 +37,20 @@ export default React.createClass({
     },
 
     render() {
+        const { alwaysShow, className, dirtyClassName } = this.props;
         const errors = this.getErrors();
         const isValid = this.isValid();
         const isDirty = this.isDirty();
-
-        const className = classNames(this.props.className, {
-            _dirty: isDirty,
+        const generatedClassName = classNames(className, {
+            [dirtyClassName]: isDirty,
         });
-        if (isValid || !this.props.alwaysShow && !isDirty) {
+
+        if (isValid || !alwaysShow && !isDirty) {
             return null;
         }
 
         return (
-            <div className={className}>
+            <div className={generatedClassName}>
                 {errors}
             </div>
         );

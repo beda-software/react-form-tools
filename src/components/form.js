@@ -11,9 +11,13 @@ export default React.createClass({
 
         // TODO: concretize type
         validationSchema: React.PropTypes.any.isRequired,
+        strategy: React.PropTypes.object.isRequired,
         formStateCursor: BaobabPropTypes.cursor,
         validateOnFly: React.PropTypes.bool,
         useHtmlForm: React.PropTypes.bool,
+
+        className: React.PropTypes.string,
+        style: React.PropTypes.object,
     },
 
     childContextTypes: {
@@ -86,16 +90,21 @@ export default React.createClass({
     },
 
     render() {
+        const props = _.pick(this.props, ['className', 'style']);
+
         if (this.isHtmlForm()) {
             return (
-                <form noValidate {...this.props} onSubmit={this.onFormSubmit}>
+                <form
+                    noValidate
+                    {...props}
+                    onSubmit={this.onFormSubmit}>
                     {this.props.children}
                 </form>
             );
         }
 
         return (
-            <div {...this.props}>
+            <div {...props}>
                 {this.props.children}
             </div>
         );

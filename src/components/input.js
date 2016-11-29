@@ -168,14 +168,19 @@ export default React.createClass({
             onBlur: this.onBlur,
         };
 
+        const restProps = _.omit(this.props, [
+            'cursor', 'onChange', 'onKeyPress', 'onSync', 'onBlur', 'sync',
+            'syncOnlyOnBlur', 'autoFocus', 'toInternal', 'toRepresentation',
+        ]);
+
         if (this.props.type == 'textarea') {
             return (
-                <textarea {...this.props} {...props} ref="input" />
+                <textarea {...restProps} {...props} ref="input" />
             );
         }
 
         return (
-            <input {...this.props} {...props}
+            <input {...restProps} {...props}
                 type={this.props.type}
                 onKeyPress={this.onKeyPress}
                 ref="input" />

@@ -54,8 +54,12 @@ export default React.createClass({
             onKeyPress: this.processKeyPressForSubmit,
         };
 
+        const restProps = _.omit(this.props, [
+            'value', 'cursor', 'onChange',
+        ]);
+
         return (
-            <input {...this.props} {...props} />
+            <input {...restProps} {...props} />
         );
     },
 });

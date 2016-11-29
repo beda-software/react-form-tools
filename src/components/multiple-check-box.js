@@ -61,8 +61,12 @@ export default React.createClass({
             checked: this.isChecked(),
         };
 
+        const restProps = _.omit(this.props, [
+            'value', 'cursor', 'onChange',
+        ]);
+
         return (
-            <input {...this.props} {...props} />
+            <input {...restProps} {...props} />
         );
     },
 });

@@ -14,15 +14,21 @@ export default React.createClass({
             React.PropTypes.string.isRequired,
             React.PropTypes.array.isRequired,
         ]),
-        className: React.PropTypes.string,
         alwaysShowError: React.PropTypes.bool,
         displayError: React.PropTypes.bool,
+        className: React.PropTypes.string,
+        dirtyClassName: React.PropTypes.string,
+        errorClassName: React.PropTypes.string,
+        errorMessageClassName: React.PropTypes.string,
     },
 
     getDefaultProps() {
         return {
             alwaysShowError: false,
             displayError: true,
+            dirtyClassName: '_dirty',
+            errorClassName: '_error',
+            errorMessageClassName: 'validationbox-error-message',
         };
     },
 
@@ -48,20 +54,26 @@ export default React.createClass({
     },
 
     render() {
+        const {
+            className, dirtyClassName, errorClassName, errorMessageClassName,
+            displayError, alwaysShowError, children,
+        } = this.props;
+
         const errors = this.getErrors();
         const isDirty = this.isDirty();
         const isValid = this.isValid();
-        const className = classNames(this.props.className, {
-            _dirty: isDirty,
-            _error: (isDirty || this.props.alwaysShowError) && !isValid,
+
+        const generatedClassName = classNames(className, {
+            [dirtyClassName]: isDirty,
+            [errorClassName]: (isDirty || this.props.alwaysShowError) && !isValid,
         });
 
         return (
-            <div className={className}
+            <div className={generatedClassName}
                 data-field-path={getFieldPathAsString(this.getFieldPath())}>
-                {this.props.children}
-                {this.props.displayError && (isDirty || this.props.alwaysShowError) ? (
-                    <div className="validationbox-error-message">
+                {children}
+                {displayError && (isDirty || alwaysShowError) ? (
+                    <div className={errorMessageClassName}>
                         {errors}
                     </div>
                 ) : null}

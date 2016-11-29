@@ -14,6 +14,8 @@ export default React.createClass({
         disabled: React.PropTypes.bool,
         disabledClassName: React.PropTypes.string,
         onClick: React.PropTypes.func,
+        value: React.PropTypes.string,
+        children: React.PropTypes.node,
     },
 
     contextTypes: {
@@ -69,18 +71,26 @@ export default React.createClass({
     },
 
     render() {
+        const {
+            className, disabledClassName, disabled, disableIfInvalid,
+            value, children,
+        } = this.props;
+        const restProps = _.omit(this.props, [
+            'className', 'disabledClassName', 'disabled', 'disableIfInvalid',
+            'value', 'children', 'onClick',
+        ]);
         const isValid = this.state.isValid;
 
         return (
             <input
-                {..._.omit(this.props, 'children')}
+                {...restProps}
                 type="submit"
                 onClick={this.onClick}
-                className={classNames(this.props.className, {
-                    [this.props.disabledClassName]: !isValid || this.props.disabled,
+                className={classNames(className, {
+                    [disabledClassName]: !isValid || disabled,
                 })}
-                disabled={this.props.disableIfInvalid && !isValid || this.props.disabled}
-                value={this.props.value || this.props.children} />
+                disabled={disableIfInvalid && !isValid || disabled}
+                value={value || children} />
         );
     },
 });

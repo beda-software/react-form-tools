@@ -48,7 +48,7 @@ export default React.createClass({
     isChecked() {
         return _.isEqual(this.props.value, this.state.value);
     },
-    
+
     render() {
         const props = {
             type: 'checkbox',
@@ -57,8 +57,12 @@ export default React.createClass({
             onKeyPress: this.processKeyPressForSubmit,
         };
 
+        const restProps = _.omit(this.props, [
+            'value', 'uncheckedValue', 'onChange', 'cursor',
+        ]);
+
         return (
-            <input {...this.props} {...props} />
+            <input {...restProps} {...props} />
         );
     },
 });

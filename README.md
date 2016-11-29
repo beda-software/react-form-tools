@@ -114,17 +114,23 @@ If component inside ValidationBox is dirty, ValidationBox will have a class '_di
 
 * **alwaysShowError** *boolean* [`false`] - if `alwaysShowError` is set to true, error will be shown even if component is dirty
 * **displayError** *boolean* [`true`] - if `displayError` is set to true, error will be shown
+* **className** *string*
+* **dirtyClassName** *string* [`_dirty`]
+* **errorClassName** *string* [`_error`]
+* **errorMessageClassName** *string* [`validationbox-error-message`]
+
 ### ValidationError
 
 ```
 <ValidationError fieldPath="path.to.field" />
 ```
 
-If component inside ValidationBox is dirty, ValidationError will have a class '_dirty'
+If component inside ValidationBox is dirty, ValidationError will have a class from `dirtyClassName` prop
 
 #### ValidationError Props
 
 * **alwaysShow** *boolean* [`false`] - is `alwaysShow` if set to true, error will be showed even if component is dirty
+* **dirtyClassName** *string* [`_dirty`]
 
 ### Radio
 
