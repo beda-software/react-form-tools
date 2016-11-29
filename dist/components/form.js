@@ -34,9 +34,13 @@ exports.default = _react2.default.createClass({
 
         // TODO: concretize type
         validationSchema: _react2.default.PropTypes.any.isRequired,
+        strategy: _react2.default.PropTypes.object.isRequired,
         formStateCursor: _baobabPropTypes2.default.cursor,
         validateOnFly: _react2.default.PropTypes.bool,
-        useHtmlForm: _react2.default.PropTypes.bool
+        useHtmlForm: _react2.default.PropTypes.bool,
+
+        className: _react2.default.PropTypes.string,
+        style: _react2.default.PropTypes.object
     },
 
     childContextTypes: {
@@ -104,17 +108,22 @@ exports.default = _react2.default.createClass({
         }
     },
     render: function render() {
+        var props = _lodash2.default.pick(this.props, ['className', 'style']);
+
         if (this.isHtmlForm()) {
             return _react2.default.createElement(
                 'form',
-                _extends({ noValidate: true }, this.props, { onSubmit: this.onFormSubmit }),
+                _extends({
+                    noValidate: true
+                }, props, {
+                    onSubmit: this.onFormSubmit }),
                 this.props.children
             );
         }
 
         return _react2.default.createElement(
             'div',
-            this.props,
+            props,
             this.props.children
         );
     },

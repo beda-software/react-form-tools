@@ -78,6 +78,8 @@ exports.default = _react2.default.createClass({
             onKeyPress: this.processKeyPressForSubmit
         };
 
-        return _react2.default.createElement('input', _extends({}, this.props, props));
+        var restProps = _lodash2.default.omit(this.props, ['value', 'uncheckedValue', 'onChange', 'cursor']);
+
+        return _react2.default.createElement('input', _extends({}, restProps, props));
     }
 });

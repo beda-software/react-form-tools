@@ -36,7 +36,9 @@ exports.default = _react2.default.createClass({
         disableIfInvalid: _react2.default.PropTypes.bool,
         disabled: _react2.default.PropTypes.bool,
         disabledClassName: _react2.default.PropTypes.string,
-        onClick: _react2.default.PropTypes.func
+        onClick: _react2.default.PropTypes.func,
+        value: _react2.default.PropTypes.string,
+        children: _react2.default.PropTypes.node
     },
 
     contextTypes: {
@@ -85,13 +87,22 @@ exports.default = _react2.default.createClass({
         this.context.form.unsubscribe(this.onFormStateUpdate);
     },
     render: function render() {
+        var _props = this.props;
+        var className = _props.className;
+        var disabledClassName = _props.disabledClassName;
+        var disabled = _props.disabled;
+        var disableIfInvalid = _props.disableIfInvalid;
+        var value = _props.value;
+        var children = _props.children;
+
+        var restProps = _lodash2.default.omit(this.props, ['className', 'disabledClassName', 'disabled', 'disableIfInvalid', 'value', 'children', 'onClick']);
         var isValid = this.state.isValid;
 
-        return _react2.default.createElement('input', _extends({}, _lodash2.default.omit(this.props, 'children'), {
+        return _react2.default.createElement('input', _extends({}, restProps, {
             type: 'submit',
             onClick: this.onClick,
-            className: (0, _classnames2.default)(this.props.className, _defineProperty({}, this.props.disabledClassName, !isValid || this.props.disabled)),
-            disabled: this.props.disableIfInvalid && !isValid || this.props.disabled,
-            value: this.props.value || this.props.children }));
+            className: (0, _classnames2.default)(className, _defineProperty({}, disabledClassName, !isValid || disabled)),
+            disabled: disableIfInvalid && !isValid || disabled,
+            value: value || children }));
     }
 });
