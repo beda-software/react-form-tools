@@ -45,6 +45,7 @@ exports.default = _react2.default.createClass({
         onBlur: _react2.default.PropTypes.func,
         sync: _react2.default.PropTypes.bool,
         syncOnlyOnBlur: _react2.default.PropTypes.bool,
+        nullable: _react2.default.PropTypes.bool,
         autoFocus: _react2.default.PropTypes.bool,
         toInternal: _react2.default.PropTypes.func,
         toRepresentation: _react2.default.PropTypes.func
@@ -200,7 +201,7 @@ exports.default = _react2.default.createClass({
             onBlur: this.onBlur
         };
 
-        var restProps = _lodash2.default.omit(this.props, ['cursor', 'onChange', 'onKeyPress', 'onSync', 'onBlur', 'sync', 'syncOnlyOnBlur', 'autoFocus', 'toInternal', 'toRepresentation']);
+        var restProps = _lodash2.default.omit(this.props, ['cursor', 'onChange', 'onKeyPress', 'onSync', 'onBlur', 'sync', 'syncOnlyOnBlur', 'autoFocus', 'toInternal', 'toRepresentation', 'nullable']);
 
         if (this.props.type == 'textarea') {
             return _react2.default.createElement('textarea', _extends({}, restProps, props, { ref: 'input' }));

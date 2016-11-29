@@ -19,6 +19,7 @@ export default React.createClass({
         onBlur: React.PropTypes.func,
         sync: React.PropTypes.bool,
         syncOnlyOnBlur: React.PropTypes.bool,
+        nullable: React.PropTypes.bool,
         autoFocus: React.PropTypes.bool,
         toInternal: React.PropTypes.func,
         toRepresentation: React.PropTypes.func,
@@ -171,6 +172,7 @@ export default React.createClass({
         const restProps = _.omit(this.props, [
             'cursor', 'onChange', 'onKeyPress', 'onSync', 'onBlur', 'sync',
             'syncOnlyOnBlur', 'autoFocus', 'toInternal', 'toRepresentation',
+            'nullable',
         ]);
 
         if (this.props.type == 'textarea') {
