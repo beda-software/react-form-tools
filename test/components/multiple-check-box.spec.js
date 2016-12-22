@@ -100,7 +100,10 @@ describe('MultipleCheckBox', () => {
         TestUtils.Simulate.change(inputNode, { target: { checked: false } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith(false, true);
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: false, previousValue: true }
+        );
         tree.get('form', 'field').should.be.deep.equal([]);
         inputNode.checked.should.be.false;
     });
@@ -111,7 +114,10 @@ describe('MultipleCheckBox', () => {
         TestUtils.Simulate.change(inputNode, { target: { checked: true } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith(true, false);
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: true, previousValue: false }
+        );
         tree.get('form', 'field').should.be.deep.equal([1]);
         inputNode.checked.should.be.true;
     });
@@ -122,7 +128,10 @@ describe('MultipleCheckBox', () => {
         TestUtils.Simulate.change(inputNode, { target: { checked: true } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith(true, false);
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: true, previousValue: false }
+        );
         tree.get('form', 'field').should.be.deep.equal([1, 2]);
         inputNode.checked.should.be.true;
     });
@@ -133,7 +142,10 @@ describe('MultipleCheckBox', () => {
         TestUtils.Simulate.change(inputNode, { target: { checked: true } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith(true, false);
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: true, previousValue: false }
+        );
         tree.get('form', 'field').should.be.deep.equal([1, 2, 3]);
         inputNode.checked.should.be.true;
     });
@@ -144,7 +156,10 @@ describe('MultipleCheckBox', () => {
         TestUtils.Simulate.change(inputNode, { target: { checked: false } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith(false, true);
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: false, previousValue: true }
+        );
         tree.get('form', 'field').should.be.deep.equal([1, 3]);
         inputNode.checked.should.be.false;
     });

@@ -46,7 +46,10 @@ export default React.createClass({
 
         this.setValue(value, () => {
             this.setDirtyState();
-            this.props.onChange(isChecked, !isChecked);
+            this.props.onChange(event, {
+                value: isChecked,
+                previousValue: !isChecked,
+            });
         });
     },
 

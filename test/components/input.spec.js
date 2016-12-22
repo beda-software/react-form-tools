@@ -156,7 +156,10 @@ describe('Input outside ValidationBox', () => {
     it('should sets inner state value and synchronizes with cursor when user types with timer', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'first' } });
-        onChangeSpy.should.have.been.calledWith('first', '');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'first', previousValue: '' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('first');
@@ -186,11 +189,17 @@ describe('Input outside ValidationBox', () => {
     it('should not calls onSync with other value if value restored to initial after changes', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'first changed' } });
-        onChangeSpy.should.have.been.calledWith('first changed', 'first');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'first changed', previousValue: 'first' }
+        );
 
         clock.tick(1);
         TestUtils.Simulate.change(inputNode, { target: { value: 'first' } });
-        onChangeSpy.should.have.been.calledWith('first', 'first changed');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'first', previousValue: 'first changed' }
+        );
 
         clock.tick(inputComponent.msToPoll + 1);
         onSyncSpy.should.have.been.not.called;
@@ -200,7 +209,10 @@ describe('Input outside ValidationBox', () => {
     it('should sets inner state value and synchronizes with cursor when input blurs', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'second' } });
-        onChangeSpy.should.have.been.calledWith('second', 'first');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'second', previousValue: 'first' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('second');
@@ -245,7 +257,10 @@ describe('Input outside ValidationBox', () => {
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'fourth' } });
-        onChangeSpy.should.have.been.calledWith('fourth', 'third');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'fourth', previousValue: 'third' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('fourth');
@@ -284,7 +299,10 @@ describe('Input outside ValidationBox', () => {
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: '' } });
-        onChangeSpy.should.have.been.calledWith('', 'fourth');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: '', previousValue: 'fourth' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('');
@@ -315,7 +333,10 @@ describe('Input outside ValidationBox', () => {
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'fifth' } });
-        onChangeSpy.should.have.been.calledWith('fifth', '');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'fifth', previousValue: '' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('fifth');
@@ -363,7 +384,10 @@ describe('Input outside ValidationBox', () => {
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'sixth' } });
-        onChangeSpy.should.have.been.calledWith('sixth', 'fifth');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'sixth', previousValue: 'fifth' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('sixth');

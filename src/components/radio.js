@@ -28,7 +28,7 @@ export default React.createClass({
         };
     },
 
-    onChange() {
+    onChange(event) {
         const value = this.props.value;
         const previousValue = this.state.value;
 
@@ -38,7 +38,7 @@ export default React.createClass({
 
         this.setValue(value, () => {
             this.setDirtyState();
-            this.props.onChange(value, previousValue);
+            this.props.onChange(event, { value, previousValue });
         });
     },
 

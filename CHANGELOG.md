@@ -5,6 +5,8 @@
 * Fix #12
 * Fix #22
 * Fix #23
+* Fix #27
+* BREAKING CHANGE. onChange accepts event as first argument, and { value, previousValue } as second. #28
 
 ## 2.2.0
 * Submit: Add `disabled` property #25

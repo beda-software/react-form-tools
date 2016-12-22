@@ -142,7 +142,7 @@ export default React.createClass({
         }
 
         this.updateValue(value);
-        this.props.onChange(value, previousValue);
+        this.props.onChange(event, { value, previousValue });
     },
 
     onBlur(event) {

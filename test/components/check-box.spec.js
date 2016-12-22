@@ -84,7 +84,10 @@ describe('CheckBox', () => {
         TestUtils.Simulate.change(inputNode, { target: { checked: true } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith('checked', 'unchecked');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'checked', previousValue: 'unchecked' }
+        );
         tree.get('form', 'field').should.be.equal('checked');
         inputNode.checked.should.be.true;
     });
@@ -103,7 +106,10 @@ describe('CheckBox', () => {
         TestUtils.Simulate.change(inputNode, { target: { checked: false } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith('unchecked', 'checked');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'unchecked', previousValue: 'checked' }
+        );
         tree.get('form', 'field').should.be.equal('unchecked');
         inputNode.checked.should.be.false;
     });

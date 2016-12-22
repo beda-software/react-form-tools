@@ -90,7 +90,7 @@ Form API is available across refs. These methods are available in child context 
 * **nullable** *boolean* [`false`] - if `nullable` is set to true, then empty value will be converted to null
 * **sync** *boolean* [`false`] - if `sync` is set to true, then synchronization will be applied on every change
 * **syncOnlyOnBlur** *boolean* [`false`] - if `syncOnlyOnBlur` is set to true, then synchronization will be applied only on blur
-* **onChange(value, previousValue)** *function* [`optional`] - callback which will be called on every change
+* **onChange(event, { value, previousValue })** *function* [`optional`] - callback which will be called on every change
 * **onSync(value, previousValue)** *function* [`optional`] - callback which will be called on every synchronization with cursor
 * **onBlur(event)** *function* [`optional`] - callback which will be called only on blur
 * **toRepresentation** *function* [`identity`] - function of transformation which is used for output
