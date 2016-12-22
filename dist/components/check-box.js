@@ -64,7 +64,7 @@ exports.default = _react2.default.createClass({
 
         this.setValue(value, function () {
             _this.setDirtyState();
-            _this.props.onChange(value, previousValue);
+            _this.props.onChange(event, { value: value, previousValue: previousValue });
         });
     },
     isChecked: function isChecked() {

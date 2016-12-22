@@ -169,7 +169,7 @@ exports.default = _react2.default.createClass({
         }
 
         this.updateValue(value);
-        this.props.onChange(value, previousValue);
+        this.props.onChange(event, { value: value, previousValue: previousValue });
     },
     onBlur: function onBlur(event) {
         var _this4 = this;
