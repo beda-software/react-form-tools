@@ -31,7 +31,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _react2.default.createClass({
     displayName: 'CheckBox',
 
-    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
+    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _mixins.ComponentActionsMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         value: _react2.default.PropTypes.any,
@@ -80,6 +80,6 @@ exports.default = _react2.default.createClass({
 
         var restProps = _lodash2.default.omit(this.props, ['value', 'uncheckedValue', 'onChange', 'cursor']);
 
-        return _react2.default.createElement('input', _extends({}, restProps, props));
+        return _react2.default.createElement('input', _extends({}, restProps, props, { ref: 'input' }));
     }
 });

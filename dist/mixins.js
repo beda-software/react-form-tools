@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.FormComponentMixin = undefined;
+exports.ComponentActionsMixin = exports.FormComponentMixin = undefined;
 
 var _react = require('react');
 
@@ -36,12 +36,12 @@ var FormComponentMixin = exports.FormComponentMixin = {
         // Helper method for form components
         // Submits form on enter by default
         this.processKeyPress(event, function () {
-            return _this.context.form.submit();
+            return _this.context.form && _this.context.form.submit();
         });
     },
     processKeyPress: function processKeyPress(event, fn) {
         // Callback `fn` will be called on enter press
-        if (!this.context.form.isHtmlForm()) {
+        if (this.insideForm() && !this.context.form.isHtmlForm()) {
             if ((0, _utils.isEnterPressed)(event)) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -84,8 +84,11 @@ var FormComponentMixin = exports.FormComponentMixin = {
         /* istanbul ignore next */
         throw 'react-form.tools ' + this.displayName + ': cursor must be set via \'cursor\',\n               \'fieldPath\' or via higher order component ValidationBox with \'fieldPath\'';
     },
+    insideForm: function insideForm() {
+        return !!this.context.form;
+    },
     inValidationBox: function inValidationBox() {
-        return !!(this.context.form && this.getFieldPath());
+        return !!(this.insideForm() && this.getFieldPath());
     },
     setValue: function setValue(value, callback) {
         var cursor = this.getCursor();
@@ -147,5 +150,17 @@ var FormComponentMixin = exports.FormComponentMixin = {
         if (this.inValidationBox()) {
             this.context.form.unsubscribe(this.onFormStateUpdate);
         }
+    }
+};
+
+var ComponentActionsMixin = exports.ComponentActionsMixin = {
+    blur: function blur() {
+        this.refs.input.blur();
+    },
+    focus: function focus() {
+        this.refs.input.focus();
+    },
+    click: function click() {
+        this.refs.input.click();
     }
 };

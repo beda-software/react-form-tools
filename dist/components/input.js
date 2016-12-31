@@ -35,7 +35,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _react2.default.createClass({
     displayName: 'Input',
 
-    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
+    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _mixins.ComponentActionsMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         cursor: _baobabPropTypes2.default.cursor,
@@ -190,7 +190,7 @@ exports.default = _react2.default.createClass({
         this.processKeyPress(event, function () {
             _this5.clearDeferredSyncTimer();
             _this5.syncValue(function () {
-                return _this5.context.form.submit();
+                return _this5.context.form && _this5.context.form.submit();
             });
         });
     },
