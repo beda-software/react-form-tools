@@ -4,12 +4,12 @@ import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
 import { BranchMixin } from 'baobab-react-mixins';
-import { FormComponentMixin } from '../mixins';
+import { FormComponentMixin, ComponentActionsMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'Input',
 
-    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
+    mixins: [BranchMixin, FormComponentMixin, ComponentActionsMixin, PureRenderMixin],
 
     propTypes: {
         cursor: BaobabPropTypes.cursor,
@@ -158,7 +158,7 @@ export default React.createClass({
     onKeyPress(event) {
         this.processKeyPress(event, () => {
             this.clearDeferredSyncTimer();
-            this.syncValue(() => this.context.form.submit());
+            this.syncValue(() => this.context.form && this.context.form.submit());
         });
     },
 

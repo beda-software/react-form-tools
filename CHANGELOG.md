@@ -6,6 +6,7 @@
 * Fix #22
 * Fix #23
 * Fix #27
+* Fix #29
 * BREAKING CHANGE. onChange accepts event as first argument, and { value, previousValue } as second. #28
 
 ## 2.2.0

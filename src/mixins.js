@@ -19,12 +19,12 @@ export const FormComponentMixin = {
     processKeyPressForSubmit(event) {
         // Helper method for form components
         // Submits form on enter by default
-        this.processKeyPress(event, () => this.context.form.submit());
+        this.processKeyPress(event, () => this.context.form && this.context.form.submit());
     },
 
     processKeyPress(event, fn) {
         // Callback `fn` will be called on enter press
-        if (!this.context.form.isHtmlForm()) {
+        if (this.insideForm() && !this.context.form.isHtmlForm()) {
             if (isEnterPressed(event)) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -71,8 +71,12 @@ export const FormComponentMixin = {
                'fieldPath' or via higher order component ValidationBox with 'fieldPath'`;
     },
 
+    insideForm() {
+        return !!this.context.form;
+    },
+
     inValidationBox() {
-        return !!(this.context.form && this.getFieldPath());
+        return !!(this.insideForm() && this.getFieldPath());
     },
 
     setValue(value, callback) {
@@ -139,5 +143,19 @@ export const FormComponentMixin = {
         if (this.inValidationBox()) {
             this.context.form.unsubscribe(this.onFormStateUpdate);
         }
+    },
+};
+
+export const ComponentActionsMixin = {
+    blur() {
+        this.refs.input.blur();
+    },
+
+    focus() {
+        this.refs.input.focus();
+    },
+
+    click() {
+        this.refs.input.click();
     },
 };

@@ -1,2 +1,2 @@
 export * from './components/index';
-export { FormComponentMixin } from './mixins';
+export { FormComponentMixin, ComponentActionsMixin } from './mixins';

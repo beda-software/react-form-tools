@@ -3,12 +3,12 @@ import _ from 'lodash';
 import BaobabPropTypes from 'baobab-prop-types';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { BranchMixin } from 'baobab-react-mixins';
-import { FormComponentMixin } from '../mixins';
+import { FormComponentMixin, ComponentActionsMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'Radio',
 
-    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
+    mixins: [BranchMixin, FormComponentMixin, ComponentActionsMixin, PureRenderMixin],
 
     propTypes: {
         value: React.PropTypes.any,
@@ -59,7 +59,7 @@ export default React.createClass({
         ]);
 
         return (
-            <input {...restProps} {...props} />
+            <input {...restProps} {...props} ref="input" />
         );
     },
 });
