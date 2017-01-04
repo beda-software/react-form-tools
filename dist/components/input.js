@@ -117,7 +117,8 @@ exports.default = _react2.default.createClass({
 
         this.clearDeferredSyncTimer();
         this.deferredSyncTimer = setTimeout(function () {
-            return _this2.syncValue(eventCallback);
+            _this2.deferredSyncTimer = null;
+            _this2.syncValue(eventCallback);
         }, this.msToPoll);
     },
     syncValue: function syncValue(eventCallback) {
