@@ -93,7 +93,10 @@ export default React.createClass({
 
     deferredSyncValue(eventCallback) {
         this.clearDeferredSyncTimer();
-        this.deferredSyncTimer = setTimeout(() => this.syncValue(eventCallback), this.msToPoll);
+        this.deferredSyncTimer = setTimeout(() => {
+            this.deferredSyncTimer = null;
+            this.syncValue(eventCallback);
+        }, this.msToPoll);
     },
 
     syncValue(eventCallback) {
