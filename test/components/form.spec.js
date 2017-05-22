@@ -2,11 +2,10 @@
 import React from 'react';
 import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
-import BaobabPropTypes from 'baobab-prop-types';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import { Form, Submit } from '../../src/components';
 import { Root } from '../utils';
+import { Form, Submit } from '../../src/components';
 
 const tree = new Baobab(
     {},

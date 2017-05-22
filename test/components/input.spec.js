@@ -7,7 +7,7 @@ import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
 import { Form, Input, ValidationBox } from '../../src/components';
 import { Root } from '../utils';
-import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
+import sinon from 'sinon';
 
 const tree = new Baobab(
     {},

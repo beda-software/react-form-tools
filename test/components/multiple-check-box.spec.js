@@ -5,9 +5,9 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import { Form, MultipleCheckBox } from '../../src/components';
+import sinon from 'sinon';
 import { Root } from '../utils';
-import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
+import { Form, MultipleCheckBox } from '../../src/components';
 
 const tree = new Baobab(
     {},
