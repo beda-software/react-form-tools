@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/Brogency/baobab-react-schemabranchmixin.svg)](https://travis-ci.org/Brogency/react-form-tools)
-[![Coverage Status](https://coveralls.io/repos/Brogency/react-form-tools/badge.svg?branch=master&service=github)](https://coveralls.io/github/Brogency/react-form-tools?branch=master)
+[![Build Status](https://travis-ci.org/beda-software/baobab-react-schemabranchmixin.svg)](https://travis-ci.org/beda-software/react-form-tools)
+[![Coverage Status](https://coveralls.io/repos/beda-software/react-form-tools/badge.svg?branch=master&service=github)](https://coveralls.io/github/beda-software/react-form-tools?branch=master)
 [![npm version](https://badge.fury.io/js/react-form-tools.svg)](https://badge.fury.io/js/react-form-tools)
 
 react-form-tools
@@ -209,3 +209,6 @@ Example app starts on http://localhost:3000 by default
 ## Tests
 
     npm test
+
+## Authors
+2014-2017, beda.software
