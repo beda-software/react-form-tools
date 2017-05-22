@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/Brogency/baobab-react-schemabranchmixin.svg)](https://travis-ci.org/Brogency/react-form-tools)
-[![Coverage Status](https://coveralls.io/repos/Brogency/react-form-tools/badge.svg?branch=master&service=github)](https://coveralls.io/github/Brogency/react-form-tools?branch=master)
+[![Build Status](https://travis-ci.org/beda-software/baobab-react-schemabranchmixin.svg)](https://travis-ci.org/beda-software/react-form-tools)
+[![Coverage Status](https://coveralls.io/repos/beda-software/react-form-tools/badge.svg?branch=master&service=github)](https://coveralls.io/github/beda-software/react-form-tools?branch=master)
 [![npm version](https://badge.fury.io/js/react-form-tools.svg)](https://badge.fury.io/js/react-form-tools)
 
 react-form-tools
@@ -67,13 +67,15 @@ then this cursor will be used for storing `dirtyStates` and `errors`
 Form API is available across refs. These methods are available in child context via `form`, which contains also `cursor` attribute to form data.
 
 * **isValid([fieldPath])**
-* **isDirty(fieldPath)**
+* **isDirty([fieldPath])**
 * **getValidationErrors([fieldPath])**
-* **setDirtyState(fieldPath)**
-* **setPristineState(fieldPath)**
+* **setDirtyState([fieldPath])**
+* **setPristineState([fieldPath])**
 * **submit()**
 * **validate(successCallback, invalidCallback)**
 * **isHtmlForm()**
+* **subscribe(handler)**
+* **unsubscribe(handler)**
 
 ### Input
 
@@ -88,7 +90,7 @@ Form API is available across refs. These methods are available in child context 
 * **nullable** *boolean* [`false`] - if `nullable` is set to true, then empty value will be converted to null
 * **sync** *boolean* [`false`] - if `sync` is set to true, then synchronization will be applied on every change
 * **syncOnlyOnBlur** *boolean* [`false`] - if `syncOnlyOnBlur` is set to true, then synchronization will be applied only on blur
-* **onChange(value, previousValue)** *function* [`optional`] - callback which will be called on every change
+* **onChange(event, { value, previousValue })** *function* [`optional`] - callback which will be called on every change
 * **onSync(value, previousValue)** *function* [`optional`] - callback which will be called on every synchronization with cursor
 * **onBlur(event)** *function* [`optional`] - callback which will be called only on blur
 * **toRepresentation** *function* [`identity`] - function of transformation which is used for output
@@ -112,17 +114,23 @@ If component inside ValidationBox is dirty, ValidationBox will have a class '_di
 
 * **alwaysShowError** *boolean* [`false`] - if `alwaysShowError` is set to true, error will be shown even if component is dirty
 * **displayError** *boolean* [`true`] - if `displayError` is set to true, error will be shown
+* **className** *string*
+* **dirtyClassName** *string* [`_dirty`]
+* **errorClassName** *string* [`_error`]
+* **errorMessageClassName** *string* [`validationbox-error-message`]
+
 ### ValidationError
 
 ```
 <ValidationError fieldPath="path.to.field" />
 ```
 
-If component inside ValidationBox is dirty, ValidationError will have a class '_dirty'
+If component inside ValidationBox is dirty, ValidationError will have a class from `dirtyClassName` prop
 
 #### ValidationError Props
 
 * **alwaysShow** *boolean* [`false`] - is `alwaysShow` if set to true, error will be showed even if component is dirty
+* **dirtyClassName** *string* [`_dirty`]
 
 ### Radio
 
@@ -201,3 +209,6 @@ Example app starts on http://localhost:3000 by default
 ## Tests
 
     npm test
+
+## Authors
+2014-2017, beda.software

@@ -34,9 +34,13 @@ exports.default = _react2.default.createClass({
 
         // TODO: concretize type
         validationSchema: _react2.default.PropTypes.any.isRequired,
+        strategy: _react2.default.PropTypes.object.isRequired,
         formStateCursor: _baobabPropTypes2.default.cursor,
         validateOnFly: _react2.default.PropTypes.bool,
-        useHtmlForm: _react2.default.PropTypes.bool
+        useHtmlForm: _react2.default.PropTypes.bool,
+
+        className: _react2.default.PropTypes.string,
+        style: _react2.default.PropTypes.object
     },
 
     childContextTypes: {
@@ -47,6 +51,7 @@ exports.default = _react2.default.createClass({
         form: _react2.default.PropTypes.object
     },
 
+    subscribers: [],
     _isHtmlForm: null,
 
     getDefaultProps: function getDefaultProps() {
@@ -72,7 +77,10 @@ exports.default = _react2.default.createClass({
                 setPristineState: this.setPristineState,
 
                 submit: this.submit,
-                validate: this.validate
+                validate: this.validate,
+
+                subscribe: this.subscribe,
+                unsubscribe: this.unsubscribe
             }
         };
     },
@@ -83,7 +91,8 @@ exports.default = _react2.default.createClass({
 
         return {
             errors: {},
-            dirtyStates: {}
+            dirtyStates: {},
+            isFormDirty: false
         };
     },
     componentDidMount: function componentDidMount() {
@@ -99,17 +108,22 @@ exports.default = _react2.default.createClass({
         }
     },
     render: function render() {
+        var props = _lodash2.default.pick(this.props, ['className', 'style']);
+
         if (this.isHtmlForm()) {
             return _react2.default.createElement(
                 'form',
-                _extends({ noValidate: true }, this.props, { onSubmit: this.onFormSubmit }),
+                _extends({
+                    noValidate: true
+                }, props, {
+                    onSubmit: this.onFormSubmit }),
                 this.props.children
             );
         }
 
         return _react2.default.createElement(
             'div',
-            this.props,
+            props,
             this.props.children
         );
     },
@@ -131,11 +145,53 @@ exports.default = _react2.default.createClass({
 
         return this._isHtmlForm;
     },
+    publish: function publish() {
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        _lodash2.default.each(this.subscribers, function (subscriber) {
+            return subscriber.apply(undefined, args);
+        });
+    },
+    subscribe: function subscribe(subscriber) {
+        this.subscribers = _lodash2.default.concat(this.subscribers, subscriber);
+
+        // Notify new subscriber about initial form state
+        subscriber(this.getFormState(), null);
+    },
+    unsubscribe: function unsubscribe(subscriber) {
+        this.subscribers = _lodash2.default.without(this.subscribers, subscriber);
+    },
+    onFormStateUpdate: function onFormStateUpdate(data, previousData) {
+        // Notify subscribers about changed data only
+        if (_lodash2.default.isEqual(data, previousData)) {
+            return;
+        }
+
+        this.publish(data, previousData);
+    },
     setFormState: function setFormState(nextState) {
+        var _this = this;
+
+        // It is necessary because validation strategy is asynchronous and validation's
+        // callback might be called after component unmount
+        if (!this.isMounted()) {
+            return;
+        }
+
+        var prevState = this.getFormState();
+
         if (this.props.formStateCursor) {
+            this.props.formStateCursor.once('update', function (_ref) {
+                var data = _ref.data;
+                return _this.onFormStateUpdate(data.currentData, prevState);
+            });
             this.props.formStateCursor.merge(nextState);
         } else {
-            this.setState(nextState);
+            this.setState(nextState, function () {
+                return _this.onFormStateUpdate(_this.state, prevState);
+            });
         }
     },
     getFormState: function getFormState() {
@@ -157,14 +213,17 @@ exports.default = _react2.default.createClass({
     submit: function submit() {
         return this.validate(this.props.onSubmit, this.props.onInvalidSubmit);
     },
+    getFormData: function getFormData() {
+        return this.props.cursor.get();
+    },
     validate: function validate(successCallback, errorCallback) {
-        var _this = this;
+        var _this2 = this;
 
-        var data = this.props.cursor.get();
+        var data = this.getFormData();
         var schema = _lodash2.default.isFunction(this.props.validationSchema) ? this.props.validationSchema(data) : this.props.validationSchema;
 
         this.props.strategy.validate(data, schema, {}, function (errors) {
-            _this.setFormState({ errors: errors });
+            _this2.setFormState({ errors: errors });
 
             if (_lodash2.default.isEmpty(errors)) {
                 if (successCallback) {
@@ -196,13 +255,17 @@ exports.default = _react2.default.createClass({
     },
     isDirty: function isDirty(fieldPath) {
         var formState = this.getFormState();
+        var isFormDirty = formState.isFormDirty;
+
+        if (isFormDirty) {
+            return true;
+        }
+
+        if (!fieldPath) {
+            return !_lodash2.default.isEmpty(formState.dirtyStates);
+        }
 
         return !!_lodash2.default.get(formState.dirtyStates, fieldPath);
-    },
-    resetDirtyStates: function resetDirtyStates() {
-        this.setFormState({
-            dirtyStates: {}
-        });
     },
     resetValidationErrors: function resetValidationErrors() {
         this.setValidationErrors({});
@@ -213,9 +276,25 @@ exports.default = _react2.default.createClass({
         });
     },
     setDirtyState: function setDirtyState(fieldPath) {
+        if (!fieldPath) {
+            this.setFormState({
+                dirtyStates: {},
+                isFormDirty: true
+            });
+            return;
+        }
+
         this.updateDirtyState(fieldPath, true);
     },
     setPristineState: function setPristineState(fieldPath) {
+        if (!fieldPath) {
+            this.setFormState({
+                dirtyStates: {},
+                isFormDirty: false
+            });
+            return;
+        }
+
         this.updateDirtyState(fieldPath, false);
     },
     updateDirtyState: function updateDirtyState(fieldPath, dirtyState) {
@@ -223,10 +302,16 @@ exports.default = _react2.default.createClass({
             return;
         }
 
-        var formState = this.getFormState();
+        var _getFormState = this.getFormState();
+
+        var dirtyStates = _getFormState.dirtyStates;
+
+
+        dirtyStates = _lodash2.default.cloneDeep(dirtyStates || {});
+        _lodash2.default.set(dirtyStates, fieldPath, dirtyState);
 
         this.setFormState({
-            dirtyStates: _lodash2.default.set(formState.dirtyStates || {}, fieldPath, dirtyState)
+            dirtyStates: dirtyStates
         });
     }
 });

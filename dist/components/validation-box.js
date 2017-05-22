@@ -14,22 +14,38 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 var _utils = require('../utils');
 
+var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
+
+var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
+
+var _mixins = require('../mixins');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 exports.default = _react2.default.createClass({
     displayName: 'ValidationBox',
 
+    mixins: [_mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
+
     propTypes: {
         fieldPath: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string.isRequired, _react2.default.PropTypes.array.isRequired]),
-        className: _react2.default.PropTypes.string,
         alwaysShowError: _react2.default.PropTypes.bool,
-        displayError: _react2.default.PropTypes.bool
+        displayError: _react2.default.PropTypes.bool,
+        className: _react2.default.PropTypes.string,
+        dirtyClassName: _react2.default.PropTypes.string,
+        errorClassName: _react2.default.PropTypes.string,
+        errorMessageClassName: _react2.default.PropTypes.string
     },
 
     getDefaultProps: function getDefaultProps() {
         return {
             alwaysShowError: false,
-            displayError: true
+            displayError: true,
+            dirtyClassName: '_dirty',
+            errorClassName: '_error',
+            errorMessageClassName: 'validationbox-error-message'
         };
     },
 
@@ -54,24 +70,33 @@ exports.default = _react2.default.createClass({
         }
     },
     render: function render() {
-        var fieldPath = this.props.fieldPath;
-        var form = this.context.form;
-        var error = form.getValidationErrors(fieldPath);
-        var isDirty = form.isDirty(fieldPath);
-        var isValid = !error;
-        var className = (0, _classnames2.default)(this.props.className, {
-            _dirty: isDirty,
-            _error: (isDirty || this.props.alwaysShowError) && !isValid
-        });
+        var _classNames;
+
+        var _props = this.props;
+        var className = _props.className;
+        var dirtyClassName = _props.dirtyClassName;
+        var errorClassName = _props.errorClassName;
+        var errorMessageClassName = _props.errorMessageClassName;
+        var displayError = _props.displayError;
+        var alwaysShowError = _props.alwaysShowError;
+        var children = _props.children;
+
+
+        var errors = this.getErrors();
+        var isDirty = this.isDirty();
+        var isValid = this.isValid();
+
+        var generatedClassName = (0, _classnames2.default)(className, (_classNames = {}, _defineProperty(_classNames, dirtyClassName, isDirty), _defineProperty(_classNames, errorClassName, (isDirty || this.props.alwaysShowError) && !isValid), _classNames));
 
         return _react2.default.createElement(
             'div',
-            { className: className, 'data-field-path': (0, _utils.getFieldPathAsString)(fieldPath) },
-            this.props.children,
-            this.props.displayError && (isDirty || this.props.alwaysShowError) ? _react2.default.createElement(
+            { className: generatedClassName,
+                'data-field-path': (0, _utils.getFieldPathAsString)(this.getFieldPath()) },
+            children,
+            displayError && (isDirty || alwaysShowError) ? _react2.default.createElement(
                 'div',
-                { className: 'validationbox-error-message' },
-                error
+                { className: errorMessageClassName },
+                errors
             ) : null
         );
     }

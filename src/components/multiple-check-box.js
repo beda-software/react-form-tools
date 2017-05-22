@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { FormComponentMixin } from '../mixins';
+import { FormComponentMixin, ComponentActionsMixin } from '../mixins';
 import { BranchMixin } from 'baobab-react-mixins';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
@@ -8,7 +8,7 @@ import BaobabPropTypes from 'baobab-prop-types';
 export default React.createClass({
     displayName: 'MultipleCheckBox',
 
-    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
+    mixins: [BranchMixin, FormComponentMixin, ComponentActionsMixin, PureRenderMixin],
 
     propTypes: {
         value: React.PropTypes.any.isRequired,
@@ -46,7 +46,10 @@ export default React.createClass({
 
         this.setValue(value, () => {
             this.setDirtyState();
-            this.props.onChange(isChecked, !isChecked);
+            this.props.onChange(event, {
+                value: isChecked,
+                previousValue: !isChecked,
+            });
         });
     },
 
@@ -61,8 +64,12 @@ export default React.createClass({
             checked: this.isChecked(),
         };
 
+        const restProps = _.omit(this.props, [
+            'value', 'cursor', 'onChange',
+        ]);
+
         return (
-            <input {...this.props} {...props} />
+            <input {...restProps} {...props} ref="input" />
         );
     },
 });

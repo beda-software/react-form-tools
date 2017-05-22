@@ -5,8 +5,8 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import { Form, ValidationError } from '../../src/components';
 import { Root } from '../utils';
+import { Form, ValidationError } from '../../src/components';
 
 const tree = new Baobab(
     {},

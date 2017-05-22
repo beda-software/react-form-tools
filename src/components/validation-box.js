@@ -1,24 +1,34 @@
 import React from 'react';
 import classNames from 'classnames';
-import {getFieldPathAsArray, getFieldPathAsString} from '../utils';
+import { getFieldPathAsArray, getFieldPathAsString } from '../utils';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import { FormComponentMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'ValidationBox',
+
+    mixins: [FormComponentMixin, PureRenderMixin],
 
     propTypes: {
         fieldPath: React.PropTypes.oneOfType([
             React.PropTypes.string.isRequired,
             React.PropTypes.array.isRequired,
         ]),
-        className: React.PropTypes.string,
         alwaysShowError: React.PropTypes.bool,
         displayError: React.PropTypes.bool,
+        className: React.PropTypes.string,
+        dirtyClassName: React.PropTypes.string,
+        errorClassName: React.PropTypes.string,
+        errorMessageClassName: React.PropTypes.string,
     },
 
     getDefaultProps() {
         return {
             alwaysShowError: false,
             displayError: true,
+            dirtyClassName: '_dirty',
+            errorClassName: '_error',
+            errorMessageClassName: 'validationbox-error-message',
         };
     },
 
@@ -44,22 +54,27 @@ export default React.createClass({
     },
 
     render() {
-        const fieldPath = this.props.fieldPath;
-        const form = this.context.form;
-        const error = form.getValidationErrors(fieldPath);
-        const isDirty = form.isDirty(fieldPath);
-        const isValid = !error;
-        const className = classNames(this.props.className, {
-            _dirty: isDirty,
-            _error: (isDirty || this.props.alwaysShowError) && !isValid,
+        const {
+            className, dirtyClassName, errorClassName, errorMessageClassName,
+            displayError, alwaysShowError, children,
+        } = this.props;
+
+        const errors = this.getErrors();
+        const isDirty = this.isDirty();
+        const isValid = this.isValid();
+
+        const generatedClassName = classNames(className, {
+            [dirtyClassName]: isDirty,
+            [errorClassName]: (isDirty || this.props.alwaysShowError) && !isValid,
         });
 
         return (
-            <div className={className} data-field-path={getFieldPathAsString(fieldPath)}>
-                {this.props.children}
-                {this.props.displayError && (isDirty || this.props.alwaysShowError) ? (
-                    <div className="validationbox-error-message">
-                        {error}
+            <div className={generatedClassName}
+                data-field-path={getFieldPathAsString(this.getFieldPath())}>
+                {children}
+                {displayError && (isDirty || alwaysShowError) ? (
+                    <div className={errorMessageClassName}>
+                        {errors}
                     </div>
                 ) : null}
             </div>

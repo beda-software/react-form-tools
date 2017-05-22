@@ -1,9 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default React.createClass({
     displayName: 'Submit',
+
+    mixins: [PureRenderMixin],
 
     propTypes: {
         className: React.PropTypes.string,
@@ -11,6 +14,8 @@ export default React.createClass({
         disabled: React.PropTypes.bool,
         disabledClassName: React.PropTypes.string,
         onClick: React.PropTypes.func,
+        value: React.PropTypes.string,
+        children: React.PropTypes.node,
     },
 
     contextTypes: {
@@ -26,6 +31,12 @@ export default React.createClass({
         };
     },
 
+    getInitialState() {
+        return {
+            isValid: false,
+        };
+    },
+
     onClick(event) {
         if (!this.context.form.isHtmlForm()) {
             event.preventDefault();
@@ -36,6 +47,14 @@ export default React.createClass({
         this.props.onClick(event);
     },
 
+    onFormStateUpdate(data) {
+        const isValid = _.isEmpty(_.get(data, 'errors'));
+
+        this.setState({
+            isValid,
+        });
+    },
+
     componentWillMount() {
         /* istanbul ignore next */
         if (!this.context.form) {
@@ -43,19 +62,35 @@ export default React.createClass({
         }
     },
 
+    componentDidMount() {
+        this.context.form.subscribe(this.onFormStateUpdate);
+    },
+
+    componentWillUnmount() {
+        this.context.form.unsubscribe(this.onFormStateUpdate);
+    },
+
     render() {
-        const isValid = this.context.form.isValid();
+        const {
+            className, disabledClassName, disabled, disableIfInvalid,
+            value, children,
+        } = this.props;
+        const restProps = _.omit(this.props, [
+            'className', 'disabledClassName', 'disabled', 'disableIfInvalid',
+            'value', 'children', 'onClick',
+        ]);
+        const isValid = this.state.isValid;
 
         return (
             <input
-                {..._.omit(this.props, 'children')}
+                {...restProps}
                 type="submit"
                 onClick={this.onClick}
-                className={classNames(this.props.className, {
-                    [this.props.disabledClassName]: !isValid || this.props.disabled,
+                className={classNames(className, {
+                    [disabledClassName]: !isValid || disabled,
                 })}
-                disabled={this.props.disableIfInvalid && !isValid || this.props.disabled}
-                value={this.props.value || this.props.children} />
+                disabled={disableIfInvalid && !isValid || disabled}
+                value={value || children} />
         );
     },
 });

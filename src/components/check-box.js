@@ -1,14 +1,14 @@
 import React from 'react';
 import _ from 'lodash';
 import BaobabPropTypes from 'baobab-prop-types';
-import { FormComponentMixin } from '../mixins';
+import { FormComponentMixin, ComponentActionsMixin } from '../mixins';
 import { BranchMixin } from 'baobab-react-mixins';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default React.createClass({
     displayName: 'CheckBox',
 
-    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
+    mixins: [BranchMixin, FormComponentMixin, ComponentActionsMixin, PureRenderMixin],
 
     propTypes: {
         value: React.PropTypes.any,
@@ -41,14 +41,14 @@ export default React.createClass({
 
         this.setValue(value, () => {
             this.setDirtyState();
-            this.props.onChange(value, previousValue);
+            this.props.onChange(event, { value, previousValue });
         });
     },
 
     isChecked() {
         return _.isEqual(this.props.value, this.state.value);
     },
-    
+
     render() {
         const props = {
             type: 'checkbox',
@@ -57,8 +57,12 @@ export default React.createClass({
             onKeyPress: this.processKeyPressForSubmit,
         };
 
+        const restProps = _.omit(this.props, [
+            'value', 'uncheckedValue', 'onChange', 'cursor',
+        ]);
+
         return (
-            <input {...this.props} {...props} />
+            <input {...restProps} {...props} ref="input" />
         );
     },
 });

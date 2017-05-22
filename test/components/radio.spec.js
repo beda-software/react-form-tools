@@ -5,9 +5,9 @@ import Baobab from 'baobab';
 import SchemaBranchMixin from 'baobab-react-schemabranchmixin';
 import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
-import { Form, Radio, ValidationBox } from '../../src/components';
+import sinon from 'sinon';
 import { Root } from '../utils';
-import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
+import { Form, Radio, ValidationBox } from '../../src/components';
 
 const tree = new Baobab(
     {},
@@ -92,7 +92,10 @@ describe('Radio', () => {
 
         clock.tick(1);
         formComponent.isDirty('field').should.be.true;
-        onChangeSpy.should.have.been.calledWith(1, null);
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 1, previousValue: null }
+        );
         tree.get('form', 'field').should.be.equal(1);
         ReactDOM.findDOMNode(radioComponents[0]).checked.should.to.be.true;
         ReactDOM.findDOMNode(radioComponents[1]).checked.should.to.be.false;
@@ -115,7 +118,10 @@ describe('Radio', () => {
         TestUtils.Simulate.change(secondInputNode, { target: { value: 2 } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith(2, 1);
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 2, previousValue: 1 }
+        );
         tree.get('form', 'field').should.be.equal(2);
         ReactDOM.findDOMNode(radioComponents[0]).checked.should.to.be.false;
         ReactDOM.findDOMNode(radioComponents[1]).checked.should.to.be.true;
@@ -127,7 +133,10 @@ describe('Radio', () => {
         TestUtils.Simulate.change(secondInputNode, { target: { value: 3 } });
 
         clock.tick(1);
-        onChangeSpy.should.have.been.calledWith(3, 2);
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 3, previousValue: 2 }
+        );
         tree.get('form', 'field').should.be.equal(3);
         ReactDOM.findDOMNode(radioComponents[0]).checked.should.to.be.false;
         ReactDOM.findDOMNode(radioComponents[1]).checked.should.to.be.false;

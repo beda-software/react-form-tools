@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import _ from 'lodash';
 import Input from './input';
 import BaobabPropTypes from 'baobab-prop-types';
 
@@ -17,12 +18,16 @@ export default React.createClass({
     },
 
     render() {
+        const restProps = _.omit(this.props, [
+            'cursor', 'skip',
+        ]);
+
         return (
             <Input
                 type="text"
                 toInternal={this.toInternal}
                 toRepresentation={this.toInternal}
-                {...this.props} />
+                {...restProps} />
         );
     },
 });

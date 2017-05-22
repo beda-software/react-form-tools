@@ -30,3 +30,9 @@ Object.defineProperty(exports, 'FormComponentMixin', {
     return _mixins.FormComponentMixin;
   }
 });
+Object.defineProperty(exports, 'ComponentActionsMixin', {
+  enumerable: true,
+  get: function get() {
+    return _mixins.ComponentActionsMixin;
+  }
+});

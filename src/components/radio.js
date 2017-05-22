@@ -3,12 +3,12 @@ import _ from 'lodash';
 import BaobabPropTypes from 'baobab-prop-types';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import { BranchMixin } from 'baobab-react-mixins';
-import { FormComponentMixin } from '../mixins';
+import { FormComponentMixin, ComponentActionsMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'Radio',
 
-    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
+    mixins: [BranchMixin, FormComponentMixin, ComponentActionsMixin, PureRenderMixin],
 
     propTypes: {
         value: React.PropTypes.any,
@@ -28,7 +28,7 @@ export default React.createClass({
         };
     },
 
-    onChange() {
+    onChange(event) {
         const value = this.props.value;
         const previousValue = this.state.value;
 
@@ -38,7 +38,7 @@ export default React.createClass({
 
         this.setValue(value, () => {
             this.setDirtyState();
-            this.props.onChange(value, previousValue);
+            this.props.onChange(event, { value, previousValue });
         });
     },
 
@@ -54,8 +54,12 @@ export default React.createClass({
             onKeyPress: this.processKeyPressForSubmit,
         };
 
+        const restProps = _.omit(this.props, [
+            'value', 'cursor', 'onChange',
+        ]);
+
         return (
-            <input {...this.props} {...props} />
+            <input {...restProps} {...props} ref="input" />
         );
     },
 });

@@ -8,15 +8,23 @@ export const FormComponentMixin = {
         fieldPath: React.PropTypes.array,
     },
 
+    getInitialState() {
+        return {
+            isDirty: false,
+            isValid: true,
+            errors: [],
+        };
+    },
+
     processKeyPressForSubmit(event) {
         // Helper method for form components
         // Submits form on enter by default
-        this.processKeyPress(event, () => this.context.form.submit());
+        this.processKeyPress(event, () => this.context.form && this.context.form.submit());
     },
 
     processKeyPress(event, fn) {
         // Callback `fn` will be called on enter press
-        if (!this.context.form.isHtmlForm()) {
+        if (this.insideForm() && !this.context.form.isHtmlForm()) {
             if (isEnterPressed(event)) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -29,6 +37,21 @@ export const FormComponentMixin = {
         }
     },
 
+    getFieldPath(props, context) {
+        props = props || this.props;
+        context = context || this.context;
+
+        if (props.fieldPath) {
+            return getFieldPathAsArray(props.fieldPath);
+        }
+
+        if (context.fieldPath) {
+            return context.fieldPath;
+        }
+
+        return null;
+    },
+
     getCursor(props, context) {
         props = props || this.props;
         context = context || this.context;
@@ -37,12 +60,10 @@ export const FormComponentMixin = {
             return props.cursor;
         }
 
-        if (props.fieldPath) {
-            return context.form.cursor.select(getFieldPathAsArray(props.fieldPath));
-        }
+        const fieldPath = this.getFieldPath(props, context);
 
-        if (context.fieldPath) {
-            return context.form.cursor.select(context.fieldPath);
+        if (fieldPath) {
+            return context.form.cursor.select(fieldPath);
         }
 
         /* istanbul ignore next */
@@ -50,8 +71,12 @@ export const FormComponentMixin = {
                'fieldPath' or via higher order component ValidationBox with 'fieldPath'`;
     },
 
+    insideForm() {
+        return !!this.context.form;
+    },
+
     inValidationBox() {
-        return !!(this.context.form && this.context.fieldPath);
+        return !!(this.insideForm() && this.getFieldPath());
     },
 
     setValue(value, callback) {
@@ -66,25 +91,71 @@ export const FormComponentMixin = {
 
     setDirtyState() {
         if (this.inValidationBox()) {
-            this.context.form.setDirtyState(this.context.fieldPath);
+            this.context.form.setDirtyState(this.getFieldPath());
         }
     },
 
     setPristineState() {
         if (this.inValidationBox()) {
-            this.context.form.setPristineState(this.context.fieldPath);
+            this.context.form.setPristineState(this.getFieldPath());
         }
     },
 
     isDirty() {
         if (this.inValidationBox()) {
-            return this.context.form.isDirty(this.context.fieldPath);
+            return this.state.isDirty;
         }
     },
 
     isValid() {
         if (this.inValidationBox()) {
-            return this.context.form.isValid(this.context.fieldPath);
+            return this.state.isValid;
         }
+    },
+
+    getErrors() {
+        if (this.inValidationBox()) {
+            return this.state.errors;
+        }
+    },
+
+    onFormStateUpdate({ dirtyStates, isFormDirty, errors }) {
+        const fieldPath = this.getFieldPath();
+
+        const fieldErrors = _.get(errors, fieldPath);
+        const isValid = _.isEmpty(fieldErrors);
+        const isDirty = !!_.get(dirtyStates, fieldPath) || isFormDirty;
+
+        this.setState({
+            errors: fieldErrors,
+            isDirty,
+            isValid,
+        });
+    },
+
+    componentDidMount() {
+        if (this.inValidationBox()) {
+            this.context.form.subscribe(this.onFormStateUpdate);
+        }
+    },
+
+    componentWillUnmount() {
+        if (this.inValidationBox()) {
+            this.context.form.unsubscribe(this.onFormStateUpdate);
+        }
+    },
+};
+
+export const ComponentActionsMixin = {
+    blur() {
+        this.refs.input.blur();
+    },
+
+    focus() {
+        this.refs.input.focus();
+    },
+
+    click() {
+        this.refs.input.click();
     },
 };

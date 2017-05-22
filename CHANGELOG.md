@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.0
+* ValidationBox receives `dirtyClassName`, `errorClassName`, `errorMessageClassName` for flexible customization #27
+* Fix #12
+* Fix #22
+* Fix #23
+* Fix #27
+* Fix #29
+* BREAKING CHANGE. onChange accepts event as first argument, and { value, previousValue } as second. #28
+
 ## 2.2.0
 * Submit: Add `disabled` property #25
 * ValidationBox: Add warning when ValidationBox, ValidationError, Submit are used outside Form #24

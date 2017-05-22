@@ -4,12 +4,12 @@ import _ from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import BaobabPropTypes from 'baobab-prop-types';
 import { BranchMixin } from 'baobab-react-mixins';
-import { FormComponentMixin } from '../mixins';
+import { FormComponentMixin, ComponentActionsMixin } from '../mixins';
 
 export default React.createClass({
     displayName: 'Input',
 
-    mixins: [BranchMixin, FormComponentMixin, PureRenderMixin],
+    mixins: [BranchMixin, FormComponentMixin, ComponentActionsMixin, PureRenderMixin],
 
     propTypes: {
         cursor: BaobabPropTypes.cursor,
@@ -19,6 +19,7 @@ export default React.createClass({
         onBlur: React.PropTypes.func,
         sync: React.PropTypes.bool,
         syncOnlyOnBlur: React.PropTypes.bool,
+        nullable: React.PropTypes.bool,
         autoFocus: React.PropTypes.bool,
         toInternal: React.PropTypes.func,
         toRepresentation: React.PropTypes.func,
@@ -92,7 +93,10 @@ export default React.createClass({
 
     deferredSyncValue(eventCallback) {
         this.clearDeferredSyncTimer();
-        this.deferredSyncTimer = setTimeout(() => this.syncValue(eventCallback), this.msToPoll);
+        this.deferredSyncTimer = setTimeout(() => {
+            this.deferredSyncTimer = null;
+            this.syncValue(eventCallback);
+        }, this.msToPoll);
     },
 
     syncValue(eventCallback) {
@@ -141,7 +145,7 @@ export default React.createClass({
         }
 
         this.updateValue(value);
-        this.props.onChange(value, previousValue);
+        this.props.onChange(event, { value, previousValue });
     },
 
     onBlur(event) {
@@ -157,7 +161,7 @@ export default React.createClass({
     onKeyPress(event) {
         this.processKeyPress(event, () => {
             this.clearDeferredSyncTimer();
-            this.syncValue(() => this.context.form.submit());
+            this.syncValue(() => this.context.form && this.context.form.submit());
         });
     },
 
@@ -168,14 +172,20 @@ export default React.createClass({
             onBlur: this.onBlur,
         };
 
+        const restProps = _.omit(this.props, [
+            'cursor', 'onChange', 'onKeyPress', 'onSync', 'onBlur', 'sync',
+            'syncOnlyOnBlur', 'autoFocus', 'toInternal', 'toRepresentation',
+            'nullable',
+        ]);
+
         if (this.props.type == 'textarea') {
             return (
-                <textarea {...this.props} {...props} ref="input" />
+                <textarea {...restProps} {...props} ref="input" />
             );
         }
 
         return (
-            <input {...this.props} {...props}
+            <input {...restProps} {...props}
                 type={this.props.type}
                 onKeyPress={this.onKeyPress}
                 ref="input" />

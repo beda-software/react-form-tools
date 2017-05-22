@@ -12,10 +12,20 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
+var _reactAddonsPureRenderMixin = require('react-addons-pure-render-mixin');
+
+var _reactAddonsPureRenderMixin2 = _interopRequireDefault(_reactAddonsPureRenderMixin);
+
+var _mixins = require('../mixins');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 exports.default = _react2.default.createClass({
     displayName: 'ValidationError',
+
+    mixins: [_mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
 
     contextTypes: {
         form: _react2.default.PropTypes.object.isRequired
@@ -24,12 +34,14 @@ exports.default = _react2.default.createClass({
     propTypes: {
         fieldPath: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.string.isRequired, _react2.default.PropTypes.array.isRequired]),
         className: _react2.default.PropTypes.string,
+        dirtyClassName: _react2.default.PropTypes.string,
         alwaysShow: _react2.default.PropTypes.bool
     },
 
     getDefaultProps: function getDefaultProps() {
         return {
-            alwaysShow: false
+            alwaysShow: false,
+            dirtyClassName: '_dirty'
         };
     },
     componentWillMount: function componentWillMount() {
@@ -39,22 +51,24 @@ exports.default = _react2.default.createClass({
         }
     },
     render: function render() {
-        var form = this.context.form;
+        var _props = this.props;
+        var alwaysShow = _props.alwaysShow;
+        var className = _props.className;
+        var dirtyClassName = _props.dirtyClassName;
 
-        var error = form.getValidationErrors(this.props.fieldPath);
-        var isValid = !error;
-        var isDirty = form.isDirty(this.props.fieldPath);
-        var className = (0, _classnames2.default)(this.props.className, {
-            _dirty: isDirty
-        });
-        if (isValid || !this.props.alwaysShow && !isDirty) {
+        var errors = this.getErrors();
+        var isValid = this.isValid();
+        var isDirty = this.isDirty();
+        var generatedClassName = (0, _classnames2.default)(className, _defineProperty({}, dirtyClassName, isDirty));
+
+        if (isValid || !alwaysShow && !isDirty) {
             return null;
         }
 
         return _react2.default.createElement(
             'div',
-            { className: className },
-            error
+            { className: generatedClassName },
+            errors
         );
     }
 });

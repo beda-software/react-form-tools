@@ -10,6 +10,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _input = require('./input');
 
 var _input2 = _interopRequireDefault(_input);
@@ -34,10 +38,12 @@ exports.default = _react2.default.createClass({
         return String(value).replace(regexp, '');
     },
     render: function render() {
+        var restProps = _lodash2.default.omit(this.props, ['cursor', 'skip']);
+
         return _react2.default.createElement(_input2.default, _extends({
             type: 'text',
             toInternal: this.toInternal,
             toRepresentation: this.toInternal
-        }, this.props));
+        }, restProps));
     }
 });

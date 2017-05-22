@@ -7,7 +7,7 @@ import TestUtils from 'react-addons-test-utils';
 import yup from 'yup';
 import { Form, Input, ValidationBox } from '../../src/components';
 import { Root } from '../utils';
-import sinon from 'imports?define=>false,require=>false!sinon/pkg/sinon-2.0.0-pre.js';
+import sinon from 'sinon';
 
 const tree = new Baobab(
     {},
@@ -156,7 +156,10 @@ describe('Input outside ValidationBox', () => {
     it('should sets inner state value and synchronizes with cursor when user types with timer', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'first' } });
-        onChangeSpy.should.have.been.calledWith('first', '');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'first', previousValue: '' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('first');
@@ -186,11 +189,17 @@ describe('Input outside ValidationBox', () => {
     it('should not calls onSync with other value if value restored to initial after changes', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'first changed' } });
-        onChangeSpy.should.have.been.calledWith('first changed', 'first');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'first changed', previousValue: 'first' }
+        );
 
         clock.tick(1);
         TestUtils.Simulate.change(inputNode, { target: { value: 'first' } });
-        onChangeSpy.should.have.been.calledWith('first', 'first changed');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'first', previousValue: 'first changed' }
+        );
 
         clock.tick(inputComponent.msToPoll + 1);
         onSyncSpy.should.have.been.not.called;
@@ -200,7 +209,10 @@ describe('Input outside ValidationBox', () => {
     it('should sets inner state value and synchronizes with cursor when input blurs', () => {
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'second' } });
-        onChangeSpy.should.have.been.calledWith('second', 'first');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'second', previousValue: 'first' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('second');
@@ -245,7 +257,10 @@ describe('Input outside ValidationBox', () => {
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'fourth' } });
-        onChangeSpy.should.have.been.calledWith('fourth', 'third');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'fourth', previousValue: 'third' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('fourth');
@@ -284,7 +299,10 @@ describe('Input outside ValidationBox', () => {
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: '' } });
-        onChangeSpy.should.have.been.calledWith('', 'fourth');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: '', previousValue: 'fourth' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('');
@@ -315,7 +333,10 @@ describe('Input outside ValidationBox', () => {
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'fifth' } });
-        onChangeSpy.should.have.been.calledWith('fifth', '');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'fifth', previousValue: '' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('fifth');
@@ -363,7 +384,10 @@ describe('Input outside ValidationBox', () => {
 
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'sixth' } });
-        onChangeSpy.should.have.been.calledWith('sixth', 'fifth');
+        onChangeSpy.should.have.been.calledWithMatch(
+            sinon.match.object,
+            { value: 'sixth', previousValue: 'fifth' }
+        );
 
         clock.tick(1);
         inputComponent.state.value.should.be.equal('sixth');
@@ -395,12 +419,12 @@ describe('Input outside ValidationBox', () => {
     });
 
     it('should inValidationBox returns false', () => {
-        inputComponent.inValidationBox().should.be.false;
+        inputComponent.inValidationBox().should.be.true;
     });
 });
 
 describe('Input inside ValidationBox', () => {
-    let inputComponent, formComponent, treeState, clock;
+    let inputComponent, formComponent, treeState;
 
     before(() => {
         const rootComponent = TestUtils.renderIntoDocument(
@@ -416,18 +440,10 @@ describe('Input inside ValidationBox', () => {
         treeState = tree.serialize();
     });
 
-    beforeEach(() => {
-        clock = sinon.useFakeTimers();
-    });
-
     after(() => {
         inputComponent.componentWillUnmount();
         formComponent.componentWillUnmount();
         tree.set(treeState);
-    });
-
-    afterEach(() => {
-        clock.restore();
     });
 
     it('should getCursor returns correct cursor', () => {
@@ -439,7 +455,6 @@ describe('Input inside ValidationBox', () => {
     });
 
     it('should isValid returns false for invalid input', (done) => {
-        clock.restore();
         formComponent.validate(null, () => {
             inputComponent.isValid().should.be.false;
             formComponent.isValid('nested.field').should.be.false;
@@ -452,15 +467,17 @@ describe('Input inside ValidationBox', () => {
     });
 
     it('should changes cursor value correctly on change', () => {
+        const clock = sinon.useFakeTimers();
         const inputNode = ReactDOM.findDOMNode(inputComponent);
         TestUtils.Simulate.change(inputNode, { target: { value: 'firth' } });
 
         clock.tick(inputComponent.msToPoll + 1);
         tree.get('form', 'nested', 'field').should.be.equal('firth');
+
+        clock.restore();
     });
 
     it('should isValid returns true for valid input', (done) => {
-        clock.restore();
         formComponent.validate(() => {
             inputComponent.isValid().should.be.true;
             formComponent.isValid('nested.field').should.be.true;
@@ -470,6 +487,7 @@ describe('Input inside ValidationBox', () => {
 
     it('should isDirty returns false for dirty input', () => {
         inputComponent.isDirty().should.be.true;
+        formComponent.isDirty('nested.field').should.be.true;
     });
 
     it('should setPristine makes pristine dirty input', () => {

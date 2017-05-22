@@ -35,7 +35,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _react2.default.createClass({
     displayName: 'Input',
 
-    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
+    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _mixins.ComponentActionsMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         cursor: _baobabPropTypes2.default.cursor,
@@ -45,6 +45,7 @@ exports.default = _react2.default.createClass({
         onBlur: _react2.default.PropTypes.func,
         sync: _react2.default.PropTypes.bool,
         syncOnlyOnBlur: _react2.default.PropTypes.bool,
+        nullable: _react2.default.PropTypes.bool,
         autoFocus: _react2.default.PropTypes.bool,
         toInternal: _react2.default.PropTypes.func,
         toRepresentation: _react2.default.PropTypes.func
@@ -116,7 +117,8 @@ exports.default = _react2.default.createClass({
 
         this.clearDeferredSyncTimer();
         this.deferredSyncTimer = setTimeout(function () {
-            return _this2.syncValue(eventCallback);
+            _this2.deferredSyncTimer = null;
+            _this2.syncValue(eventCallback);
         }, this.msToPoll);
     },
     syncValue: function syncValue(eventCallback) {
@@ -168,7 +170,7 @@ exports.default = _react2.default.createClass({
         }
 
         this.updateValue(value);
-        this.props.onChange(value, previousValue);
+        this.props.onChange(event, { value: value, previousValue: previousValue });
     },
     onBlur: function onBlur(event) {
         var _this4 = this;
@@ -189,7 +191,7 @@ exports.default = _react2.default.createClass({
         this.processKeyPress(event, function () {
             _this5.clearDeferredSyncTimer();
             _this5.syncValue(function () {
-                return _this5.context.form.submit();
+                return _this5.context.form && _this5.context.form.submit();
             });
         });
     },
@@ -200,11 +202,13 @@ exports.default = _react2.default.createClass({
             onBlur: this.onBlur
         };
 
+        var restProps = _lodash2.default.omit(this.props, ['cursor', 'onChange', 'onKeyPress', 'onSync', 'onBlur', 'sync', 'syncOnlyOnBlur', 'autoFocus', 'toInternal', 'toRepresentation', 'nullable']);
+
         if (this.props.type == 'textarea') {
-            return _react2.default.createElement('textarea', _extends({}, this.props, props, { ref: 'input' }));
+            return _react2.default.createElement('textarea', _extends({}, restProps, props, { ref: 'input' }));
         }
 
-        return _react2.default.createElement('input', _extends({}, this.props, props, {
+        return _react2.default.createElement('input', _extends({}, restProps, props, {
             type: this.props.type,
             onKeyPress: this.onKeyPress,
             ref: 'input' }));

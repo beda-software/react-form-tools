@@ -31,7 +31,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _react2.default.createClass({
     displayName: 'MultipleCheckBox',
 
-    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _reactAddonsPureRenderMixin2.default],
+    mixins: [_baobabReactMixins.BranchMixin, _mixins.FormComponentMixin, _mixins.ComponentActionsMixin, _reactAddonsPureRenderMixin2.default],
 
     propTypes: {
         value: _react2.default.PropTypes.any.isRequired,
@@ -63,7 +63,10 @@ exports.default = _react2.default.createClass({
 
         this.setValue(value, function () {
             _this.setDirtyState();
-            _this.props.onChange(isChecked, !isChecked);
+            _this.props.onChange(event, {
+                value: isChecked,
+                previousValue: !isChecked
+            });
         });
     },
     isChecked: function isChecked() {
@@ -76,6 +79,8 @@ exports.default = _react2.default.createClass({
             checked: this.isChecked()
         };
 
-        return _react2.default.createElement('input', _extends({}, this.props, props));
+        var restProps = _lodash2.default.omit(this.props, ['value', 'cursor', 'onChange']);
+
+        return _react2.default.createElement('input', _extends({}, restProps, props, { ref: 'input' }));
     }
 });
