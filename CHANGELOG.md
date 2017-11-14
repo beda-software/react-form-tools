@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.0.1
+* Fix #31
+
 ## 3.0.0
 * ValidationBox receives `dirtyClassName`, `errorClassName`, `errorMessageClassName` for flexible customization #27
 * Fix #12

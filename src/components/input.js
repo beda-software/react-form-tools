@@ -36,8 +36,10 @@ export default React.createClass({
     },
 
     getInitialState() {
+        const internalValue = this.props.toInternal(this.getCursor().get());
+
         return {
-            value: this.props.toInternal(this.getCursor().get()) || '',
+            value: _.isNull(internalValue) ? '' : internalValue,
         };
     },
 
@@ -62,8 +64,10 @@ export default React.createClass({
         }
 
         if (this.state.cursorValue !== prevState.cursorValue) {
+            const internalValue = this.props.toInternal(this.state.cursorValue);
+
             this.setState({
-                value: this.props.toInternal(this.state.cursorValue) || '',
+                value: _.isNull(internalValue) ? '' : internalValue,
             });
         }
     },
